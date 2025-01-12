@@ -109,9 +109,10 @@ const FileTreeItem = ({ fileTree, depth = 0.5 }) => {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <>
+    <div className="group">
       <div
-        className="flex items-center hover:bg-slate-800 px-2 py-1 cursor-pointer"
+        className="flex items-center hover:bg-slate-800 px-2 py-1
+                   cursor-pointer"
         style={{ paddingLeft: `${depth < 6 ? depth * 1 : 6}rem` }}
         onClick={() => setIsOpen(!isOpen)}
       >
@@ -139,7 +140,7 @@ const FileTreeItem = ({ fileTree, depth = 0.5 }) => {
           ))}
         </div>
       )}
-    </>
+    </div>
   );
 };
 

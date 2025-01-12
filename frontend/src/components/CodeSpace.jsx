@@ -1,8 +1,8 @@
 import React from "react";
 import Tiles from "./Tiles";
-import Terminal from "./Terminal";
+import VideoChatPanel from "./VideoChatPanel";
 
-const CodeSpace = ({ isMobile }) => {
+const CodeSpace = ({ isMobile, setIsChatOpen }) => {
   return (
     <div className="min-h-screen w-auto overflow-hidden flex-1 flex flex-col">
       <Tiles />
@@ -31,7 +31,7 @@ const CodeSpace = ({ isMobile }) => {
           WebkitTextFillColor: "currentcolor",
         }}
       ></textarea>
-      {!isMobile && <Terminal />}
+      {!isMobile && <VideoChatPanel setIsChatOpen={setIsChatOpen} />}
     </div>
   );
 };

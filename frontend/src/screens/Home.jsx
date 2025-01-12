@@ -36,22 +36,13 @@ const Home = () => {
         isLeftbarPanel={isLeftbarPanel}
         setIsLeftbarPanel={setIsLeftbarPanel}
       />
-      <CodeSpace isMobile={isMobile} />
+      <CodeSpace isMobile={isMobile} setIsChatOpen={setIsChatOpen} />
       <MobileChatOption isMobile={isMobile} />
       <DesktopChatOption
         isMobile={isMobile}
         isChatOpen={isChatOpen}
         setIsChatOpen={setIsChatOpen}
       />
-      {!isChatOpen && (
-        <button
-          className="fixed bottom-32 right-6 p-4 bg-blue-600 
-                   text-white rounded-full shadow-lg z-50"
-          onClick={() => setIsChatOpen(true)}
-        >
-          <BsChatDots />
-        </button>
-      )}
     </main>
   );
 };
