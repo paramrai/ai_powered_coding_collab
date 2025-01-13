@@ -2,6 +2,7 @@ import express, { urlencoded, json } from "express";
 import morgan from "morgan";
 import connect from "./db/db.js";
 import userRoutes from "./routes/user.routes.js";
+import projectRoutes from "./routes/project.routes.js";
 
 const app = express();
 connect();
@@ -15,7 +16,7 @@ app.get("/", (req, res) => {
 });
 
 app.use("/users", userRoutes);
-// app.use("/projects", projectRoutes);
+app.use("/projects", projectRoutes);
 // app.use("/ai", aiRoutes);
 
 export default app;

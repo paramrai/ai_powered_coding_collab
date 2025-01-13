@@ -1,40 +1,41 @@
 import { Router } from "express";
-import * as userController from "../controllers/user.controller.js";
 import { body } from "express-validator";
-import * as authMiddleware from "../middlewares/auth.middleware.js";
+import {
+  createUserController,
+  getAllUsersController,
+  loginController,
+  logoutController,
+  profileController,
+} from "../controllers/user.controller.js";
+import { authUser } from "../middlewares/auth.middleware.js";
 
 const router = Router();
 
 router.post(
   "/register",
-  body("email").isEmail().withMessage("Email must be a valid email address"),
-  body("password")
-    .isLength({ min: 3 })
-    .withMessage("Password must be at least 3 characters long"),
-  userController.createUserController
+  [
+    body("email").isEmail().withMessage("Email must be a valid email address"),
+    body("password")
+      .isLength({ min: 3 })
+      .withMessage("Password must be at least 3 characters long"),
+  ],
+  createUserController
 );
 
 router.post(
   "/login",
-  body("email").isEmail().withMessage("Email must be a valid email address"),
-  body("password")
-    .isLength({ min: 3 })
-    .withMessage("Password must be at least 3 characters long"),
-  userController.loginController
+  [
+    body("email").isEmail().withMessage("Email must be a valid email address"),
+    body("password")
+      .isLength({ min: 3 })
+      .withMessage("Password must be at least 3 characters long"),
+  ],
+  loginController
 );
 
-router.get(
-  "/profile",
-  authMiddleware.authUser,
-  userController.profileController
-);
+router.get("/profile", authUser, profileController);
+router.get("/logout", authUser, logoutController);
+router.get("/all", authUser, getAllUsersController);
 
-router.get("/logout", authMiddleware.authUser, userController.logoutController);
-
-router.get(
-  "/all",
-  authMiddleware.authUser,
-  userController.getAllUsersController
-);
-
-export default router;
+const userRoutes = router;
+export default userRoutes;
