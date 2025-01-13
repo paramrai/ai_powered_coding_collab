@@ -3,17 +3,18 @@ import { createRoot } from "react-dom/client";
 import { BrowserRouter as Router } from "react-router-dom";
 import "./index.css";
 import App from "./App.jsx";
-import UserProvider from "./context/user.context.jsx";
-import SocketProvider from "./context/socket.context.jsx";
+import { Provider } from "react-redux";
+import { store } from "./redux/store";
+import SocketProvider from "./redux/context/SocketProvider";
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
     <Router>
-      <UserProvider>
+      <Provider store={store}>
         <SocketProvider>
           <App />
         </SocketProvider>
-      </UserProvider>
+      </Provider>
     </Router>
   </StrictMode>
 );

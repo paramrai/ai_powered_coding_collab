@@ -71,7 +71,7 @@ const Tiles = () => {
   const [activeTile, setActiveTile] = useState("JavaScript");
 
   return (
-    <div className="w-full overflow-x-auto scrollbar-hide bg-yellow-500">
+    <div className="w-full overflow-x-auto scrollbar-hide">
       <div className="flex min-w-max">
         {tiles.map((tile, i) => (
           <button

@@ -1,3 +1,8 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+html {
+  opacity: 1;
+  background-color: rgb(15 23 42) /* #0f172a */;
+}
