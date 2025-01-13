@@ -12,10 +12,9 @@ export const createUserController = async (req, res) => {
   try {
     const user = await userService.createUser(req.body);
     const token = await user.generateJWT();
-    console.log(token);
     res.status(201).json({ user, token });
   } catch (error) {
-    res.status(400).send(error.message);
+    res.status(400).send(error);
   }
 };
 
