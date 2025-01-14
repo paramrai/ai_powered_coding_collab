@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { FaSearch, FaTools, FaLightbulb, FaShareAlt } from "react-icons/fa";
 import { FaThumbsUp, FaEye } from "react-icons/fa";
 import { HiOutlineViewGridAdd } from "react-icons/hi";
@@ -18,6 +18,97 @@ import { BiLogoVisualStudio } from "react-icons/bi";
 import { MdFolder } from "react-icons/md";
 import { RiNotificationBadgeFill } from "react-icons/ri";
 import { motion } from "framer-motion";
+import { Link } from "react-router-dom";
+
+function CreateGemModal({ createGemModal, setCreateGemModal }) {
+  return (
+    createGemModal && (
+      <motion.div
+        initial={{ scale: 0.3, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        exit={{
+          scale: 0.3,
+          opacity: 0,
+          transition: {
+            duration: 0.2,
+            ease: "easeInOut",
+          },
+        }}
+        transition={{
+          type: "spring",
+          stiffness: 120,
+          damping: 15,
+          mass: 1,
+          duration: 0.2,
+        }}
+        className="fixed inset-0 bg-slate-900 z-50 p-2"
+      >
+        <div className="fixed inset-0 flex items-center justify-center bg-transparent">
+          <div className="bg-slate-800 rounded-lg shadow-lg p-6 w-full max-w-md relative">
+            <button
+              className="absolute top-2 right-2 text-gray-600 hover:text-gray-400"
+              onClick={() => setCreateGemModal(false)}
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-6 w-6"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M6 18L18 6M6 6l12 12"
+                />
+              </svg>
+            </button>
+            <h2 className="text-2xl font-bold mb-4 text-gray-200">Add Gem</h2>
+            <div className="mb-4">
+              <label for="gem-name" className="block text-gray-500">
+                Create your hidden Gem
+              </label>
+              <div className="search_input w-[100%] mt-2 focus-within:ring-2 focus-within:ring-indigo-500 flex gap-2 items-center p-3 bg-slate-900 text-gray-500 transition-all">
+                <input
+                  autoComplete="off"
+                  className="bg-transparent  w-full h-full outline-none"
+                  placeholder="Ai Powered : Code Gem"
+                  type="text"
+                />
+              </div>
+            </div>
+            <div className="mb-4">
+              <label for="description" className="block text-gray-500">
+                Description
+              </label>
+              <div className="search_input w-[100%] mt-2 focus-within:ring-2 focus-within:ring-indigo-500 flex gap-2 items-center p-3 bg-slate-900 text-gray-500 transition-all">
+                <textarea
+                  autoComplete="off"
+                  className="bg-transparent  w-full h-[100px] resize-none outline-none scrollbar-thin scrollbar-thumb-slate-700 scrollbar-track-slate-900 text-start"
+                  placeholder={`Code Gem is an innovative online code editor that blends the power of AI with seamless collaboration and communication.
+                  Key Features:AI-Powered Coding Assistance: Code Gem leverages advanced AI to help you write, debug, and optimize code with intelligent suggestions and real-time error checking.                  
+                  Video Chat Integration: Collaborate with your team or friends through built-in video chat, making it easy to discuss and solve coding challenges together.
+                  Real-Time Collaboration: Work on the same codebase simultaneously with anyone, whether they are using Code Gem or invited to join your coding session. Changes are synchronized instantly, ensuring a smooth and efficient collaborative experience.
+                  Enhance your coding productivity and creativity with Code Gem—where technology and teamwork come together.`}
+                  type="text"
+                ></textarea>
+              </div>
+            </div>
+            <div className="btns space-x-2 flex justify-end">
+              <button className="bg-gray-600 text-white hover:text-black px-4 py-2 rounded hover:bg-gray-500 focus:outline-none">
+                Set Later
+              </button>
+              <button className="bg-green-500 text-black hover:text-white px-4 py-2 rounded focus:outline-none">
+                Submit
+              </button>
+            </div>
+          </div>
+        </div>
+      </motion.div>
+    )
+  );
+}
 
 function Navbar() {
   return (
@@ -47,75 +138,16 @@ function Navbar() {
 
 function Tabs() {
   const [createGemModal, setCreateGemModal] = useState();
-  const [inboxModal, setInboxModal] = useState();
 
   return (
     <div
       className="flex flex-wrap gap-2 justify-start p-4 bg-gray-800 text-gray-400 w-full
      z-50 shadow-md sticky border-t-4 border-[#ffb120] mx-auto mt-4"
     >
-      {createGemModal && (
-        <motion.div
-          initial={{ scale: 0.3, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          exit={{
-            scale: 0.3,
-            opacity: 0,
-            transition: {
-              duration: 0.2,
-              ease: "easeInOut",
-            },
-          }}
-          transition={{
-            type: "spring",
-            stiffness: 120,
-            damping: 15,
-            mass: 1,
-            duration: 0.2,
-          }}
-          className="fixed inset-0 bg-slate-900 z-50 p-2"
-        >
-          ADD YOUR GEMS HERE <br />
-          <button
-            onClick={() => setCreateGemModal(false)}
-            className="bg-green-500 text-black hover:text-white px-4 py-3 rounded hover:bg-green-600 focus:outline-none"
-          >
-            close
-          </button>
-        </motion.div>
-      )}
-
-      {inboxModal && (
-        <motion.div
-          initial={{ scale: 0.3, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          exit={{
-            scale: 0.3,
-            opacity: 0,
-            transition: {
-              duration: 0.2,
-              ease: "easeInOut",
-            },
-          }}
-          transition={{
-            type: "spring",
-            stiffness: 120,
-            damping: 15,
-            mass: 1,
-            duration: 0.2,
-          }}
-          className="fixed inset-0 bg-slate-900 z-50 p-2"
-        >
-          YOUR NOTIFICATION <br />
-          <button
-            onClick={() => setInboxModal(false)}
-            className="bg-green-500 text-black hover:text-white px-4 py-3 rounded hover:bg-green-600 focus:outline-none"
-          >
-            close
-          </button>
-        </motion.div>
-      )}
-
+      <CreateGemModal
+        createGemModal={createGemModal}
+        setCreateGemModal={setCreateGemModal}
+      />
       <button
         onClick={() => setCreateGemModal(true)}
         className="bg-green-500 text-black hover:text-white px-4 py-3 rounded hover:bg-green-600 focus:outline-none"
@@ -125,8 +157,8 @@ function Tabs() {
         </i>
       </button>
 
-      <div
-        onClick={() => setInboxModal(true)}
+      <Link
+        to="/inbox"
         className="group flex items-center bg-slate-700 rounded-md hover:bg-slate-600 px-4 py-2 
       cursor-pointer hover:text-white focus:text-white focus:outline-none transform transition-all 
       duration-200 ease-in-out"
@@ -136,7 +168,7 @@ function Tabs() {
       duration-200 ease-in-out"
         />
         <span>Inbox</span>
-      </div>
+      </Link>
 
       <div
         className="group flex items-center bg-slate-700 rounded-md hover:bg-slate-600 px-4 py-2 
@@ -394,11 +426,11 @@ function Footer() {
 
 const Home = () => {
   return (
-    <div>
+    <main className="h-full overflow-y-auto scrollbar-thin scrollbar-thumb-slate-700 scrollbar-track-slate-900">
       <header className="p-3 border-b-[1px] border-slate-800">
         <Navbar />
       </header>
-      <nav>
+      <nav className="sticky top-0 z-50">
         <Tabs />
       </nav>
       <section className="flex my-4 px-2">
@@ -413,7 +445,7 @@ const Home = () => {
         <InfoCards />
       </section>
       <Footer />
-    </div>
+    </main>
   );
 };
 

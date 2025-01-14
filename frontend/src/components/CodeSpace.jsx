@@ -1,11 +1,11 @@
 import React from "react";
-import Tiles from "./Tiles";
 import VideoChatPanel from "./VideoChatPanel";
+import OpenFiles from "./OpenFiles";
 
 const CodeSpace = ({ isMobile, setIsChatOpen }) => {
   return (
     <div className="min-h-screen w-auto overflow-hidden flex-1 flex flex-col">
-      <Tiles />
+      <OpenFiles />
       <textarea
         name="code_space"
         id="code_space"
