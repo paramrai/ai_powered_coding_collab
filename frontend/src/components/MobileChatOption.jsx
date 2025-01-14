@@ -16,21 +16,21 @@ const MobileChatOption = ({ isMobile }) => {
             exit={{
               scale: 0.3,
               opacity: 0,
-              y: "50%",
-              x: "50%",
+              y: "0%",
+              x: "0%",
               transition: {
-                duration: 0.3,
+                duration: 0.2,
                 ease: "easeInOut",
               },
             }}
             transition={{
               type: "spring",
-              stiffness: 80,
+              stiffness: 120,
               damping: 15,
               mass: 1,
-              duration: 0.5,
+              duration: 0.2,
             }}
-            className="fixed inset-0 bg-slate-900 z-50 p-4"
+            className="fixed inset-0 bg-slate-900 z-50 p-2"
           >
             <ChatContent setIsChatOpen={setIsChatOpen} />
           </motion.div>

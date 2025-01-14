@@ -5,7 +5,7 @@ const DesktopChatOption = ({ isMobile, isChatOpen, setIsChatOpen }) => {
   return (
     !isMobile &&
     isChatOpen && (
-      <div className="bg-slate-900 p-4 flex-2">
+      <div className="bg-slate-900 flex-2 p-2">
         <ChatContent setIsChatOpen={setIsChatOpen} />
       </div>
     )

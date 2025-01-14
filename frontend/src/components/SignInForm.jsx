@@ -6,17 +6,18 @@ import { useNavigate } from "react-router-dom";
 
 const SignInForm = () => {
   const [close, setClose] = useState(false);
+  const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
   const handleSignIn = (e) => {
-    if (!password || !email) {
+    if (!password || !email || !username) {
       alert("Username or Password is required");
     }
 
-    const user = { email };
+    const user = { username, email };
     dispatch(setUser({ user }));
     setClose(true);
     navigate("/projects");
@@ -58,6 +59,12 @@ const SignInForm = () => {
                 Skip for now
               </h2>
             </div>
+            <input
+              type="username"
+              placeholder="Username"
+              onChange={(e) => setUsername(e.target.value)}
+              className="w-full p-2 mb-4 border rounded"
+            />
             <input
               type="email"
               placeholder="Email"

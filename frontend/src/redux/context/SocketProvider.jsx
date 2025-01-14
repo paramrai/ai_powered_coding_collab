@@ -3,7 +3,9 @@ import { useDispatch } from "react-redux";
 import { io } from "socket.io-client";
 import { setConnect, setDisconnect } from "../slices/socketSlice";
 
-const socket = io(import.meta.env.VITE_API_URL);
+const socket = io(import.meta.env.VITE_API_URL, {
+  reconnection: false,
+});
 
 const SocketProvider = ({ children }) => {
   const dispatch = useDispatch();
