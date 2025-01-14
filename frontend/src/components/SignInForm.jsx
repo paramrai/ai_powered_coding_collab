@@ -19,7 +19,7 @@ const SignInForm = () => {
     const user = { email };
     dispatch(setUser({ user }));
     setClose(true);
-    navigate("/home");
+    navigate("/projects");
   };
 
   return (
@@ -51,7 +51,7 @@ const SignInForm = () => {
               <h2
                 onClick={() => {
                   setClose(true);
-                  navigate("/home");
+                  navigate("/projects");
                 }}
                 className="text-sm text-blue-700 cursor-pointer"
               >
