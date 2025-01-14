@@ -21,28 +21,10 @@ import {
   SiDart,
 } from "react-icons/si";
 import { BsHash } from "react-icons/bs";
+import { useDispatch, useSelector } from "react-redux";
+import { removeFile, selectFiles } from "../redux/slices/gemSlice";
 
-const tiles = [
-  "JavaScript",
-  "Python",
-  "Java",
-  "C++",
-  "TypeScript",
-  "React",
-  "Node",
-  "Go",
-  "Ruby",
-  "PHP",
-  "Swift",
-  "Kotlin",
-  "Rust",
-  "C#",
-  "Dart",
-  "HTML",
-  "CSS",
-];
-
-const tileIcons = {
+const icons = {
   JavaScript: <FaJs className="text-yellow-400" size={16} />,
   Python: <FaPython className="text-blue-500" size={16} />,
   Java: <FaJava className="text-orange-500" size={16} />,
@@ -67,30 +49,33 @@ const tileIcons = {
   CSS: <FaCss3 className="text-blue-500" size={16} />,
 };
 
-const Tiles = () => {
-  const [activeTile, setActiveTile] = useState("JavaScript");
+const OpenFiles = () => {
+  const [activeFile, setActiveFile] = useState("");
+  const openFiles = useSelector(selectFiles);
+  const dispatch = useDispatch();
 
   return (
-    <div className="w-full overflow-x-auto scrollbar-hide">
+    <div className="w-full overflow-x-auto scrollbar-hide bg-slate-800">
       <div className="flex min-w-max">
-        {tiles.map((tile, i) => (
+        {openFiles.map((file, i) => (
           <button
             key={i}
             className={`min-w-[50px] h-[50px] flex justify-between
-                        items-center bg-slate-800 p-4 
-                        transition-all duration-300 border-b-[1px] 
-                        ${
-                          activeTile === tile
-                            ? "border-blue-500"
-                            : "border-slate-800"
-                        }`}
-            onClick={() => setActiveTile(tile)}
+                      items-center bg-slate-800 p-4
+                      transition-all duration-300 border-b-[1px]
+                      ${
+                        activeFile === file
+                          ? "border-blue-500"
+                          : "border-slate-800"
+                      }`}
+            onClick={() => setActiveFile(file)}
           >
-            {tileIcons[tile]}
-            <h3 className="text-sm text-white mx-2">{tile}</h3>
+            {file.icon}
+            <h3 className="text-sm text-white mx-2">{file.name}</h3>
             <IoClose
               className="text-sm text-gray-400 hover:text-red-500 transition-colors"
               size={18}
+              onClick={() => dispatch(removeFile(file.name))}
             />
           </button>
         ))}
@@ -99,4 +84,4 @@ const Tiles = () => {
   );
 };
 
-export default Tiles;
+export default OpenFiles;

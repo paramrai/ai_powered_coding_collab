@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { FaFolder, FaFolderOpen, FaFile, FaReact, FaJs } from "react-icons/fa";
 import { SiTailwindcss, SiVite } from "react-icons/si";
+import { selectFiles, setOpenFiles } from "../redux/slices/gemSlice";
+import { useDispatch, useSelector } from "react-redux";
 
 const fileTree = {
   name: "ai_powered_coding_collab",
@@ -18,71 +20,6 @@ const fileTree = {
               name: "components",
               type: "folder",
               children: [
-                {
-                  name: "home",
-                  type: "folder",
-                  children: [
-                    {
-                      name: "home2",
-                      type: "folder",
-                      children: [
-                        {
-                          name: "home3",
-                          type: "folder",
-                          children: [
-                            {
-                              name: "home4",
-                              type: "folder",
-                              children: [
-                                {
-                                  name: "home5",
-                                  type: "folder",
-                                  children: [
-                                    {
-                                      name: "home6",
-                                      type: "folder",
-                                      children: [
-                                        {
-                                          name: "home2",
-                                          type: "folder",
-                                          children: [
-                                            {
-                                              name: "home3",
-                                              type: "folder",
-                                              children: [
-                                                {
-                                                  name: "home4",
-                                                  type: "folder",
-                                                  children: [
-                                                    {
-                                                      name: "home5",
-                                                      type: "folder",
-                                                      children: [
-                                                        {
-                                                          name: "home6",
-                                                          type: "folder",
-                                                          children: [],
-                                                        },
-                                                      ],
-                                                    },
-                                                  ],
-                                                },
-                                              ],
-                                            },
-                                          ],
-                                        },
-                                      ],
-                                    },
-                                  ],
-                                },
-                              ],
-                            },
-                          ],
-                        },
-                      ],
-                    },
-                  ],
-                },
                 { name: "LeftBar.jsx", type: "file", icon: <FaReact /> },
                 { name: "LeftBarPanel.jsx", type: "file", icon: <FaReact /> },
                 { name: "CodeSpace.jsx", type: "file", icon: <FaReact /> },
@@ -107,6 +44,17 @@ const fileTree = {
 
 const FileTreeItem = ({ fileTree, depth = 0.5 }) => {
   const [isOpen, setIsOpen] = useState(false);
+  const openFiles = useSelector(selectFiles);
+  const dispatch = useDispatch();
+
+  const handleOpenFile = (file) => {
+    const fileExists = openFiles.some(
+      (openFile) => openFile.name === file.name
+    );
+    if (!fileExists) {
+      dispatch(setOpenFiles(file));
+    }
+  };
 
   return (
     <div className="group">
@@ -124,12 +72,17 @@ const FileTreeItem = ({ fileTree, depth = 0.5 }) => {
             <span className="text-gray-300">{fileTree.name}</span>
           </>
         ) : (
-          <>
-            <span className="text-blue-400 mr-2">
+          <button
+            onClick={() => handleOpenFile({ name: fileTree.name, icon: "" })}
+            className="flex items-center"
+          >
+            <span className="text-blue-400 mr-2 pointer-events-none">
               {fileTree.icon || <FaFile />}
             </span>
-            <span className="text-gray-300">{fileTree.name}</span>
-          </>
+            <span className="text-gray-300 pointer-events-none">
+              {fileTree.name}
+            </span>
+          </button>
         )}
       </div>
 
