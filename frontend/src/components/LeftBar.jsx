@@ -25,7 +25,7 @@ const LeftBar = ({ isLeftbarPanel, setIsLeftbarPanel }) => {
           <div
             className="absolute left-[102%] ml-2 py-1 px-2 top-4 
                 whitespace-nowrap bg-slate-800 text-gray-400
-                text-xs rounded opacity-0 group-hover:opacity-100
+                text-xs rounded hidden group-hover:block
                 before:content-[''] before:absolute before:left-[-8px]
                 before:top-[50%] before:transform before:-translate-y-1/2
                 before:border-4 before:border-transparent before:border-r-slate-800

@@ -1,112 +1,134 @@
-import React, { useState } from "react";
-import { FaFolder, FaFolderOpen, FaFile, FaReact, FaJs } from "react-icons/fa";
+import React, { useEffect, useState } from "react";
+import {
+  FaFolder,
+  FaFolderOpen,
+  FaFile,
+  FaReact,
+  FaJs,
+  FaFolderPlus,
+  FaSyncAlt,
+  FaChevronDown,
+  FaChevronRight,
+} from "react-icons/fa";
 import { SiTailwindcss, SiVite } from "react-icons/si";
-import { selectFiles, setOpenFiles } from "../redux/slices/gemSlice";
+import { VscCollapseAll } from "react-icons/vsc";
+import {
+  addFileOrFolder,
+  selectFileTree,
+  selectOpenFiles,
+  setActiveFile,
+  setIsOpenedProp,
+  setOpenFiles,
+} from "../redux/slices/gemSlice";
 import { useDispatch, useSelector } from "react-redux";
 
-const fileTree = {
-  name: "ai_powered_coding_collab",
-  type: "folder",
-  children: [
-    {
-      name: "frontend",
-      type: "folder",
-      children: [
-        {
-          name: "src",
-          type: "folder",
-          children: [
-            {
-              name: "components",
-              type: "folder",
-              children: [
-                { name: "LeftBar.jsx", type: "file", icon: <FaReact /> },
-                { name: "LeftBarPanel.jsx", type: "file", icon: <FaReact /> },
-                { name: "CodeSpace.jsx", type: "file", icon: <FaReact /> },
-                { name: "ChatContent.js", type: "file", icon: <FaJs /> },
-              ],
-            },
-            {
-              name: "screens",
-              type: "folder",
-              children: [{ name: "Home.jsx", type: "file", icon: <FaReact /> }],
-            },
-            { name: "App.jsx", type: "file", icon: <FaReact /> },
-            { name: "main.jsx", type: "file", icon: <FaReact /> },
-          ],
-        },
-        { name: "tailwind.config.js", type: "file", icon: <SiTailwindcss /> },
-        { name: "vite.config.js", type: "file", icon: <SiVite /> },
-      ],
-    },
-  ],
-};
-
-const FileTreeItem = ({ fileTree, depth = 0.5 }) => {
+const FileTree = ({ fileTree, depth = 0.5 }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const openFiles = useSelector(selectFiles);
   const dispatch = useDispatch();
 
-  const handleOpenFile = (file) => {
-    const fileExists = openFiles.some(
-      (openFile) => openFile.name === file.name
-    );
-    if (!fileExists) {
-      dispatch(setOpenFiles(file));
+  const handleClick = () => {
+    setIsOpen(!isOpen);
+
+    if (fileTree.type === "file") {
+      dispatch(setOpenFiles({ name: fileTree.name, icon: "" }));
+      dispatch(setActiveFile(fileTree.name));
+    } else if (fileTree.type === "folder" || fileTree.type === "root") {
+      dispatch(
+        setIsOpenedProp({
+          name: fileTree.name,
+          type: fileTree.type,
+        })
+      );
     }
   };
 
   return (
-    <div className="group">
+    <>
       <div
-        className="flex items-center hover:bg-slate-800 px-2 py-1
-                   cursor-pointer"
+        className="relative flex group items-center px-2 py-1
+                   cursor-pointer hover:text-gray-200"
         style={{ paddingLeft: `${depth < 6 ? depth * 1 : 6}rem` }}
-        onClick={() => setIsOpen(!isOpen)}
+        onClick={handleClick}
       >
-        {fileTree.type === "folder" ? (
+        {fileTree?.type === "root" && (
+          <div className="flex items-center justify-center">
+            <i className="text-gray-300 text-xs mr-1 translate-y-[1px]">
+              {isOpen ? <FaChevronDown /> : <FaChevronRight />}
+            </i>
+            <span className="text-gray-300">{fileTree.name}</span>
+          </div>
+        )}
+        {fileTree?.type === "folder" && (
           <>
             <span className="text-yellow-500 mr-2">
               {isOpen ? <FaFolderOpen /> : <FaFolder />}
             </span>
-            <span className="text-gray-300">{fileTree.name}</span>
+            <span className="text-gray-300">{fileTree?.name}</span>
           </>
-        ) : (
-          <button
-            onClick={() => handleOpenFile({ name: fileTree.name, icon: "" })}
-            className="flex items-center"
-          >
+        )}
+
+        {fileTree?.type === "file" && (
+          <button className="flex items-center">
             <span className="text-blue-400 mr-2 pointer-events-none">
-              {fileTree.icon || <FaFile />}
+              {fileTree?.icon || <FaFile />}
             </span>
             <span className="text-gray-300 pointer-events-none">
-              {fileTree.name}
+              {fileTree?.name}
             </span>
           </button>
         )}
       </div>
 
-      {isOpen && fileTree.children && (
+      {isOpen && (
         <div>
           {fileTree.children.map((child, index) => (
-            <FileTreeItem key={index} fileTree={child} depth={depth + 1} />
+            <FileTree key={index} fileTree={child} depth={depth + 1} />
           ))}
         </div>
       )}
-    </div>
+    </>
   );
 };
 
 const LeftBarPanel = ({ isMobile, isLeftbarPanel, setIsLeftbarPanel }) => {
+  const dispatch = useDispatch();
+
+  const handleAddFileOrFolder = (name, type) => {
+    dispatch(addFileOrFolder({ name, type }));
+  };
+
   return (
     !isMobile &&
     isLeftbarPanel && (
       <div
-        className="h-screen w-64 bg-slate-900 overflow-x-hidden
+        className="group relative h-full w-64 bg-slate-900 overflow-x-hidden
                  overflow-y-auto scrollbar-thin scrollbar-thumb-slate-700 
                scrollbar-track-slate-900"
       >
-        <FileTreeItem fileTree={fileTree} />
+        <div
+          className="hidden group-hover:flex absolute top-0 right-0 gap-2 p-2 items-center pr-2 
+        justify-end text-gray-400 bg-slate-900 w-max h-min ml-auto z-10"
+        >
+          <button
+            onClick={() => handleAddFileOrFolder("newFile.js", "file")}
+            className="text-sm cursor-pointer"
+          >
+            <FaFile />
+          </button>
+          <button
+            onClick={() => handleAddFileOrFolder("newFolder", "folder")}
+            className="text-sm cursor-pointer"
+          >
+            <FaFolderPlus />
+          </button>
+          <button onClick={() => {}} className="text-sm cursor-pointer">
+            <FaSyncAlt />
+          </button>
+          <button onClick={() => {}} className="text-sm cursor-pointer">
+            <VscCollapseAll />
+          </button>
+        </div>
+        <FileTree fileTree={useSelector(selectFileTree)} />
       </div>
     )
   );

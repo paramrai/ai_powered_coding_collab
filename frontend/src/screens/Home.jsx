@@ -19,6 +19,7 @@ import { MdFolder } from "react-icons/md";
 import { RiNotificationBadgeFill } from "react-icons/ri";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
+import SignInForm from "../components/SignInForm";
 
 function CreateGemModal({ createGemModal, setCreateGemModal }) {
   return (
@@ -111,9 +112,12 @@ function CreateGemModal({ createGemModal, setCreateGemModal }) {
 }
 
 function Navbar() {
+  const [close, setClose] = useState(false);
+
   return (
-    <nav className="flex justify-between items-center">
-      <div className="search_input w-[100%] sm:w-max max-w-96 focus-within:ring-2 focus-within:ring-indigo-500 flex gap-2 items-center p-3 bg-slate-800 text-gray-500 transition-all">
+    <nav className="flex gap-4 justify-between items-center">
+      <SignInForm close={close} setClose={setClose} />
+      <div className="search_input flex-1 focus-within:ring-2 focus-within:ring-indigo-500 flex gap-2 items-center p-3 bg-slate-800 text-gray-500 transition-all">
         <i className="cursor-pointer hover:text-slate-200 text-md">
           <FaSearch />
         </i>
@@ -124,11 +128,17 @@ function Navbar() {
           type="text"
         />
       </div>
-      <div className="btns space-x-2 hidden sm:flex">
-        <button className="bg-green-500 text-black hover:text-white px-4 py-2 rounded hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-blue-500">
+      <div className="btns space-x-2 hidden sm:flex flex-shrink-0">
+        <button
+          onClick={() => setClose(false)}
+          className="bg-green-500 text-black hover:text-white px-4 py-2 rounded hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+        >
           Sign Up
         </button>
-        <button className="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-500">
+        <button
+          onClick={() => setClose(false)}
+          className="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-500"
+        >
           Login
         </button>
       </div>

@@ -4,8 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { selectUser, setUser } from "../redux/slices/userSlice";
 import { useNavigate } from "react-router-dom";
 
-const SignInForm = () => {
-  const [close, setClose] = useState(false);
+const SignInForm = ({ close, setClose }) => {
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -20,7 +19,6 @@ const SignInForm = () => {
     const user = { username, email };
     dispatch(setUser({ user }));
     setClose(true);
-    navigate("/projects");
   };
 
   return (
@@ -44,7 +42,7 @@ const SignInForm = () => {
             mass: 1,
             duration: 0.5,
           }}
-          className="fixed inset-0 bg-slate-900 z-50 flex justify-center items-center"
+          className="fixed inset-0 bg-slate-900 z-[60] flex justify-center items-center"
         >
           <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-md relative m-2">
             <div className="flex flex-wrap justify-between items-center mb-4">
@@ -52,7 +50,6 @@ const SignInForm = () => {
               <h2
                 onClick={() => {
                   setClose(true);
-                  navigate("/projects");
                 }}
                 className="text-sm text-blue-700 cursor-pointer"
               >

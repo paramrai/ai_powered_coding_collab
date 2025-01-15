@@ -22,7 +22,12 @@ import {
 } from "react-icons/si";
 import { BsHash } from "react-icons/bs";
 import { useDispatch, useSelector } from "react-redux";
-import { removeFile, selectFiles } from "../redux/slices/gemSlice";
+import {
+  closeFile,
+  selectActiveFile,
+  selectOpenFiles,
+  setActiveFile,
+} from "../redux/slices/gemSlice";
 
 const icons = {
   JavaScript: <FaJs className="text-yellow-400" size={16} />,
@@ -50,8 +55,8 @@ const icons = {
 };
 
 const OpenFiles = () => {
-  const [activeFile, setActiveFile] = useState("");
-  const openFiles = useSelector(selectFiles);
+  const openFiles = useSelector(selectOpenFiles);
+  const activeFile = useSelector(selectActiveFile);
   const dispatch = useDispatch();
 
   return (
@@ -64,18 +69,36 @@ const OpenFiles = () => {
                       items-center bg-slate-800 p-4
                       transition-all duration-300 border-b-[1px]
                       ${
-                        activeFile === file
+                        activeFile === file.name
                           ? "border-blue-500"
                           : "border-slate-800"
                       }`}
-            onClick={() => setActiveFile(file)}
+            onClick={(e) => {
+              if (e.target instanceof SVGElement) {
+                console.log("The target is an SVG element.");
+                dispatch(closeFile(file.name));
+                // set active before this index only if file name same
+                if (activeFile === file.name) {
+                  console.log("same");
+                  const index = openFiles.findIndex(
+                    (obj) => obj.name === file.name
+                  );
+                  dispatch(setActiveFile(openFiles[index - 1]?.name));
+                } else {
+                  console.log("diffrent");
+                }
+              } else {
+                console.log("The target is not an SVG element.");
+                // set active file
+                dispatch(setActiveFile(file.name));
+              }
+            }}
           >
             {file.icon}
             <h3 className="text-sm text-white mx-2">{file.name}</h3>
             <IoClose
               className="text-sm text-gray-400 hover:text-red-500 transition-colors"
               size={18}
-              onClick={() => dispatch(removeFile(file.name))}
             />
           </button>
         ))}
