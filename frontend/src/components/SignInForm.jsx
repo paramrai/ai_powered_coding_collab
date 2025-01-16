@@ -14,10 +14,11 @@ const SignInForm = ({ close, setClose }) => {
   const handleSignIn = (e) => {
     if (!password || !email || !username) {
       alert("Username or Password is required");
+      return;
     }
 
     const user = { username, email };
-    dispatch(setUser({ user }));
+    dispatch(setUser(user));
     setClose(true);
   };
 

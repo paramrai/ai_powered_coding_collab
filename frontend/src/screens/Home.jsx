@@ -20,6 +20,8 @@ import { RiNotificationBadgeFill } from "react-icons/ri";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import SignInForm from "../components/SignInForm";
+import { useSelector } from "react-redux";
+import { selectUser } from "../redux/slices/userSlice";
 
 function CreateGemModal({ createGemModal, setCreateGemModal }) {
   return (
@@ -111,8 +113,28 @@ function CreateGemModal({ createGemModal, setCreateGemModal }) {
   );
 }
 
+const RightBar = ({ isOpen, setIsRightBarOpen }) => {
+  const user = useSelector(selectUser);
+
+  return (
+    <motion.div
+      initial={{ x: "100%" }}
+      animate={{ x: isOpen ? "0%" : "100%" }}
+      transition={{ type: "spring", stiffness: 260, damping: 28 }}
+      onMouseLeave={() => setIsRightBarOpen(false)}
+      className="fixed top-0 right-0 h-full w-64 bg-slate-800 shadow-lg p-4 z-[60]"
+    >
+      <h2 className="text-xl font-semibold mb-4">Profile</h2>
+      <div>{user?.username}</div>
+      <div>{user?.email}</div>
+    </motion.div>
+  );
+};
+
 function Navbar() {
   const [close, setClose] = useState(false);
+  const user = useSelector(selectUser);
+  const [isRightBarOpen, setIsRightBarOpen] = useState(false);
 
   return (
     <nav className="flex gap-4 justify-between items-center">
@@ -128,20 +150,37 @@ function Navbar() {
           type="text"
         />
       </div>
-      <div className="btns space-x-2 hidden sm:flex flex-shrink-0">
-        <button
-          onClick={() => setClose(false)}
-          className="bg-green-500 text-black hover:text-white px-4 py-2 rounded hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
-        >
-          Sign Up
-        </button>
-        <button
-          onClick={() => setClose(false)}
-          className="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-500"
-        >
-          Login
-        </button>
-      </div>
+      {!user.username ? (
+        <div className="btns space-x-2 hidden sm:flex flex-shrink-0">
+          <button
+            onClick={() => setClose(false)}
+            className="bg-green-500 text-black hover:text-white px-4 py-2 rounded hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          >
+            Sign Up
+          </button>
+          <button
+            onClick={() => setClose(false)}
+            className="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-500"
+          >
+            Login
+          </button>
+        </div>
+      ) : (
+        <div className="relative">
+          <button
+            onMouseEnter={() => setIsRightBarOpen(true)}
+            className="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-500"
+          >
+            Profile
+          </button>
+          {isRightBarOpen && (
+            <RightBar
+              isOpen={isRightBarOpen}
+              setIsRightBarOpen={setIsRightBarOpen}
+            />
+          )}
+        </div>
+      )}
     </nav>
   );
 }
