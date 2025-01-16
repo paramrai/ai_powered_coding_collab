@@ -28,31 +28,7 @@ import {
   selectOpenFiles,
   setActiveFile,
 } from "../redux/slices/gemSlice";
-
-const icons = {
-  JavaScript: <FaJs className="text-yellow-400" size={16} />,
-  Python: <FaPython className="text-blue-500" size={16} />,
-  Java: <FaJava className="text-orange-500" size={16} />,
-  "C++": <SiCplusplus className="text-blue-600" size={16} />,
-  TypeScript: <SiTypescript className="text-blue-400" size={16} />,
-  React: <FaReact className="text-cyan-400" size={16} />,
-  Node: <FaNodeJs className="text-green-500" size={16} />,
-  Go: <SiGo className="text-blue-500" size={16} />,
-  Ruby: <SiRuby className="text-red-500" size={16} />,
-  PHP: <FaPhp className="text-purple-500" size={16} />,
-  Swift: <FaSwift className="text-orange-500" size={16} />,
-  Kotlin: <SiKotlin className="text-orange-400" size={16} />,
-  Rust: <FaRust className="text-orange-600" size={16} />,
-  "C#": (
-    <div className="flex items-center">
-      <span className="text-green-500 font-bold text-sm">C</span>
-      <BsHash className="text-green-500" size={16} />
-    </div>
-  ),
-  Dart: <SiDart className="text-blue-400" size={16} />,
-  HTML: <FaHtml5 className="text-orange-500" size={16} />,
-  CSS: <FaCss3 className="text-blue-500" size={16} />,
-};
+import { getFileIcon } from "./LeftBarPanel";
 
 const OpenFiles = () => {
   const openFiles = useSelector(selectOpenFiles);
@@ -77,7 +53,7 @@ const OpenFiles = () => {
               if (e.target instanceof SVGElement) {
                 console.log("The target is an SVG element.");
                 dispatch(closeFile(file.name));
-                // set active before this index only if file name same
+                // if closing file = active then active = index - 1
                 if (activeFile === file.name) {
                   console.log("same");
                   const index = openFiles.findIndex(
@@ -94,7 +70,7 @@ const OpenFiles = () => {
               }
             }}
           >
-            {file.icon}
+            {getFileIcon(file.name)}
             <h3 className="text-sm text-white mx-2">{file.name}</h3>
             <IoClose
               className="text-sm text-gray-400 hover:text-red-500 transition-colors"

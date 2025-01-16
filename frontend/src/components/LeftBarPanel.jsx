@@ -2,7 +2,6 @@ import React, { useEffect, useRef, useState } from "react";
 import {
   FaFolder,
   FaFolderOpen,
-  FaFile,
   FaFolderPlus,
   FaSyncAlt,
   FaChevronDown,
@@ -11,7 +10,27 @@ import {
   FaPython,
   FaHtml5,
   FaReact,
+  FaJava,
+  FaPhp,
+  FaCss3Alt,
+  FaFileExcel,
+  FaFileWord,
+  FaFilePdf,
+  FaFilePowerpoint,
+  FaFileCsv,
+  FaFile,
 } from "react-icons/fa";
+import {
+  SiRuby,
+  SiSwift,
+  SiTypescript,
+  SiGo,
+  SiKotlin,
+  SiRust,
+  SiDotenv,
+} from "react-icons/si";
+import { PiFileCSharp } from "react-icons/pi";
+
 import { VscCollapseAll } from "react-icons/vsc";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -22,11 +41,36 @@ import {
   setOpenFiles,
 } from "../redux/slices/gemSlice";
 
-const getFileIcon = (fileName) => {
-  if (fileName.endsWith(".js")) return <FaJs />;
-  if (fileName.endsWith(".py")) return <FaPython />;
-  if (fileName.endsWith(".html")) return <FaHtml5 />;
-  if (fileName.endsWith(".jsx")) return <FaReact />;
+export const getFileIcon = (fileName) => {
+  if (fileName.endsWith(".js")) return <FaJs className="text-yellow-400" />;
+  if (fileName.endsWith(".py")) return <FaPython className="text-blue-400" />;
+  if (fileName.endsWith(".html"))
+    return <FaHtml5 className="text-orange-600" />;
+  if (fileName.endsWith(".jsx")) return <FaReact className="text-blue-400" />;
+  if (fileName.endsWith(".java")) return <FaJava className="text-red-600" />;
+  if (fileName.endsWith(".php")) return <FaPhp className="text-purple-600" />;
+  if (fileName.endsWith(".css")) return <FaCss3Alt className="text-blue-500" />;
+  if (fileName.endsWith(".xlsx"))
+    return <FaFileExcel className="text-green-600" />;
+  if (fileName.endsWith(".docx"))
+    return <FaFileWord className="text-blue-600" />;
+  if (fileName.endsWith(".pdf")) return <FaFilePdf className="text-red-600" />;
+  if (fileName.endsWith(".pptx"))
+    return <FaFilePowerpoint className="text-orange-600" />;
+  if (fileName.endsWith(".csv"))
+    return <FaFileCsv className="text-green-400" />;
+  if (fileName.endsWith(".rb")) return <SiRuby className="text-red-500" />;
+  if (fileName.endsWith(".swift"))
+    return <SiSwift className="text-orange-500" />;
+  if (fileName.endsWith(".cs"))
+    return <PiFileCSharp className="text-green-500" />;
+  if (fileName.endsWith(".ts"))
+    return <SiTypescript className="text-blue-500" />;
+  if (fileName.endsWith(".go")) return <SiGo className="text-blue-400" />;
+  if (fileName.endsWith(".kt")) return <SiKotlin className="text-purple-500" />;
+  if (fileName.endsWith(".rs")) return <SiRust className="text-brown-500" />;
+  if (fileName.endsWith(".env")) return <SiDotenv className="text-green-500" />;
+
   // Add more icons as needed
   return <FaFile />;
 };
@@ -49,7 +93,7 @@ const FileTree = ({
   const handleClick = () => {
     setIsOpen(!isOpen);
     if (fileTree.type === "file") {
-      dispatch(setOpenFiles({ name: fileTree.name, icon: "" }));
+      dispatch(setOpenFiles({ name: fileTree.name }));
       dispatch(setActiveFile(fileTree.name));
     } else if (fileTree.type === "folder" || fileTree.type === "root") {
       dispatch(setCurrentPath(fileTree.name));
@@ -83,7 +127,7 @@ const FileTree = ({
         {fileTree?.type === "file" && (
           <button className="flex items-center">
             <span className="text-blue-400 mr-2 pointer-events-none">
-              {fileTree?.icon || getFileIcon(fileTree?.name)}
+              {getFileIcon(fileTree?.name)}
             </span>
             <span className="text-gray-300 pointer-events-none">
               {fileTree?.name}
@@ -95,11 +139,15 @@ const FileTree = ({
       {lastOpenedFolder === fileTree.name && showInput && (
         <form
           ref={addingForm}
-          className="w-full flex gap-2 items-center text-gray-400 mt-2"
+          className="w-full flex gap-2 items-center text-gray-400 my-2"
           onSubmit={handleAddFileSubmit}
           style={{ paddingLeft: `${depth < 6 ? depth * 1 : 6}rem` }}
         >
-          {type === "folder" ? <FaFolder /> : <FaFile />}
+          {type === "folder" ? (
+            <FaFolder className="text-yellow-500" />
+          ) : (
+            <FaFile className="text-blue-400" />
+          )}
           <input
             type="text"
             className="w-full bg-transparent ring-1 ring-orange-500 rounded-sm"
@@ -153,6 +201,8 @@ const LeftBarPanel = ({ isMobile, isLeftbarPanel, setIsLeftbarPanel }) => {
       );
       input.value = "";
       setShowInput(false);
+      dispatch(setOpenFiles({ name: newFileName }));
+      dispatch(setActiveFile(newFileName));
     }
   };
 
@@ -160,7 +210,7 @@ const LeftBarPanel = ({ isMobile, isLeftbarPanel, setIsLeftbarPanel }) => {
     const input = addingForm.current?.querySelector("input");
     const handleBlur = () => setShowInput(false);
 
-    if (showInput) {
+    if (showInput && input) {
       input.focus();
       input.addEventListener("blur", handleBlur);
     }

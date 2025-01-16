@@ -1,7 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 let initialState = {
-  openFiles: [], // name;'file.js' , icon:'js'
+  openFiles: [], // 'file.js' ,isha.js
   activeFile: "",
   path: "",
   fileTree: [
