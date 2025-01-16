@@ -187,6 +187,8 @@ const LeftBarPanel = ({ isMobile, isLeftbarPanel, setIsLeftbarPanel }) => {
   const [showInput, setShowInput] = useState(false);
   const [lastOpenedFolder, setLastOpenedFolder] = useState(null);
 
+  const fileTree = useSelector(selectFileTree)[0];
+
   const handleAddFileSubmit = (e) => {
     e.preventDefault();
     const input = addingForm.current.querySelector("input");
@@ -252,7 +254,7 @@ const LeftBarPanel = ({ isMobile, isLeftbarPanel, setIsLeftbarPanel }) => {
           </button>
         </div>
         <FileTree
-          fileTree={useSelector(selectFileTree)[0]}
+          fileTree={fileTree}
           addingForm={addingForm}
           showInput={showInput}
           setShowInput={setShowInput}
