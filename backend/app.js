@@ -5,6 +5,7 @@ import userRoutes from "./routes/user.routes.js";
 import projectRoutes from "./routes/project.routes.js";
 import cors from "cors";
 import errorHandler from "./utils/errorHandler.js";
+import aiRoutes from "./routes/ai.routes.js";
 
 const app = express();
 connect();
@@ -24,7 +25,7 @@ app.get("/", (req, res) => {
 
 app.use("/users", userRoutes);
 app.use("/projects", projectRoutes);
+app.use("/ai", aiRoutes);
 app.use(errorHandler);
-// app.use("/ai", aiRoutes);
 
 export default app;
