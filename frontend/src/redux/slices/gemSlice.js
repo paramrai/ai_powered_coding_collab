@@ -3,102 +3,48 @@ import { createSlice } from "@reduxjs/toolkit";
 let initialState = {
   openFiles: [], // name;'file.js' , icon:'js'
   activeFile: "",
-  fileTree: {
-    name: "root",
-    type: "root",
-    isOpened: false,
-    children: [
-      {
-        name: "frontend",
-        type: "folder",
-        isOpened: false,
-        children: [
-          {
-            name: "src",
-            type: "folder",
-            isOpened: false,
-            children: [
-              { name: "App.js", type: "file", children: [], content: "" },
-            ],
-            content: "",
-          },
-        ],
-        content: "",
-      },
-      {
-        name: "backend",
-        type: "folder",
-        isOpened: false,
-        children: [
-          { name: "server.js", type: "file", children: [], content: "" },
-        ],
-        content: "",
-      },
-    ],
-  },
+  path: "",
+  fileTree: [
+    {
+      name: "root",
+      type: "root",
+      children: [],
+    },
+  ],
 };
 
-const findFolderAndUpdate = (children, name) => {
-  let folderFound;
-
-  const search = (children) => {
-    for (let child of children) {
-      if (child.name === name) {
-        folderFound = child;
-        break;
-      }
-
-      if (child.children) {
-        search(child.children);
-      }
-    }
-  };
-  search(children);
-
-  if (folderFound) {
-    console.log("folder founded");
-  } else {
-    console.log("not found");
+function findPathAndAdd(iterable, type, name, path) {
+  if (!Array.isArray(iterable)) {
+    console.error("iterable is not an array");
+    return;
   }
-};
 
-const falseAllFolders = (children) => {
-  return children.map((child) => {
-    if (child.children) {
-      return falseAllFolders(child.children);
-    } else {
-      if (child.isOpened) child.isOpened = false;
+  for (let child of iterable) {
+    if (child.name === path) {
+      if (child.children.some((c) => c.name === name)) {
+        console.error(`A ${type} with the name "${name}" already exists.`);
+        return;
+      }
+
+      child.children.push({
+        name,
+        type,
+        children: type === "folder" ? [] : undefined,
+        content: type === "file" ? "" : undefined,
+      });
+      return;
     }
-  });
-};
+
+    if (child.children) {
+      findPathAndAdd(child.children, type, name, path);
+    }
+  }
+}
 
 const gemSlice = createSlice({
   name: "gems",
   initialState,
   reducers: {
-    setIsOpenedProp: (state, action) => {
-      const { name, type } = action.payload;
-      if (type === "root") {
-        if (!state.fileTree.isOpened) {
-          state.fileTree.isOpened = true;
-        } else if (state.fileTree.isOpened) {
-          state.fileTree.isOpened = false;
-        }
-        // false all with recursive
-        falseAllFolders(state.fileTree.children);
-      }
-
-      if (type === "folder") {
-        findFolderAndUpdate(state.fileTree.children, name);
-      }
-    },
-    addFileOrFolder: (state, action) => {
-      const { name, type, path, isOpened } = action.payload;
-      let newItem =
-        type === "file"
-          ? { name, type, children: null, content: "" }
-          : { name, type, isOpened, children: [], content: null };
-    },
     setOpenFiles: (state, action) => {
       state.openFiles = [...state.openFiles, action.payload];
 
@@ -124,17 +70,28 @@ const gemSlice = createSlice({
     setActiveFile: (state, action) => {
       state.activeFile = action.payload;
     },
+    setCurrentPath: (state, action) => {
+      const folderName = action.payload;
+      state.path = folderName;
+      console.log(state.path);
+    },
+    addNewFile: (state, action) => {
+      const { type, name } = action.payload;
+      const path = state.path;
+      findPathAndAdd(state.fileTree, type, name, path);
+    },
   },
 });
 
 export default gemSlice.reducer;
 export const {
-  setIsOpenedProp,
   setOpenFiles,
   closeFile,
   setActiveFile,
-  addFileOrFolder,
+  setCurrentPath,
+  addNewFile,
 } = gemSlice.actions;
 export const selectOpenFiles = (state) => state.gems.openFiles;
 export const selectActiveFile = (state) => state.gems.activeFile;
 export const selectFileTree = (state) => state.gems.fileTree;
+export const selectPath = (state) => state.gems.path;
