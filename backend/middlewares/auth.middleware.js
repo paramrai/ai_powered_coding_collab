@@ -5,21 +5,19 @@ export const authUser = async (req, res, next) => {
     const authHeader = req.headers.authorization || req.headers.Authorization;
 
     if (!authHeader?.startsWith("Bearer ")) {
-      return res.status(401).json({ error: "No token provided" });
+      return next(new AuthorizationError("No token provided"));
     }
 
     const token = authHeader.split(" ")[1];
 
     // const isBlackListed = await redisClient.get(token);
-
     // if (isBlackListed) {
-    //   res.cookie("token", "");
-
-    //   return res.status(401).send({ error: "Unauthorized User" });
+    // res.cookie("token", "");
+    // return next(new AuthorizationError("Unauthorized Please login !"));
     // }
 
     if (!token) {
-      return res.status(401).send({ error: "Unauthorized User" });
+      return next(new AuthorizationError("Unauthorized Please login !"));
     }
 
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
@@ -27,6 +25,6 @@ export const authUser = async (req, res, next) => {
     next();
   } catch (error) {
     console.log(error);
-    return res.status(401).send({ error: "Unauthorized User" });
+    return next(new AuthorizationError("Unauthorized Please login !"));
   }
 };
