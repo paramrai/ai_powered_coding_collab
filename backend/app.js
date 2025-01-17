@@ -24,7 +24,7 @@ app.get("/", (req, res) => {
 });
 
 app.use("/users", userRoutes);
-app.use("/projects", gemRoutes);
+app.use("/gems", gemRoutes);
 app.use("/ai", aiRoutes);
 app.use(errorHandler);
 
