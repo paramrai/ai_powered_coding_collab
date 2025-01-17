@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-const projectSchema = new mongoose.Schema(
+const gemSchema = new mongoose.Schema(
   {
     name: {
       type: String,
@@ -8,24 +8,32 @@ const projectSchema = new mongoose.Schema(
     },
     description: {
       type: String,
+      default: "",
     },
     owner: {
       type: mongoose.Schema.Types.ObjectId,
+      required: true,
       ref: "user",
     },
-    collabrator: [
+    collaborator: [
       {
         type: mongoose.Schema.Types.ObjectId,
         ref: "user",
       },
     ],
-    fileTree: {},
+    fileTree: [
+      {
+        name: String,
+        type: String,
+        content: String,
+        children: [{}],
+      },
+    ],
   },
-
   {
     timestamps: true,
   }
 );
 
-const projectModel = mongoose.model("project", projectSchema);
-export default projectModel;
+const gemModel = mongoose.model("gem", gemSchema);
+export default gemModel;

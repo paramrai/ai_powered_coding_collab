@@ -1,5 +1,5 @@
 import { validationResult } from "express-validator";
-import projectModel from "../models/project.model.js";
+import gemModel from "../models/gem.model.js";
 import mongoose from "mongoose";
 import {
   InternalServerError,
@@ -7,7 +7,7 @@ import {
   ValidationError,
 } from "../utils/errorClass.js";
 
-export const createProjectController = async (req, res, next) => {
+export const createGemController = async (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return next(new ValidationError(errors.array()[0].msg));
@@ -16,74 +16,75 @@ export const createProjectController = async (req, res, next) => {
   try {
     const { name, description, owner } = req.body;
 
-    const project = await projectModel.create({
+    const gem = await gemModel.create({
       name,
       description,
       owner,
     });
 
-    return res.status(201).json(project);
+    return res.status(201).json(gem);
   } catch (error) {
     console.log(error.message);
     return next(new InternalServerError(error.message));
   }
 };
 
-export const readProjectController = async (req, res, next) => {
+export const readGemController = async (req, res, next) => {
   const { id } = req.params;
 
   try {
-    const project = await projectModel.findById(id);
-    if (!project) {
-      return next(new NotFoundError("Project not found"));
+    const gem = await gemModel.findById(id);
+    if (!gem) {
+      return next(new NotFoundError("Gem not found"));
     }
-    res.status(200).json(project);
+    res.status(200).json(gem);
   } catch (error) {
     console.error(error.message);
     return next(new InternalServerError(error.message));
   }
 };
 
-export const updateProjectController = async (req, res, next) => {
+export const updateGemController = async (req, res, next) => {
   const { id } = req.params;
   const { name, description, ...otherFields } = req.body;
   if (!mongoose.Types.ObjectId.isValid(id)) {
-    return next(new ValidationError("Invalid project ID"));
+    return next(new ValidationError("Invalid gem ID"));
   }
   try {
-    const updatedProject = await projectModel.findByIdAndUpdate(
+    const updatedGem = await gemModel.findByIdAndUpdate(
       id,
       { name, description, ...otherFields },
       { new: true, runValidators: true }
     );
-    if (!updatedProject) {
-      return next(new NotFoundError("Project not found"));
+    if (!updatedGem) {
+      return next(new NotFoundError("Gem not found"));
     }
-    res.status(200).json(updatedProject);
+    res.status(200).json(updatedGem);
   } catch (error) {
     console.error(error.message);
     return next(new InternalServerError(error.message));
   }
 };
 
-export const deleteProjectController = async (req, res, next) => {
+export const deleteGemController = async (req, res, next) => {
   const { id } = req.params;
   if (!mongoose.Types.ObjectId.isValid(id)) {
-    return next(new ValidationError("Invalid project ID"));
+    return next(new ValidationError("Invalid gem ID"));
   }
   try {
-    const deletedProject = await projectModel.findByIdAndDelete(id);
-    if (!deletedProject) {
-      return next(new NotFoundError("Project not found"));
+    const deletedGem = await Model.findByIdAndDelete(id);
+    if (!deletedGem) {
+      gem;
+      return next(new NotFoundError("Gem not found"));
     }
-    res.status(200).json({ msg: "Project deleted successfully" });
+    res.status(200).json({ msg: "Gem deleted successfully" });
   } catch (error) {
     console.error(error.message);
     return next(new InternalServerError(error.message));
   }
 };
 
-export const getUserProjectsController = async (req, res, next) => {
+export const getUserGemsController = async (req, res, next) => {
   const { userId } = req.params;
 
   try {
@@ -91,23 +92,23 @@ export const getUserProjectsController = async (req, res, next) => {
       return next(new ValidationError("Invalid user ID"));
     }
 
-    const userProjects = await projectModel.find({ owner: userId });
+    const userGems = await gemModel.find({ owner: userId });
 
-    if (!userProjects) {
+    if (!userGems) {
       return res.status(200).json({ msg: "Not found" });
     }
 
-    return res.status(200).json(userProjects);
+    return res.status(200).json(userGems);
   } catch (error) {
     console.error(error.message);
     return next(new InternalServerError(error.message));
   }
 };
 
-export const getAllProjectsController = async (req, res, next) => {
+export const getAllGemsController = async (req, res, next) => {
   try {
-    const allProjects = await projectModel.find();
-    res.status(200).json(allProjects);
+    const allGems = await gemModel.find();
+    res.status(200).json(allGems);
   } catch (error) {
     console.error(error.message);
     return next(new InternalServerError(error.message));
