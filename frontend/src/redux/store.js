@@ -13,12 +13,14 @@ import storage from "redux-persist/lib/storage";
 import socketReducer from "./slices/socketSlice";
 import userReducer from "./slices/userSlice";
 import gemReducer from "./slices/gemSlice";
+import msgReducer from "./slices/conversationSlice";
 
 // Combine reducers
 const rootReducer = combineReducers({
   socket: socketReducer,
   user: userReducer,
   gems: gemReducer,
+  messages: msgReducer,
 });
 
 // Persist configuration

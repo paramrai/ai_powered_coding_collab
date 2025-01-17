@@ -10,7 +10,7 @@ import {
   selectUser,
 } from "../redux/slices/userSlice";
 import axiosInstance from "../axios/axiosInstance";
-import { ToastContainer, toast } from "react-toastify";
+import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 const SignInForm = ({ setClose }) => {
@@ -189,17 +189,6 @@ const AuthForm = ({ close, setClose }) => {
           )}
         </AnimatePresence>
       )}
-      <ToastContainer
-        position="top-right"
-        autoClose={5000}
-        hideProgressBar={false}
-        newestOnTop
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-      />
     </div>
   );
 };

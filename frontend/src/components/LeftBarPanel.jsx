@@ -203,8 +203,10 @@ const LeftBarPanel = ({ isMobile, isLeftbarPanel, setIsLeftbarPanel }) => {
       );
       input.value = "";
       setShowInput(false);
-      dispatch(setOpenFiles({ name: newFileName }));
-      dispatch(setActiveFile(newFileName));
+      if (type === "file") {
+        dispatch(setOpenFiles({ name: newFileName }));
+        dispatch(setActiveFile(newFileName));
+      }
     }
   };
 

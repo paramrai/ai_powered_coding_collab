@@ -84,6 +84,14 @@ const gemSlice = createSlice({
 });
 
 export default gemSlice.reducer;
+
+// selection
+export const selectOpenFiles = (state) => state.gems.openFiles;
+export const selectActiveFile = (state) => state.gems.activeFile;
+export const selectFileTree = (state) => state.gems.fileTree;
+export const selectPath = (state) => state.gems.path;
+
+// methods
 export const {
   setOpenFiles,
   closeFile,
@@ -91,7 +99,3 @@ export const {
   setCurrentPath,
   addNewFile,
 } = gemSlice.actions;
-export const selectOpenFiles = (state) => state.gems.openFiles;
-export const selectActiveFile = (state) => state.gems.activeFile;
-export const selectFileTree = (state) => state.gems.fileTree;
-export const selectPath = (state) => state.gems.path;
