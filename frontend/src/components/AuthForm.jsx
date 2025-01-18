@@ -1,24 +1,16 @@
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  setUser,
-  setLoading,
-  setError,
-  selectLoading,
-  selectError,
-  selectUser,
-} from "../redux/slices/userSlice";
+import { setUser, selectUser, selectToken } from "../redux/slices/userSlice";
 import axiosInstance from "../axios/axiosInstance";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-const SignInForm = ({ setClose }) => {
+const SignInForm = ({ setIsAuthFormOpen }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const dispatch = useDispatch();
-  const loading = useSelector(selectLoading);
-  const error = useSelector(selectError);
+  const [loading, setLoading] = useState(false);
 
   const handleSignIn = async (e) => {
     e.preventDefault();
@@ -26,22 +18,26 @@ const SignInForm = ({ setClose }) => {
       toast.error("All fields are required");
       return;
     }
-    dispatch(setLoading(true));
+    setLoading(true);
 
     try {
       const response = await axiosInstance.post("/users/login", {
         email,
         password,
       });
-      const user = response.data;
-      dispatch(setUser(user));
-      toast.success("Logged in successfully!");
-      setClose(true);
+
+      if (response.status === 200 || response.statusText === "OK") {
+        const user = response.data;
+        dispatch(setUser(user));
+        setIsAuthFormOpen(false);
+        toast.success("Logged in successfully!");
+      }
     } catch (error) {
-      dispatch(setError(error.message));
-      toast.error(error.response.data.msg);
+      console.log(error);
+      toast.error(error.message);
+    } finally {
+      setLoading(false);
     }
-    dispatch(setLoading(false));
   };
 
   return (
@@ -69,13 +65,12 @@ const SignInForm = ({ setClose }) => {
   );
 };
 
-const SignUpForm = ({ setClose }) => {
+const SignUpForm = ({ setIsAuthFormOpen }) => {
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const dispatch = useDispatch();
-  const loading = useSelector(selectLoading);
-  const error = useSelector(selectError);
+  const [loading, setLoading] = useState(false);
 
   const handleSignUp = async (e) => {
     e.preventDefault();
@@ -83,7 +78,7 @@ const SignUpForm = ({ setClose }) => {
       toast.error("All fields are required");
       return;
     }
-    dispatch(setLoading(true));
+    setLoading(true);
 
     try {
       const response = await axiosInstance.post("/users/register", {
@@ -94,12 +89,13 @@ const SignUpForm = ({ setClose }) => {
       const user = response.data;
       dispatch(setUser(user));
       toast.success("Signed up successfully!");
-      setClose(true);
+      setIsAuthFormOpen(false);
     } catch (error) {
       dispatch(setError(error.message));
       toast.error(error.response.data.msg);
+    } finally {
+      setLoading(false);
     }
-    dispatch(setLoading(false));
   };
 
   return (
@@ -133,15 +129,15 @@ const SignUpForm = ({ setClose }) => {
   );
 };
 
-const AuthForm = ({ close, setClose }) => {
+const AuthForm = ({ isAuthFormOpen, setIsAuthFormOpen }) => {
   const [isSigningUp, setIsSigningUp] = useState(false);
-  const user = useSelector(selectUser);
+  const token = useSelector(selectToken);
 
   return (
     <div>
-      {!user && (
+      {!token && (
         <AnimatePresence>
-          {!close && (
+          {isAuthFormOpen && (
             <motion.div
               initial={{ y: "-100%", scale: 0, opacity: 0 }}
               animate={{ y: "0%", scale: 1, opacity: 1 }}
@@ -165,16 +161,16 @@ const AuthForm = ({ close, setClose }) => {
                     {isSigningUp ? "Sign Up" : "Sign In"}
                   </h2>
                   <h2
-                    onClick={() => setClose(true)}
+                    onClick={() => setIsAuthFormOpen(false)}
                     className="text-sm text-blue-700 cursor-pointer"
                   >
                     Skip for now
                   </h2>
                 </div>
                 {isSigningUp ? (
-                  <SignUpForm setClose={setClose} />
+                  <SignUpForm setIsAuthFormOpen={setIsAuthFormOpen} />
                 ) : (
-                  <SignInForm setClose={setClose} />
+                  <SignInForm setIsAuthFormOpen={setIsAuthFormOpen} />
                 )}
                 <button
                   onClick={() => setIsSigningUp(!isSigningUp)}

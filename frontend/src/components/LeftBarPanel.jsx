@@ -72,7 +72,7 @@ export const getFileIcon = (fileName) => {
   if (fileName.endsWith(".env")) return <SiDotenv className="text-green-500" />;
 
   // Add more icons as needed
-  return <FaFile />;
+  return <FaFile className="text-blue-500" />;
 };
 
 const FileTree = ({
@@ -136,7 +136,7 @@ const FileTree = ({
         )}
       </div>
 
-      {lastOpenedFolder === fileTree.name && showInput && (
+      {lastOpenedFolder === fileTree?.name && showInput && (
         <form
           ref={addingForm}
           className="w-full flex gap-2 items-center text-gray-400 my-2"
@@ -226,7 +226,6 @@ const LeftBarPanel = ({ isMobile, isLeftbarPanel, setIsLeftbarPanel }) => {
   }, [showInput]);
 
   return (
-    !isMobile &&
     isLeftbarPanel && (
       <div className="group relative h-screen w-64 bg-slate-900 overflow-x-hidden overflow-y-auto scrollbar-thin scrollbar-thumb-slate-700 scrollbar-track-slate-900">
         <div className="hidden group-hover:flex absolute top-0 right-0 gap-2 p-2 items-center pr-2 justify-end text-gray-400 bg-slate-900 w-max h-min ml-auto z-10">

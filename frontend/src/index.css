@@ -5,6 +5,7 @@
 html {
   opacity: 1;
   background-color: rgb(15 23 42);
+  scroll-behavior: smooth;
   /* #0f172a */
 }
 

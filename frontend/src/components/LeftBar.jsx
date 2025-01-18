@@ -1,12 +1,17 @@
 import { FaFile, FaSearch, FaGithub, FaCode, FaCog } from "react-icons/fa";
+import { ImExit } from "react-icons/im";
+import { useNavigate } from "react-router-dom";
 
 const LeftBar = ({ isLeftbarPanel, setIsLeftbarPanel }) => {
+  const navigate = useNavigate();
+
   const icons = [
     { icon: <FaFile />, label: "Explorer" },
     { icon: <FaSearch />, label: "Search" },
     { icon: <FaGithub />, label: "Source Control" },
     { icon: <FaCode />, label: "Code" },
     { icon: <FaCog />, label: "Settings" },
+    { icon: <ImExit />, label: "Exit" },
   ];
 
   return (
@@ -18,17 +23,22 @@ const LeftBar = ({ isLeftbarPanel, setIsLeftbarPanel }) => {
                        transition-all duration-200 
                        border-l-2 border-transparent
                      hover:border-blue-500"
-            onClick={() => setIsLeftbarPanel(!isLeftbarPanel)}
+            onClick={() => {
+              if (item.label === "Exit") {
+                navigate("/");
+              }
+              setIsLeftbarPanel(!isLeftbarPanel);
+            }}
           >
             <div className="text-xl">{item.icon}</div>
           </button>
           <div
             className="absolute left-[102%] ml-2 py-1 px-2 top-4 
-                whitespace-nowrap bg-slate-800 text-gray-400
+                whitespace-nowrap bg-slate-700 text-gray-400
                 text-xs rounded hidden group-hover:block
                 before:content-[''] before:absolute before:left-[-8px]
                 before:top-[50%] before:transform before:-translate-y-1/2
-                before:border-4 before:border-transparent before:border-r-slate-800
+                before:border-4 before:border-transparent before:border-r-slate-700
                 transition-opacity duration-200"
           >
             {item.label}
