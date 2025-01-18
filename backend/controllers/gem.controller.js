@@ -128,10 +128,10 @@ export const getAllGemsController = async (req, res, next) => {
 
 export const collectGemController = async (req, res, next) => {
   try {
-    const { gemId } = query.params;
+    const { gemId } = req.params;
     const { userId } = req.body;
 
-    if (!mongoose.Types.ObjectId.isValid(id)) {
+    if (!mongoose.Types.ObjectId.isValid(gemId)) {
       return next(new ValidationError("Invalid gem ID"));
     }
 
@@ -143,17 +143,16 @@ export const collectGemController = async (req, res, next) => {
     }
 
     // Check if the gem already exists in the user's collection
-    const isAlreadyExist = user.collection.find((gem) => gem._id === gemId);
+    const isAlreadyExist = user.collection.some((item) => item.equals(gemId));
     console.log(isAlreadyExist);
-
     // { _id:lbncsaduvfb }
 
     if (isAlreadyExist) {
-      await user.updateOne({ $pull: { collection: { _id: gemId } } });
+      await user.updateOne({ $pull: { collection: gemId } });
       return res.status(200).json({ msg: "Gem removed successfully" });
     } else {
-      await user.updateOne({ $push: { collection: { _id: gemId } } });
-      return res.status(200).json({ msg: "Gem added successfully" });
+      await user.updateOne({ $push: { collection: gemId } });
+      return res.status(200).json({ msg: "Gem collected successfully" });
     }
   } catch (error) {
     console.error(error.message);
