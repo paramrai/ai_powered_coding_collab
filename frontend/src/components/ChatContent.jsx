@@ -95,7 +95,7 @@ const ChatContent = ({ setIsChatOpen }) => {
         }
       } catch (error) {
         console.log(error);
-        toast.error(error.message);
+        toast.error(error.response.data.msg);
       } finally {
         setLoading(false);
       }

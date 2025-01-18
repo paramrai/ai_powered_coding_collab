@@ -34,7 +34,7 @@ const SignInForm = ({ setIsAuthFormOpen }) => {
       }
     } catch (error) {
       console.log(error);
-      toast.error(error.message);
+      toast.error(error.response.data.msg);
     } finally {
       setLoading(false);
     }
@@ -45,6 +45,7 @@ const SignInForm = ({ setIsAuthFormOpen }) => {
       <input
         type="email"
         placeholder="Email"
+        autoFocus
         onChange={(e) => setEmail(e.target.value)}
         className="w-full p-2 border rounded"
       />
@@ -103,6 +104,7 @@ const SignUpForm = ({ setIsAuthFormOpen }) => {
       <input
         type="text"
         placeholder="Username"
+        autoFocus
         onChange={(e) => setUsername(e.target.value)}
         className="w-full p-2 border rounded"
       />
