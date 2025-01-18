@@ -36,7 +36,10 @@ export const loginController = async (req, res, next) => {
   const { email, password } = req.body;
 
   try {
-    const user = await userModel.findOne({ email }).select("+password");
+    const user = await userModel
+      .findOne({ email })
+      .select("+password")
+      .populate("collection");
 
     if (!user) {
       return next(new AuthenticationError("Invalid credentials"));
@@ -66,7 +69,7 @@ export const logoutController = async (req, res, next) => {
     const authHeader = req.headers.authorization || req.headers.Authorization;
 
     if (!authHeader?.startsWith("Bearer ")) {
-      return next(new AuthenticationError("No token provided"));
+      return next(new AuthenticationError("Unauthorised please login !"));
     }
 
     const token = authHeader.split(" ")[1];

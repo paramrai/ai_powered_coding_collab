@@ -16,6 +16,12 @@ const userSchema = new mongoose.Schema(
       type: String,
       select: false,
     },
+    collection: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "gem",
+      },
+    ],
     isActive: Boolean,
   },
   {
@@ -37,5 +43,5 @@ userSchema.methods.generateJWT = async function () {
   });
 };
 
-const User = mongoose.model("user", userSchema);
-export default User;
+const userModel = mongoose.model("user", userSchema);
+export default userModel;

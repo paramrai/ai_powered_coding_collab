@@ -6,6 +6,7 @@ import {
   NotFoundError,
   ValidationError,
 } from "../utils/errorClass.js";
+import userModel from "../models/user.model.js";
 
 export const createGemController = async (req, res, next) => {
   const errors = validationResult(req);
@@ -30,10 +31,14 @@ export const createGemController = async (req, res, next) => {
 };
 
 export const readGemController = async (req, res, next) => {
-  const { id } = req.params;
+  const { gemId } = req.params;
+
+  if (!mongoose.Types.ObjectId.isValid(gemId)) {
+    return next(new ValidationError("Invalid gem ID"));
+  }
 
   try {
-    const gem = await gemModel.findById(id);
+    const gem = await gemModel.findById(gemId);
     if (!gem) {
       return next(new NotFoundError("Gem not found"));
     }
@@ -45,14 +50,16 @@ export const readGemController = async (req, res, next) => {
 };
 
 export const updateGemController = async (req, res, next) => {
-  const { id } = req.params;
+  const { gemId } = req.params;
   const { name, description, ...otherFields } = req.body;
-  if (!mongoose.Types.ObjectId.isValid(id)) {
+
+  if (!mongoose.Types.ObjectId.isValid(gemId)) {
     return next(new ValidationError("Invalid gem ID"));
   }
+
   try {
     const updatedGem = await gemModel.findByIdAndUpdate(
-      id,
+      gemId,
       { name, description, ...otherFields },
       { new: true, runValidators: true }
     );
@@ -67,12 +74,14 @@ export const updateGemController = async (req, res, next) => {
 };
 
 export const deleteGemController = async (req, res, next) => {
-  const { id } = req.params;
-  if (!mongoose.Types.ObjectId.isValid(id)) {
+  const { gemId } = req.params;
+
+  if (!mongoose.Types.ObjectId.isValid(gemId)) {
     return next(new ValidationError("Invalid gem ID"));
   }
+
   try {
-    const deletedGem = await Model.findByIdAndDelete(id);
+    const deletedGem = await Model.findByIdAndDelete(gemId);
     if (!deletedGem) {
       gem;
       return next(new NotFoundError("Gem not found"));
@@ -92,7 +101,9 @@ export const getUserGemsController = async (req, res, next) => {
       return next(new ValidationError("Invalid user ID"));
     }
 
-    const userGems = await gemModel.find({ owner: userId });
+    const userGems = await gemModel
+      .find({ owner: userId })
+      .populate("owner collaborator");
 
     if (!userGems) {
       return res.status(200).json({ msg: "Not found" });
@@ -107,10 +118,51 @@ export const getUserGemsController = async (req, res, next) => {
 
 export const getAllGemsController = async (req, res, next) => {
   try {
-    const allGems = await gemModel.find();
+    const allGems = await gemModel.find().populate("owner collaborator");
     res.status(200).json(allGems);
   } catch (error) {
     console.error(error.message);
     return next(new InternalServerError(error.message));
   }
+};
+
+export const collectGemController = async (req, res, next) => {
+  try {
+    const { gemId } = query.params;
+    const { userId } = req.body;
+
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return next(new ValidationError("Invalid gem ID"));
+    }
+
+    const user = await userModel.findById(userId);
+    const gem = await gemModel.findById(gemId);
+
+    if (!gem || !user) {
+      return next(new NotFoundError("Gem or user not exist"));
+    }
+
+    // Check if the gem already exists in the user's collection
+    const isAlreadyExist = user.collection.find((gem) => gem._id === gemId);
+    console.log(isAlreadyExist);
+
+    // { _id:lbncsaduvfb }
+
+    if (isAlreadyExist) {
+      await user.updateOne({ $pull: { collection: { _id: gemId } } });
+      return res.status(200).json({ msg: "Gem removed successfully" });
+    } else {
+      await user.updateOne({ $push: { collection: { _id: gemId } } });
+      return res.status(200).json({ msg: "Gem added successfully" });
+    }
+  } catch (error) {
+    console.error(error.message);
+    return next(new InternalServerError(error.message));
+  }
+};
+
+export const getGemCollectionController = async (req, res, next) => {
+  try {
+    const { userId } = query.params;
+  } catch (error) {}
 };

@@ -2,9 +2,11 @@ import { Router } from "express";
 import { authUser } from "../middlewares/auth.middleware.js";
 import { body } from "express-validator";
 import {
+  collectGemController,
   createGemController,
   deleteGemController,
   getAllGemsController,
+  getGemCollectionController,
   getUserGemsController,
   readGemController,
   updateGemController,
@@ -18,15 +20,19 @@ router.post(
   createGemController
 );
 
-router.get("/readGem/:id", readGemController);
+router.get("/readGem/:gemId", readGemController);
 
-router.put("/updateGem/:id", updateGemController);
+router.put("/updateGem/:gemId", updateGemController);
 
-router.delete("/deleteGem/:id", deleteGemController);
+router.delete("/deleteGem/:gemId", deleteGemController);
 
 router.get("/getUserGems/:userId", getUserGemsController);
 
 router.get("/getAllGems", getAllGemsController);
+
+router.put("/collectGem/:gemId", collectGemController);
+
+router.get("/collection/:userId", getGemCollectionController);
 
 const gemRoutes = router;
 export default gemRoutes;
