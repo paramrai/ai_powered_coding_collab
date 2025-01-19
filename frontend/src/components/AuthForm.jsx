@@ -34,7 +34,7 @@ const SignInForm = ({ setIsAuthFormOpen }) => {
       }
     } catch (error) {
       console.log(error);
-      toast.error(error.response.data.msg);
+      toast.error(error.response?.data.msg || error.message);
     } finally {
       setLoading(false);
     }
@@ -93,7 +93,7 @@ const SignUpForm = ({ setIsAuthFormOpen }) => {
       setIsAuthFormOpen(false);
     } catch (error) {
       dispatch(setError(error.message));
-      toast.error(error.response.data.msg);
+      toast.error(error.response?.data.msg || error.message);
     } finally {
       setLoading(false);
     }

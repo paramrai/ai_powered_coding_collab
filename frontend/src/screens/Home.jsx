@@ -82,7 +82,7 @@ function CreateGemModal({ createGemModal, setCreateGemModal }) {
       }
     } catch (error) {
       console.error(error);
-      toast.error(error.response.data.msg);
+      toast.error(error.response?.data.msg || error.message);
     }
   };
 
