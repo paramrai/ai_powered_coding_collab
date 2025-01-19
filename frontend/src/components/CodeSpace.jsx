@@ -2,7 +2,7 @@ import React from "react";
 import VideoChatPanel from "./VideoChatPanel";
 import OpenFiles from "./OpenFiles";
 
-const CodeSpace = ({ isMobile, setIsChatOpen }) => {
+const CodeSpace = () => {
   return (
     <div className="min-h-screen w-auto overflow-hidden flex-1 flex flex-col">
       <OpenFiles />
@@ -31,7 +31,7 @@ const CodeSpace = ({ isMobile, setIsChatOpen }) => {
           WebkitTextFillColor: "currentcolor",
         }}
       ></textarea>
-      {!isMobile && <VideoChatPanel setIsChatOpen={setIsChatOpen} />}
+      <VideoChatPanel />
     </div>
   );
 };

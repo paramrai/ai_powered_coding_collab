@@ -40,6 +40,7 @@ import {
   setCurrentPath,
   setOpenFiles,
 } from "../redux/slices/gemSlice";
+import { useMobileCheck } from "../hooks/useMobileCheck";
 
 export const getFileIcon = (fileName) => {
   if (fileName.endsWith(".js")) return <FaJs className="text-yellow-400" />;
@@ -180,7 +181,7 @@ const FileTree = ({
   );
 };
 
-const LeftBarPanel = ({ isMobile, isLeftbarPanel, setIsLeftbarPanel }) => {
+const LeftBarPanel = ({ isLeftbarPanel, setIsLeftbarPanel }) => {
   const dispatch = useDispatch();
   const addingForm = useRef(null);
   const [type, setType] = useState("");

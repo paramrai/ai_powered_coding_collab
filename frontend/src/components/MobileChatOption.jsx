@@ -2,8 +2,10 @@ import React, { useState } from "react";
 import { FaRobot } from "react-icons/fa";
 import { motion, AnimatePresence } from "framer-motion";
 import ChatContent from "./ChatContent";
+import { useMobileCheck } from "../hooks/useMobileCheck";
 
-const MobileChatOption = ({ isMobile }) => {
+const MobileChatOption = () => {
+  const isMobile = useMobileCheck();
   const [isChatOpen, setIsChatOpen] = useState(false);
 
   return (

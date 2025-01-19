@@ -1,7 +1,10 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import ChatContent from "./ChatContent";
+import { useMobileCheck } from "../hooks/useMobileCheck";
 
-const DesktopChatOption = ({ isMobile, isChatOpen, setIsChatOpen }) => {
+const DesktopChatOption = ({ isChatOpen, setIsChatOpen }) => {
+  const isMobile = useMobileCheck();
+
   return (
     !isMobile &&
     isChatOpen && (
