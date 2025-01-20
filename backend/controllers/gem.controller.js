@@ -98,7 +98,7 @@ export const getUserGemsController = async (req, res, next) => {
 
   try {
     if (!mongoose.Types.ObjectId.isValid(userId)) {
-      return next(new ValidationError("Invalid user ID"));
+      return next(new ValidationError("Unauthorized Please login !"));
     }
 
     const userGems = await gemModel

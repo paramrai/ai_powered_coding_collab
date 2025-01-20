@@ -5,6 +5,7 @@ import axiosInstance from "../../axios/axiosInstance";
 import { selectToken, selectUser } from "../../redux/slices/userSlice";
 import { toast } from "react-toastify";
 import { addGem } from "../../redux/slices/gemSlice";
+import { motion } from "framer-motion";
 
 function CreateGemModal({ createGemModal, setCreateGemModal }) {
   const [name, setName] = useState("");

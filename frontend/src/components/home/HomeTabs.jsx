@@ -1,42 +1,62 @@
-import { useState } from "react";
-import { selectUser } from "../../redux/slices/userSlice";
 import { useDispatch, useSelector } from "react-redux";
-import { toast } from "react-toastify";
+import {
+  selectHomeActiveTab,
+  selectUser,
+  setHomeActiveTab,
+} from "../../redux/slices/userSlice";
+import { useCallback, useState } from "react";
 import CreateGemModal from "./CreateGemModal";
 import { HiOutlineViewGridAdd } from "react-icons/hi";
 import { RiNotificationBadgeFill } from "react-icons/ri";
-import { MdFolder } from "react-icons/md";
 import { FaProjectDiagram, FaUser } from "react-icons/fa";
+import { MdFolder } from "react-icons/md";
+import { toast } from "react-toastify";
+import axiosInstance from "../../axios/axiosInstance";
+import { setExploreGem } from "../../redux/slices/gemSlice";
 
-function HomeTabs() {
+function Tabs() {
   const [createGemModal, setCreateGemModal] = useState();
-  const userId = useSelector(selectUser)._id;
+  const user = useSelector(selectUser);
   const dispatch = useDispatch();
+  const homeActiveTab = useSelector(selectHomeActiveTab);
 
-  const handleYourWorkClick = async () => {
-    try {
-      const res = await axiosInstance.get(`/gems/getUserGems/${userId}`);
-      dispatch(setExploreGem(res.data));
-    } catch (error) {
-      console.log(error);
-      toast.error(error.response.data.msg);
+  const handleTabChange = async (tab) => {
+    if (!user._id) {
+      tab === "me" && toast.info("Please Login First !");
+      tab === "collection" &&
+        toast.info("See collection by logging in First !");
+      return;
     }
-  };
 
-  const handleExploreGemClick = async () => {
+    let request;
+
+    switch (tab) {
+      case "me":
+        request = `/gems/getUserGems/${user._id}`;
+        break;
+      case "collection":
+        console.log("userCollection", user.collection);
+        dispatch(setExploreGem(user.collection));
+        return;
+      case "explore":
+      default:
+        request = "/gems/getAllGems";
+    }
+
     try {
-      const res = await axiosInstance.get(`/gems/getAllGems/`);
+      const res = await axiosInstance.get(request);
       dispatch(setExploreGem(res.data));
+      dispatch(setHomeActiveTab(tab));
     } catch (error) {
       console.log(error);
-      toast.error(error.response.data.msg);
+      toast.error(error.response?.data.msg || error.message);
     }
   };
 
   return (
     <div
       className="flex flex-wrap gap-2 justify-start p-4 bg-gray-800 text-gray-400 w-full
-      shadow-md border-t-4 border-[#ffb120] mx-auto mt-4 sticky top-0 z-50"
+       z-50 shadow-md sticky border-t-4 border-[#ffb120] mx-auto mt-4"
     >
       <CreateGemModal
         createGemModal={createGemModal}
@@ -65,7 +85,7 @@ function HomeTabs() {
       </button>
 
       <button
-        onClick={handleYourWorkClick}
+        onClick={() => handleTabChange("me")}
         className={`group flex items-center bg-slate-700 rounded-md hover:bg-slate-600 px-4 py-2 
         cursor-pointer hover:text-white focus:text-white focus:outline-none transform transition-all 
         duration-200 ease-in-out`}
@@ -77,6 +97,7 @@ function HomeTabs() {
         <span>Your Work</span>
       </button>
       <div
+        onClick={() => handleTabChange("collection")}
         className={`group flex items-center bg-slate-700 rounded-md hover:bg-slate-600 px-4 py-2 
         cursor-pointer hover:text-white focus:text-white focus:outline-none transform transition-all 
         duration-200 ease-in-out`}
@@ -88,7 +109,7 @@ function HomeTabs() {
         <span>Collections</span>
       </div>
       <button
-        onClick={handleExploreGemClick}
+        onClick={() => handleTabChange("explore")}
         className={`group flex items-center bg-slate-700 rounded-md hover:bg-slate-600 px-4 py-2 
         cursor-pointer hover:text-white focus:text-white focus:outline-none transform transition-all 
         duration-200 ease-in-out`}
@@ -103,4 +124,4 @@ function HomeTabs() {
   );
 }
 
-export default HomeTabs;
+export default Tabs;

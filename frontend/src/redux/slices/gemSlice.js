@@ -86,6 +86,7 @@ const gemSlice = createSlice({
       findPathAndAdd(state.fileTree, type, name, path);
     },
     setExploreGem: (state, action) => {
+      console.log(action.payload);
       state.exploreGems = action.payload;
     },
   },

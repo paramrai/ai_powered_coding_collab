@@ -1,4 +1,6 @@
+import { useSelector } from "react-redux";
 import { selectUser } from "../../redux/slices/userSlice";
+import { motion } from "framer-motion";
 
 const RightBarProfile = ({ isOpen, setIsRightBarOpen }) => {
   const user = useSelector(selectUser);

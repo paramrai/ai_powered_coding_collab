@@ -4,6 +4,7 @@ import AuthForm from "../AuthForm";
 import RightBarProfile from "./RightBarProfile";
 import { useState } from "react";
 import { FaSearch } from "react-icons/fa";
+import { toast } from "react-toastify";
 
 function Navbar() {
   const [close, setClose] = useState(false);
