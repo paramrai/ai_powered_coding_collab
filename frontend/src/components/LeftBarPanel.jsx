@@ -105,7 +105,7 @@ const FileTree = ({
   return (
     <>
       <div
-        className="relative flex group items-center px-2 py-1 cursor-pointer hover:text-gray-200"
+        className="relative flex group items-center p-[0.5px] cursor-pointer hover:text-gray-200"
         style={{ paddingLeft: `${depth < 6 ? depth * 1 : 6}rem` }}
         onClick={handleClick}
       >

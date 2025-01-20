@@ -133,7 +133,7 @@ function GemSection() {
           </div>
         ))}
       </div>
-      <div className="w-full text-center">
+      <div className="w-full text-center mt-2">
         <button
           onClick={handleNext}
           className="bg-green-500 text-black hover:text-white px-4 py-3 rounded hover:bg-green-600 focus:outline-none w-[120px]"
