@@ -4,10 +4,28 @@ import { act } from "react";
 const userSlice = createSlice({
   name: "user",
   initialState: {
-    user: {},
+    user: {
+      sentInvites: [
+        {
+          gemId: "1dsfa2dasf3",
+          recieverIds: ["123", "123"],
+        },
+        {
+          gemId: "1sda2adsdvf",
+          recieverIds: ["123", "123"],
+        },
+      ],
+      recievedInvites: [
+        {
+          senderId: "",
+          gemId: "",
+        },
+      ],
+    },
     token: "",
     homeActiveTab: "explore", // explore,me,collection
   },
+
   reducers: {
     setUser: (state, action) => {
       const { user, token } = action.payload;

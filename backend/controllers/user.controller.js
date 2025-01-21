@@ -185,12 +185,10 @@ export const inviteUserController = async (req, res, next) => {
     await inviteSenderUser.save();
 
     // Populate and return updated user
-    const updatedUser = await userModel
-      .findById(inviteSenderId)
-      .populate("sentInvites.recieverIds");
+    const updatedUser = await userModel.findById(inviteSenderId);
 
     return res.status(200).json({
-      message: hasReceivedInvite ? "Invite removed" : "Invite sent",
+      msg: hasReceivedInvite ? "Invite removed" : "Invite sent",
       user: updatedUser,
     });
   } catch (error) {

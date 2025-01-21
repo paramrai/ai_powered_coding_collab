@@ -19,6 +19,7 @@ function Tabs() {
   const user = useSelector(selectUser);
   const dispatch = useDispatch();
   const homeActiveTab = useSelector(selectHomeActiveTab);
+  const recievedInvites = user.recievedInvites;
 
   const handleTabChange = async (tab) => {
     if (!user._id) {

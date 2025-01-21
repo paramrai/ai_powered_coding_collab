@@ -1,7 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 let initialState = {
-  currentOpenGem: {},
   exploreGems: [],
   openFiles: [], // 'file.js' ,isha.js
   activeFile: "",

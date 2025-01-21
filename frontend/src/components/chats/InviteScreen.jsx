@@ -1,14 +1,21 @@
 import { useEffect, useState } from "react";
 import axiosInstance from "../../axios/axiosInstance";
-import { useSelector } from "react-redux";
-import { selectToken, selectUser } from "../../redux/slices/userSlice";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  selectToken,
+  selectUser,
+  updateUserObject,
+} from "../../redux/slices/userSlice";
 import { selectCurrentGem } from "../../redux/slices/gemSlice";
+import { toast } from "react-toastify";
 
 function InviteScreen({ activeTab }) {
   const token = useSelector(selectToken);
   const currentUser = useSelector(selectUser);
   const currentGem = useSelector(selectCurrentGem);
   const [potentialInvites, setPotentialInvites] = useState([]);
+  const dispatch = useDispatch();
+  const sentInvites = currentUser.sentInvites;
 
   useEffect(() => {
     // fetch all users
@@ -30,6 +37,13 @@ function InviteScreen({ activeTab }) {
     fetchUsers();
   }, []);
 
+  const isUserInvited = (userId) => {
+    return sentInvites.some(
+      (invite) =>
+        invite.gemId === currentGem._id && invite.recieverIds.includes(userId)
+    );
+  };
+
   const handleInviteUser = async (user) => {
     try {
       // invite user
@@ -46,8 +60,12 @@ function InviteScreen({ activeTab }) {
           },
         }
       );
-      console.log(res);
-    } catch {
+      console.log(res.data);
+      if (res.status === 200 || res.statusText === "OK") {
+        dispatch(updateUserObject(res.data.user));
+        toast.success(res.data.msg);
+      }
+    } catch (error) {
       console.log(error);
     }
   };
@@ -67,9 +85,13 @@ function InviteScreen({ activeTab }) {
             </div>
             <button
               onClick={() => handleInviteUser(user)}
-              className="bg-blue-500 text-white px-3 py-1 rounded-lg"
+              className={`px-3 py-1 rounded-lg ${
+                isUserInvited(user._id)
+                  ? "bg-gray-500 cursor-not-allowed"
+                  : "bg-blue-500"
+              }`}
             >
-              Invite
+              {isUserInvited(user._id) ? "Invited" : "Invite"}
             </button>
           </div>
         ))}
