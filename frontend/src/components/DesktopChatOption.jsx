@@ -16,6 +16,8 @@ const DesktopChatOption = ({ isChatOpen, setIsChatOpen, width, setWidth }) => {
     maxWidth: 800,
     onResize: setWidth,
     reverse: true,
+    onClose: () => setIsChatOpen(false),
+    closeAtWidth: 310, // Slightly higher than minWidth to create a "snap" effect
   });
 
   if (!isChatOpen || isMobile) return null;
@@ -23,7 +25,7 @@ const DesktopChatOption = ({ isChatOpen, setIsChatOpen, width, setWidth }) => {
   return (
     <div
       ref={chatPanelRef}
-      className={`${resizableContainerClasses} h-full bg-slate-900 border-l border-slate-700`}
+      className={`${resizableContainerClasses} h-[100vh] bg-red-900 border-l border-slate-700`}
       style={{ width: `${width}px` }}
     >
       <div

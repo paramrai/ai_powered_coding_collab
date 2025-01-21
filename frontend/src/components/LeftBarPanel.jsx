@@ -192,6 +192,8 @@ const LeftBarPanel = ({ isLeftbarPanel, setIsLeftbarPanel }) => {
   const handleResize = useResizePanel(leftBarRef, "horizontal", {
     minWidth: 200,
     maxWidth: 600,
+    onClose: () => setIsLeftbarPanel(false),
+    closeAtWidth: 210, // Slightly higher than minWidth to create a "snap" effect
   });
 
   const fileTree = useSelector(selectFileTree)[0];

@@ -8,6 +8,8 @@ export const useResizePanel = (ref, direction = "horizontal", options = {}) => {
     maxHeight = 400,
     onResize,
     reverse = false,
+    onClose,
+    closeAtWidth,
   } = options;
 
   const initResize = useCallback(
@@ -31,11 +33,21 @@ export const useResizePanel = (ref, direction = "horizontal", options = {}) => {
           newSize = Math.min(Math.max(newSize, minHeight), maxHeight);
           ref.current.style.height = `${newSize}px`;
         }
-
         onResize?.(newSize);
       };
 
       const handleMouseUp = () => {
+        // Check closing conditions for both directions
+        if (closeAtWidth) {
+          const currentSize =
+            direction === "horizontal"
+              ? ref.current.offsetWidth
+              : ref.current.offsetHeight;
+          if (currentSize <= closeAtWidth) {
+            onClose?.();
+          }
+        }
+
         document.removeEventListener("mousemove", handleMouseMove);
         document.removeEventListener("mouseup", handleMouseUp);
         document.body.style.cursor = "default";
@@ -57,6 +69,8 @@ export const useResizePanel = (ref, direction = "horizontal", options = {}) => {
       onResize,
       ref,
       reverse,
+      onClose,
+      closeAtWidth,
     ]
   );
 

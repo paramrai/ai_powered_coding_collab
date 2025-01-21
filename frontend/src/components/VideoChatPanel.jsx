@@ -25,6 +25,8 @@ const CallingOption = () => {
 
 const VideoChatPanel = () => {
   const isMobile = useMobileCheck();
+  const [isOpen, setIsOpen] = useState(true);
+  const [panelHeight, setPanelHeight] = useState(200);
   const [localStream, setLocalStream] = useState(null);
 
   // refs
@@ -34,32 +36,36 @@ const VideoChatPanel = () => {
   const handleResize = useResizePanel(videoPanelRef, "vertical", {
     minHeight: 150,
     maxHeight: 400,
-    reverse: true, // Add this to fix the direction
+    onResize: setPanelHeight,
+    reverse: true,
+    onClose: () => setIsOpen(false),
+    closeAtWidth: 155, // Slightly higher than minHeight to create snap effect
   });
 
+  if (!isOpen || isMobile) return null;
+
   return (
-    !isMobile && (
+    <div
+      ref={videoPanelRef}
+      className={`${resizableContainerClasses} w-full flex justify-between`}
+      style={{ height: `${panelHeight}px` }}
+    >
       <div
-        ref={videoPanelRef}
-        className={`${resizableContainerClasses} h-[200px] w-full flex justify-between`}
-      >
-        <div
-          className={resizeHandleClasses.vertical}
-          onMouseDown={handleResize}
-        />
-        <div className="left w-full h-full border-r-[1px] border-slate-800">
-          <video
-            ref={localVideoRef}
-            autoPlay
-            muted
-            className="w-full h-full"
-          ></video>
-        </div>
-        <div className="right w-full h-full p-4 overflow-y-auto scrollbar-hide overflow-x-hidden flex justify-center items-center">
-          <video ref={remoteVideoRef} autoPlay muted></video>
-        </div>
+        className={`${resizeHandleClasses.vertical} top-[-1px] h-[3px]`}
+        onMouseDown={handleResize}
+      />
+      <div className="left w-full h-full border-r-[1px] border-slate-800">
+        <video
+          ref={localVideoRef}
+          autoPlay
+          muted
+          className="w-full h-full"
+        ></video>
       </div>
-    )
+      <div className="right w-full h-full p-4 overflow-y-auto scrollbar-hide overflow-x-hidden flex justify-center items-center">
+        <video ref={remoteVideoRef} autoPlay muted></video>
+      </div>
+    </div>
   );
 };
 
