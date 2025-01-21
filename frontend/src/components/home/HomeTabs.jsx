@@ -13,13 +13,14 @@ import { MdFolder } from "react-icons/md";
 import { toast } from "react-toastify";
 import axiosInstance from "../../axios/axiosInstance";
 import { setExploreGem } from "../../redux/slices/gemSlice";
+import InboxModal from "./InboxModal";
 
 function Tabs() {
   const [createGemModal, setCreateGemModal] = useState();
   const user = useSelector(selectUser);
   const dispatch = useDispatch();
   const homeActiveTab = useSelector(selectHomeActiveTab);
-  const recievedInvites = user.recievedInvites;
+  const [showInvites, setShowInvites] = useState(false);
 
   const handleTabChange = async (tab) => {
     if (!user._id) {
@@ -65,6 +66,8 @@ function Tabs() {
         setCreateGemModal={setCreateGemModal}
       />
 
+      <InboxModal showInvites={showInvites} setShowInvites={setShowInvites} />
+
       <button
         onClick={() => setCreateGemModal(true)}
         className="bg-green-500 text-black hover:text-white px-4 py-3 rounded hover:bg-green-600 focus:outline-none"
@@ -75,6 +78,7 @@ function Tabs() {
       </button>
 
       <button
+        onClick={() => setShowInvites(true)}
         className="group flex items-center bg-slate-700 rounded-md hover:bg-slate-600 px-4 py-2 
         cursor-pointer hover:text-white focus:text-white focus:outline-none transform transition-all 
         duration-200 ease-in-out"

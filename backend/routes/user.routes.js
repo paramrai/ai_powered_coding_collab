@@ -1,12 +1,14 @@
 import { Router } from "express";
 import { body } from "express-validator";
 import {
+  acceptInviteController,
   createUserController,
   getAllUsersController,
   inviteUserController,
   loginController,
   logoutController,
   profileController,
+  rejectInviteController,
 } from "../controllers/user.controller.js";
 import { authUser } from "../middlewares/auth.middleware.js";
 
@@ -39,6 +41,8 @@ router.get("/logout", authUser, logoutController);
 router.get("/getAllUsers", authUser, getAllUsersController);
 
 router.put("/inviteUser", authUser, inviteUserController);
+router.put("/acceptInvite", authUser, acceptInviteController);
+router.put("/rejectInvite", authUser, rejectInviteController);
 
 const userRoutes = router;
 export default userRoutes;

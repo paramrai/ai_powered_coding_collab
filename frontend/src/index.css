@@ -3,10 +3,10 @@
 @tailwind utilities;
 
 html {
-  opacity: 1;
   background-color: rgb(15 23 42);
   scroll-behavior: smooth;
-  /* #0f172a */
+  opacity: 1;
+  @apply scrollbar-thin scrollbar-thumb-gray-700 scrollbar-track-gray-900;
 }
 
 #spinner > div {

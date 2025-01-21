@@ -87,7 +87,7 @@ function CreateGemModal({ createGemModal, setCreateGemModal }) {
         }}
         className="fixed inset-0 bg-slate-900 z-50 p-2"
       >
-        <div className="fixed inset-0 flex items-center justify-center bg-transparent">
+        <div className="fixed inset-0 flex items-center justify-center bg-transparent px-2">
           <div className="bg-slate-800 rounded-lg shadow-lg p-6 w-full max-w-md relative">
             <button
               className="absolute top-2 right-2 text-gray-600 hover:text-gray-400"

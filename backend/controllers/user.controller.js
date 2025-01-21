@@ -196,3 +196,103 @@ export const inviteUserController = async (req, res, next) => {
     return next(new Error(error.message));
   }
 };
+
+export const acceptInviteController = async (req, res, next) => {
+  const { gemId, accepterId, senderId } = req.body;
+
+  try {
+    const gem = await gemModel.findById(gemId);
+    const accepterUser = await userModel.findById(accepterId);
+    const senderUser = await userModel.findById(senderId);
+
+    if (!gem || !accepterUser || !senderUser) {
+      return next(new ValidationError("Please enter a valid user or gem Id"));
+    }
+
+    // Remove the invite from accepter's recievedInvites
+    await accepterUser.updateOne({
+      $pull: {
+        recievedInvites: {
+          gemId,
+          senderId,
+        },
+      },
+    });
+
+    // Remove the invite from sender's sentInvites
+    await senderUser.updateOne(
+      {
+        _id: senderId,
+        "sentInvites.gemId": gemId,
+      },
+      {
+        $pull: {
+          "sentInvites.$.recieverIds": accepterId,
+        },
+      }
+    );
+
+    // Add accepter Id to gem's collaborators
+    if (!gem.collaborators.includes(accepterId)) {
+      gem.collaborators.push(accepterId);
+    }
+
+    await gem.save();
+
+    // Populate and return updated user
+    const updatedUser = await userModel.findById(accepterId);
+
+    return res.status(200).json({
+      msg: "Invite accepted",
+      user: updatedUser,
+    });
+  } catch (error) {
+    console.log(error);
+    return next(new Error(error.message));
+  }
+};
+
+export const rejectInviteController = async (req, res, next) => {
+  const { gemId, rejectorId, senderId } = req.body;
+
+  try {
+    const rejectorUser = await userModel.findById(rejectorId);
+    const senderUser = await userModel.findById(senderId);
+    const gem = await gemModel.findById(gemId);
+
+    if (!rejectorUser || !senderUser || !gem) {
+      return next(new ValidationError("Please enter a valid user or gem Id"));
+    }
+
+    // Remove the invite from rejector's recievedInvites
+    await rejectorUser.updateOne({
+      $pull: {
+        recievedInvites: {
+          gemId,
+          senderId,
+        },
+      },
+    });
+
+    // Remove the invite from sender's sentInvites
+    await senderUser.updateOne(
+      {
+        _id: senderId,
+        "sentInvites.gemId": gemId,
+      },
+      {
+        $pull: {
+          "sentInvites.$.recieverIds": rejectorId,
+        },
+      }
+    );
+
+    // Populate and return updated user
+    const updatedUser = await userModel.findById(rejectorId);
+
+    return res.status(200).json({
+      msg: "Invite rejected",
+      user: updatedUser,
+    });
+  } catch (error) {}
+};
