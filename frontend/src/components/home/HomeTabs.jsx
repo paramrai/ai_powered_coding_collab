@@ -37,6 +37,7 @@ function Tabs() {
       case "collection":
         console.log("userCollection", user.collection);
         dispatch(setExploreGem(user.collection));
+        dispatch(setHomeActiveTab(tab));
         return;
       case "explore":
       default:
@@ -88,7 +89,11 @@ function Tabs() {
         onClick={() => handleTabChange("me")}
         className={`group flex items-center bg-slate-700 rounded-md hover:bg-slate-600 px-4 py-2 
         cursor-pointer hover:text-white focus:text-white focus:outline-none transform transition-all 
-        duration-200 ease-in-out`}
+        duration-200 ease-in-out ${
+          homeActiveTab === "me"
+            ? "border-l-4 border-green-500 bg-slate-600 text-white"
+            : "border-l-4 border-transparent"
+        }`}
       >
         <FaUser
           className="mr-2 group-hover:text-[#ffb120] transform transition-all 
@@ -100,7 +105,11 @@ function Tabs() {
         onClick={() => handleTabChange("collection")}
         className={`group flex items-center bg-slate-700 rounded-md hover:bg-slate-600 px-4 py-2 
         cursor-pointer hover:text-white focus:text-white focus:outline-none transform transition-all 
-        duration-200 ease-in-out`}
+        duration-200 ease-in-out ${
+          homeActiveTab === "collection"
+            ? "border-l-4 border-green-500 bg-slate-600 text-white"
+            : "border-l-4 border-transparent"
+        }`}
       >
         <MdFolder
           className="mr-2 group-hover:text-green-500 transform transition-all 
@@ -112,7 +121,11 @@ function Tabs() {
         onClick={() => handleTabChange("explore")}
         className={`group flex items-center bg-slate-700 rounded-md hover:bg-slate-600 px-4 py-2 
         cursor-pointer hover:text-white focus:text-white focus:outline-none transform transition-all 
-        duration-200 ease-in-out`}
+        duration-200 ease-in-out ${
+          homeActiveTab === "explore"
+            ? "border-l-4 border-green-500 bg-slate-600 text-white"
+            : "border-l-4 border-transparent"
+        }`}
       >
         <FaProjectDiagram
           className="mr-2 text-blue-500 transform transition-all 
