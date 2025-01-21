@@ -10,6 +10,7 @@ const CodeGem = () => {
   const isMobile = useMobileCheck();
   const [isChatOpen, setIsChatOpen] = useState(true);
   const [isLeftbarPanel, setIsLeftbarPanel] = useState(!isMobile);
+  const [chatPanelWidth, setChatPanelWidth] = useState(400); // Initial width for the chat panel
 
   return (
     <main className="main_container max-h-screen w-full overflow-hidden flex bg-slate-900">
@@ -26,6 +27,8 @@ const CodeGem = () => {
       <DesktopChatOption
         isChatOpen={isChatOpen}
         setIsChatOpen={setIsChatOpen}
+        width={chatPanelWidth}
+        setWidth={setChatPanelWidth}
       />
     </main>
   );

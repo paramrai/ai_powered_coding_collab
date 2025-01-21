@@ -41,6 +41,7 @@ import {
   setOpenFiles,
 } from "../redux/slices/gemSlice";
 import { useMobileCheck } from "../hooks/useMobileCheck";
+import { useResizePanel } from "../hooks/useResizePanel";
 
 export const getFileIcon = (fileName) => {
   if (fileName.endsWith(".js")) return <FaJs className="text-yellow-400" />;
@@ -187,6 +188,11 @@ const LeftBarPanel = ({ isLeftbarPanel, setIsLeftbarPanel }) => {
   const [type, setType] = useState("");
   const [showInput, setShowInput] = useState(false);
   const [lastOpenedFolder, setLastOpenedFolder] = useState(null);
+  const leftBarRef = useRef(null);
+  const handleResize = useResizePanel(leftBarRef, "horizontal", {
+    minWidth: 200,
+    maxWidth: 600,
+  });
 
   const fileTree = useSelector(selectFileTree)[0];
 
@@ -228,7 +234,11 @@ const LeftBarPanel = ({ isLeftbarPanel, setIsLeftbarPanel }) => {
 
   return (
     isLeftbarPanel && (
-      <div className="group relative h-screen w-64 bg-slate-900 overflow-x-hidden overflow-y-auto scrollbar-thin scrollbar-thumb-slate-700 scrollbar-track-slate-900">
+      <div
+        ref={leftBarRef}
+        className="group relative h-screen w-64 bg-slate-900 overflow-x-hidden 
+        overflow-y-auto scrollbar-thin scrollbar-thumb-slate-700 scrollbar-track-slate-900"
+      >
         <div className="hidden group-hover:flex absolute top-0 right-0 gap-2 p-2 items-center pr-2 justify-end text-gray-400 bg-slate-900 w-max h-min ml-auto z-10">
           <button
             onClick={() => {
@@ -265,6 +275,12 @@ const LeftBarPanel = ({ isLeftbarPanel, setIsLeftbarPanel }) => {
           handleAddFileSubmit={handleAddFileSubmit}
           lastOpenedFolder={lastOpenedFolder}
           setLastOpenedFolder={setLastOpenedFolder}
+        />
+        {/* Add resize handle */}
+        <div
+          className="absolute top-0 right-0 w-1 h-full cursor-ew-resize hover:bg-purple-500/50
+          transition-colors group z-50"
+          onMouseDown={handleResize}
         />
       </div>
     )

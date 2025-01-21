@@ -1,6 +1,11 @@
 import React, { useEffect, useRef, useState } from "react";
 import { FaMicrophone, FaVideo, FaPhone, FaPhoneSlash } from "react-icons/fa";
 import { useMobileCheck } from "../hooks/useMobileCheck";
+import { useResizePanel } from "../hooks/useResizePanel";
+import {
+  resizeHandleClasses,
+  resizableContainerClasses,
+} from "../styles/resizeHandle";
 
 const CallingOption = () => {
   return (
@@ -25,11 +30,24 @@ const VideoChatPanel = () => {
   // refs
   const localVideoRef = useRef(null);
   const remoteVideoRef = useRef(null);
+  const videoPanelRef = useRef(null);
+  const handleResize = useResizePanel(videoPanelRef, "vertical", {
+    minHeight: 150,
+    maxHeight: 400,
+    reverse: true, // Add this to fix the direction
+  });
 
   return (
     !isMobile && (
-      <div className="max-h-[200px] h-[200px] w-full flex justify-between flex-shrink-[0] flex-grow-[0] flex-auto">
-        <div className="left bg-orange-400 w-full h-full border-r-[1px] border-slate-800">
+      <div
+        ref={videoPanelRef}
+        className={`${resizableContainerClasses} h-[200px] w-full flex justify-between`}
+      >
+        <div
+          className={resizeHandleClasses.vertical}
+          onMouseDown={handleResize}
+        />
+        <div className="left w-full h-full border-r-[1px] border-slate-800">
           <video
             ref={localVideoRef}
             autoPlay
@@ -37,7 +55,7 @@ const VideoChatPanel = () => {
             className="w-full h-full"
           ></video>
         </div>
-        <div className="right bg-green-600 w-full h-full p-4 overflow-y-auto scrollbar-hide overflow-x-hidden flex justify-center items-center">
+        <div className="right w-full h-full p-4 overflow-y-auto scrollbar-hide overflow-x-hidden flex justify-center items-center">
           <video ref={remoteVideoRef} autoPlay muted></video>
         </div>
       </div>

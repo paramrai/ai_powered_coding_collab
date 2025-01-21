@@ -1,17 +1,39 @@
-import React from "react";
+import React, { useRef } from "react";
 import ChatContent from "./chats/ChatContent";
 import { useMobileCheck } from "../hooks/useMobileCheck";
+import { useResizePanel } from "../hooks/useResizePanel";
+import {
+  resizeHandleClasses,
+  resizableContainerClasses,
+} from "../styles/resizeHandle";
 
-const DesktopChatOption = ({ isChatOpen, setIsChatOpen }) => {
+const DesktopChatOption = ({ isChatOpen, setIsChatOpen, width, setWidth }) => {
   const isMobile = useMobileCheck();
+  const chatPanelRef = useRef(null);
+
+  const handleResize = useResizePanel(chatPanelRef, "horizontal", {
+    minWidth: 300,
+    maxWidth: 800,
+    onResize: setWidth,
+    reverse: true,
+  });
+
+  if (!isChatOpen || isMobile) return null;
 
   return (
-    !isMobile &&
-    isChatOpen && (
-      <div className="bg-slate-900 flex-2 p-2 w-[400px]">
+    <div
+      ref={chatPanelRef}
+      className={`${resizableContainerClasses} h-full bg-slate-900 border-l border-slate-700`}
+      style={{ width: `${width}px` }}
+    >
+      <div
+        className={`${resizeHandleClasses.horizontal} left-0`}
+        onMouseDown={handleResize}
+      />
+      <div className="h-full pl-2 pr-1 py-1 overflow-hidden">
         <ChatContent setIsChatOpen={setIsChatOpen} />
       </div>
-    )
+    </div>
   );
 };
 
