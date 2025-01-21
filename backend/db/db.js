@@ -1,9 +1,9 @@
 import mongoose from "mongoose";
 
-function connect() {
+async function connect() {
   const uri = process.env.MONGO_URI;
 
-  mongoose
+  await mongoose
     .connect(uri)
     .then(() => {
       console.log("Connected to MongoDB");

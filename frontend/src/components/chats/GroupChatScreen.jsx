@@ -122,7 +122,7 @@ function GroupChatScreen({ activeTab }) {
           </div>
         </div>
         {/* <div ref={messagesEndRef} /> */}
-        <div className="chat-promt absolute bottom-0 left-0 w-full px-2 pb-2">
+        <div className="chat-promt sticky bottom-0 w-full px-2 pb-2">
           <form
             // onSubmit={sendMessage}
             className="flex pt-2"

@@ -22,6 +22,32 @@ const userSchema = new mongoose.Schema(
         ref: "gem",
       },
     ],
+    sentInvites: [
+      {
+        recieverIds: [
+          {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "user",
+          },
+        ],
+        gemId: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "gem",
+        },
+      },
+    ],
+    recievedInvites: [
+      {
+        senderId: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "user",
+        },
+        gemId: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "gem",
+        },
+      },
+    ],
     isActive: Boolean,
   },
   {

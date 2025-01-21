@@ -1,6 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 let initialState = {
+  currentOpenGem: {},
   exploreGems: [],
   openFiles: [], // 'file.js' ,isha.js
   activeFile: "",
@@ -89,6 +90,9 @@ const gemSlice = createSlice({
       console.log(action.payload);
       state.exploreGems = action.payload;
     },
+    setCurrentOpenGem: (state, action) => {
+      state.currentGem = action.payload;
+    },
   },
 });
 
@@ -100,6 +104,7 @@ export const selectActiveFile = (state) => state.gems.activeFile;
 export const selectFileTree = (state) => state.gems.fileTree;
 export const selectPath = (state) => state.gems.path;
 export const selectExploreGems = (state) => state.gems.exploreGems;
+export const selectCurrentGem = (state) => state.gems.currentGem;
 
 // methods
 export const {
@@ -110,4 +115,5 @@ export const {
   setCurrentPath,
   addNewFile,
   setExploreGem,
+  setCurrentOpenGem,
 } = gemSlice.actions;

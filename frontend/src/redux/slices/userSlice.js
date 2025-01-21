@@ -1,4 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
+import { act } from "react";
 
 const userSlice = createSlice({
   name: "user",
@@ -39,6 +40,9 @@ const userSlice = createSlice({
         state.user.collection = [...state.user.collection, action.payload];
       }
     },
+    updateUserObject: (state, action) => {
+      state.user = action.payload;
+    },
   },
 });
 
@@ -47,5 +51,10 @@ export const selectUser = (state) => state.user.user;
 export const selectToken = (state) => state.user.token;
 export const selectHomeActiveTab = (state) => state.user.homeActiveTab;
 
-export const { setUser, clearUser, setHomeActiveTab, setUserCollection } =
-  userSlice.actions;
+export const {
+  setUser,
+  clearUser,
+  setHomeActiveTab,
+  setUserCollection,
+  updateUserObject,
+} = userSlice.actions;

@@ -3,6 +3,7 @@ import { body } from "express-validator";
 import {
   createUserController,
   getAllUsersController,
+  inviteUserController,
   loginController,
   logoutController,
   profileController,
@@ -35,7 +36,9 @@ router.post(
 
 router.get("/profile", authUser, profileController);
 router.get("/logout", authUser, logoutController);
-router.get("/all", authUser, getAllUsersController);
+router.get("/getAllUsers", authUser, getAllUsersController);
+
+router.put("/inviteUser", authUser, inviteUserController);
 
 const userRoutes = router;
 export default userRoutes;

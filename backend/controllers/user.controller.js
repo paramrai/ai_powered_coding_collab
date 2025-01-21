@@ -100,3 +100,101 @@ export const getAllUsersController = async (req, res, next) => {
     return next(new Error(error.message));
   }
 };
+
+export const inviteUserController = async (req, res, next) => {
+  const { inviteSenderId, inviteReceiverId, gemId } = req.body;
+
+  try {
+    const [inviteReceiverUser, inviteSenderUser] = await Promise.all([
+      userModel.findById(inviteReceiverId),
+      userModel.findById(inviteSenderId),
+    ]);
+
+    if (!inviteSenderUser || !inviteReceiverUser || !gemId) {
+      return next(new ValidationError("Please enter a valid user or gem Id"));
+    }
+
+    // Check if receiver already has this invite
+    const hasReceivedInvite = inviteReceiverUser.recievedInvites.some(
+      (invite) =>
+        invite.gemId.toString() === gemId.toString() &&
+        invite.senderId.toString() === inviteSenderId.toString()
+    );
+
+    if (hasReceivedInvite) {
+      // Remove the invite
+      await inviteReceiverUser.updateOne({
+        $pull: {
+          recievedInvites: {
+            gemId: gemId,
+            senderId: inviteSenderId,
+          },
+        },
+      });
+
+      await inviteSenderUser.updateOne({});
+
+      // Remove receiverId from sender's sentInvites
+      const gemInviteIndex = inviteSenderUser.sentInvites.findIndex(
+        (invite) => invite.gemId.toString() === gemId.toString()
+      );
+
+      if (gemInviteIndex !== -1) {
+        inviteSenderUser.sentInvites[gemInviteIndex].recieverIds =
+          inviteSenderUser.sentInvites[gemInviteIndex].recieverIds.filter(
+            (id) => id.toString() !== inviteReceiverId.toString()
+          );
+
+        // Remove the entire gemId object if no receivers left
+        if (
+          inviteSenderUser.sentInvites[gemInviteIndex].recieverIds.length === 0
+        ) {
+          inviteSenderUser.sentInvites.splice(gemInviteIndex, 1);
+        }
+      }
+    } else {
+      // Add new invite
+      await inviteReceiverUser.updateOne({
+        $push: {
+          recievedInvites: {
+            senderId: inviteSenderId,
+            gemId,
+          },
+        },
+      });
+
+      // Update sender's sentInvites
+      const existingGemInvite = inviteSenderUser.sentInvites.find(
+        (invite) => invite.gemId.toString() === gemId.toString()
+      );
+
+      if (existingGemInvite) {
+        // Add receiverId if it doesn't exist
+        if (!existingGemInvite.recieverIds.includes(inviteReceiverId)) {
+          existingGemInvite.recieverIds.push(inviteReceiverId);
+        }
+      } else {
+        // Create new gemId object with receiverId
+        inviteSenderUser.sentInvites.push({
+          recieverIds: [inviteReceiverId],
+          gemId,
+        });
+      }
+    }
+
+    await inviteSenderUser.save();
+
+    // Populate and return updated user
+    const updatedUser = await userModel
+      .findById(inviteSenderId)
+      .populate("sentInvites.recieverIds");
+
+    return res.status(200).json({
+      message: hasReceivedInvite ? "Invite removed" : "Invite sent",
+      user: updatedUser,
+    });
+  } catch (error) {
+    console.log(error);
+    return next(new Error(error.message));
+  }
+};
