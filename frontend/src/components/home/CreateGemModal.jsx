@@ -4,8 +4,8 @@ import { useNavigate } from "react-router-dom";
 import axiosInstance from "../../axios/axiosInstance";
 import { selectToken, selectUser } from "../../redux/slices/userSlice";
 import { toast } from "react-toastify";
-import { addGem, setCurrentOpenGem } from "../../redux/slices/gemSlice";
 import { motion } from "framer-motion";
+import { setGem } from "../../redux/slices/gemSlice";
 
 function CreateGemModal({ createGemModal, setCreateGemModal }) {
   const [name, setName] = useState("");
@@ -34,8 +34,7 @@ function CreateGemModal({ createGemModal, setCreateGemModal }) {
             {
               name,
               type: "root",
-              content: "",
-              children: [{}],
+              children: [],
             },
           ],
         },
@@ -47,17 +46,9 @@ function CreateGemModal({ createGemModal, setCreateGemModal }) {
       );
 
       if (res.status === 201 || res.statusText === "Created") {
+        dispatch(setGem(res.data));
+        navigate(`/gem/${res.data.name}`);
         toast.success("Your gem is created");
-        dispatch(
-          addGem({
-            name,
-            type: "root",
-            content: "",
-            children: [{}],
-          })
-        );
-        navigate("/gem");
-        dispatch(setCurrentOpenGem(res.data));
       }
     } catch (error) {
       console.error(error);

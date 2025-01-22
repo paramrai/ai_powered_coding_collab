@@ -6,6 +6,7 @@ import {
   DuplicateKeyError,
   ValidationError,
 } from "../utils/errorClass.js";
+import gemModel from "../models/gem.model.js";
 
 export const createUserController = async (req, res, next) => {
   const errors = validationResult(req);
@@ -220,21 +221,21 @@ export const acceptInviteController = async (req, res, next) => {
     });
 
     // Remove the invite from sender's sentInvites
-    await senderUser.updateOne(
-      {
-        _id: senderId,
-        "sentInvites.gemId": gemId,
-      },
-      {
-        $pull: {
-          "sentInvites.$.recieverIds": accepterId,
-        },
-      }
+    const inviteIndex = senderUser.sentInvites.findIndex((invite) =>
+      invite.gemId.equals(gemId)
     );
 
+    if (inviteIndex !== -1) {
+      senderUser.sentInvites[inviteIndex].recieverIds.filter(
+        (id) => id.toString() !== gemId.toString()
+      );
+
+      await senderUser.save();
+    }
+
     // Add accepter Id to gem's collaborators
-    if (!gem.collaborators.includes(accepterId)) {
-      gem.collaborators.push(accepterId);
+    if (!gem.collaborator.includes(accepterId)) {
+      gem.collaborator.push(accepterId);
     }
 
     await gem.save();
@@ -275,17 +276,17 @@ export const rejectInviteController = async (req, res, next) => {
     });
 
     // Remove the invite from sender's sentInvites
-    await senderUser.updateOne(
-      {
-        _id: senderId,
-        "sentInvites.gemId": gemId,
-      },
-      {
-        $pull: {
-          "sentInvites.$.recieverIds": rejectorId,
-        },
-      }
+    const inviteIndex = senderUser.sentInvites.findIndex((invite) =>
+      invite.gemId.equals(gemId)
     );
+
+    if (inviteIndex !== -1) {
+      senderUser.sentInvites[inviteIndex].recieverIds.filter(
+        (id) => id.toString() !== gemId.toString()
+      );
+
+      await senderUser.save();
+    }
 
     // Populate and return updated user
     const updatedUser = await userModel.findById(rejectorId);
@@ -294,5 +295,8 @@ export const rejectInviteController = async (req, res, next) => {
       msg: "Invite rejected",
       user: updatedUser,
     });
-  } catch (error) {}
+  } catch (error) {
+    console.log(error);
+    return next(new Error(error.message));
+  }
 };

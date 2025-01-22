@@ -21,14 +21,7 @@ const gemSchema = new mongoose.Schema(
         ref: "user",
       },
     ],
-    fileTree: [
-      {
-        name: String,
-        type: String,
-        content: String,
-        children: [{}],
-      },
-    ],
+    fileTree: [],
   },
   {
     timestamps: true,

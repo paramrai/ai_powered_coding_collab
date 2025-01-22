@@ -15,12 +15,13 @@ export const createGemController = async (req, res, next) => {
   }
 
   try {
-    const { name, description, owner } = req.body;
+    const { name, description, owner, fileTree } = req.body;
 
     const gem = await gemModel.create({
       name,
       description,
       owner,
+      fileTree,
     });
 
     return res.status(201).json(gem);
@@ -31,14 +32,10 @@ export const createGemController = async (req, res, next) => {
 };
 
 export const readGemController = async (req, res, next) => {
-  const { gemId } = req.params;
-
-  if (!mongoose.Types.ObjectId.isValid(gemId)) {
-    return next(new ValidationError("Invalid gem ID"));
-  }
+  const { gemName } = req.params;
 
   try {
-    const gem = await gemModel.findById(gemId);
+    const gem = await gemModel.findOne({ name: gemName });
     if (!gem) {
       return next(new NotFoundError("Gem not found"));
     }
@@ -51,21 +48,21 @@ export const readGemController = async (req, res, next) => {
 
 export const updateGemController = async (req, res, next) => {
   const { gemId } = req.params;
-  const { name, description, ...otherFields } = req.body;
+
+  const { name, description, fileTree } = req.body;
 
   if (!mongoose.Types.ObjectId.isValid(gemId)) {
     return next(new ValidationError("Invalid gem ID"));
   }
 
   try {
-    const updatedGem = await gemModel.findByIdAndUpdate(
-      gemId,
-      { name, description, ...otherFields },
-      { new: true, runValidators: true }
-    );
+    await gemModel.findByIdAndUpdate(gemId, { name, description, fileTree });
+    const updatedGem = await gemModel.findById(gemId);
+
     if (!updatedGem) {
       return next(new NotFoundError("Gem not found"));
     }
+
     res.status(200).json(updatedGem);
   } catch (error) {
     console.error(error.message);
@@ -158,10 +155,4 @@ export const collectGemController = async (req, res, next) => {
     console.error(error.message);
     return next(new InternalServerError(error.message));
   }
-};
-
-export const getGemCollectionController = async (req, res, next) => {
-  try {
-    const { userId } = query.params;
-  } catch (error) {}
 };

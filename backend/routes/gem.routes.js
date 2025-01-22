@@ -6,7 +6,6 @@ import {
   createGemController,
   deleteGemController,
   getAllGemsController,
-  getGemCollectionController,
   getUserGemsController,
   readGemController,
   updateGemController,
@@ -20,19 +19,17 @@ router.post(
   createGemController
 );
 
-router.get("/readGem/:gemId", readGemController);
+router.get("/readGem/:gemName", readGemController); // done
 
 router.put("/updateGem/:gemId", updateGemController);
 
 router.delete("/deleteGem/:gemId", deleteGemController);
 
-router.get("/getUserGems/:userId", getUserGemsController);
+router.get("/getUserGems/:userId", getUserGemsController); // done
 
-router.get("/getAllGems", getAllGemsController);
+router.get("/getAllGems", getAllGemsController); // done
 
-router.put("/collectGem/:gemId", collectGemController);
-
-router.get("/collection/:userId", getGemCollectionController);
+router.put("/collectGem/:gemId", collectGemController); // done
 
 const gemRoutes = router;
 export default gemRoutes;

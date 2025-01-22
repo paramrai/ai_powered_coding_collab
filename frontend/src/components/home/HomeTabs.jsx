@@ -23,7 +23,7 @@ function Tabs() {
   const [showInvites, setShowInvites] = useState(false);
 
   const handleTabChange = async (tab) => {
-    if (!user._id) {
+    if (!user._id && tab !== "explore") {
       tab === "me" && toast.info("Please Login First !");
       tab === "collection" &&
         toast.info("See collection by logging in First !");

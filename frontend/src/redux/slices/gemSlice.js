@@ -1,17 +1,11 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 let initialState = {
-  exploreGems: [],
-  openFiles: [], // 'file.js' ,isha.js
-  activeFile: "",
+  gem: {},
   path: "",
-  fileTree: [
-    {
-      name: "root",
-      type: "root",
-      children: [],
-    },
-  ],
+  activeFile: "",
+  openFiles: [],
+  exploreGems: [],
 };
 
 function findPathAndAdd(iterable, type, name, path) {
@@ -42,12 +36,29 @@ function findPathAndAdd(iterable, type, name, path) {
   }
 }
 
+function findPathAndDelete(iterable, type, name, path) {
+  if (!Array.isArray(iterable)) {
+    console.error("iterable is not an array");
+    return;
+  }
+
+  for (let child in iterable) {
+    if (child.type === type && child.name === name) {
+      console.log(`${child.name} will be deleted`);
+    }
+
+    if (child.children) {
+      findPathAndDelete(child.children, type, name, path);
+    }
+  }
+}
+
 const gemSlice = createSlice({
   name: "gems",
   initialState,
   reducers: {
-    addGem: (state, action) => {
-      return { ...state, fileTree: [action.payload] };
+    setGem: (state, action) => {
+      state.gem = action.payload;
     },
 
     setOpenFiles: (state, action) => {
@@ -78,19 +89,19 @@ const gemSlice = createSlice({
     setCurrentPath: (state, action) => {
       const folderName = action.payload;
       state.path = folderName;
-      console.log(state.path);
     },
     addNewFile: (state, action) => {
       const { type, name } = action.payload;
       const path = state.path;
-      findPathAndAdd(state.fileTree, type, name, path);
+      findPathAndAdd(state.gem.fileTree, type, name, path);
+    },
+    deleteFile: (state, action) => {
+      const { type, name } = action.payload;
+      const path = state.path;
+      findPathAndDelete(state.gem.fileTree, type, name, path);
     },
     setExploreGem: (state, action) => {
-      console.log(action.payload);
       state.exploreGems = action.payload;
-    },
-    setCurrentOpenGem: (state, action) => {
-      state.currentGem = action.payload;
     },
   },
 });
@@ -98,21 +109,21 @@ const gemSlice = createSlice({
 export default gemSlice.reducer;
 
 // selection
+export const selectPath = (state) => state.gems.path;
 export const selectOpenFiles = (state) => state.gems.openFiles;
 export const selectActiveFile = (state) => state.gems.activeFile;
-export const selectFileTree = (state) => state.gems.fileTree;
-export const selectPath = (state) => state.gems.path;
 export const selectExploreGems = (state) => state.gems.exploreGems;
-export const selectCurrentGem = (state) => state.gems.currentGem;
+export const selectFileTree = (state) => state.gems.gem.fileTree;
+export const selectCurrentGem = (state) => state.gems.gem;
 
 // methods
 export const {
-  addGem,
+  setGem,
   setOpenFiles,
   closeFile,
   setActiveFile,
   setCurrentPath,
   addNewFile,
+  deleteFile,
   setExploreGem,
-  setCurrentOpenGem,
 } = gemSlice.actions;

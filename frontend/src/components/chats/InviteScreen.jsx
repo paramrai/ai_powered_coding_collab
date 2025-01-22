@@ -6,8 +6,9 @@ import {
   selectUser,
   updateUserObject,
 } from "../../redux/slices/userSlice";
-import { selectCurrentGem } from "../../redux/slices/gemSlice";
+// todo import { selectCurrentGem } from "../../redux/slices/gemSlice";
 import { toast } from "react-toastify";
+import { selectCurrentGem } from "../../redux/slices/gemSlice";
 
 function InviteScreen({ activeTab }) {
   const token = useSelector(selectToken);

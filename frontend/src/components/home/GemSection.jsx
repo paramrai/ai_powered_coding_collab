@@ -8,10 +8,16 @@ import {
   selectUser,
   setUserCollection,
 } from "../../redux/slices/userSlice";
-import { selectExploreGems, setExploreGem } from "../../redux/slices/gemSlice";
+import {
+  selectExploreGems,
+  setExploreGem,
+  setGem,
+} from "../../redux/slices/gemSlice";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { ClipLoader } from "react-spinners";
+import { useNavigate } from "react-router-dom";
+import moment from "moment";
 
 const profile =
   "https:assets.codepen.io/2017/internal/avatars/users/default.png";
@@ -27,6 +33,7 @@ function GemSection() {
   const exploreGems = useSelector(selectExploreGems);
   const userId = useSelector(selectUser)._id;
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   // fetch gems
   useEffect(() => {
@@ -48,14 +55,15 @@ function GemSection() {
   }, [homeActiveTab]);
 
   useEffect(() => {
-    setLoading(true); // Start loading
-    if (homeActiveTab === "collection") {
-      setGems([...exploreGems]); // Create new array reference
-    } else {
-      setGems(exploreGems.slice(page, page + 6));
-    }
+    setLoading(true);
+    let sortedGems = [...exploreGems].sort(
+      (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+    );
+
+    setGems(sortedGems);
     setHasMore(page + 6 < exploreGems.length);
-    setLoading(false); // Stop loading
+
+    setLoading(false);
   }, [exploreGems, homeActiveTab, page]);
 
   const handleLikeClick = async (gem) => {
@@ -90,6 +98,11 @@ function GemSection() {
     window.scrollTo(0, 0);
   }
 
+  const handleOpenGem = (gem) => {
+    navigate(`/gem/${gem.name}`);
+    console.log(gem);
+  };
+
   return (
     <section className="flex flex-col my-4 px-2">
       {loading ? (
@@ -104,20 +117,10 @@ function GemSection() {
               : "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 w-full"
           }`}
         >
-          {gems.length === 0 && (
-            <div className="max-w-[500px] mx-auto text-gray-400 px-4 text-lg">
-              <span className="text-3xl">Thank you </span>
-              for taking the time to explore our projects. Each one is a gem,
-              meticulously crafted with passion, creativity, and dedication. We
-              hope you've enjoyed discovering these treasures . Your support and
-              appreciation mean the world to us, and we look forward to
-              continuing this journey together.
-            </div>
-          )}
           {gems.map((gem, index) => (
             <div
               key={index}
-              className="group project_card hover:bg-slate-800 w-full text-white rounded-md flex flex-col gap-4 p-3 transform transition duration-300"
+              className="group project_card hover:bg-slate-800 w-full text-white rounded-md flex flex-col gap-4 p-3 transform transition duration-300 cursor-pointer "
             >
               <div className="relative space-y-2">
                 <div className="overlay_effect_div absolute bg-slate-800 h-full w-full z-[-1] top-3 left-3 rounded-md"></div>
@@ -127,12 +130,13 @@ function GemSection() {
                     alt="preview"
                     className="object-cover rounded-md max-h-[200px] w-full"
                   />
-                  <i
-                    title="See in Detail"
-                    className="absolute top-2 right-2 p-2 text-lg bg-slate-800 rounded-md cursor-pointer opacity-0 group-hover:opacity-100 transform transition duration-300"
+                  <button
+                    onClick={() => handleOpenGem(gem)}
+                    title="Click to see in detail"
+                    className="group-hover:scale-[1.8] group-hover:transform group-hover:translate-y-6 group-hover:-translate-x-6 absolute top-2 right-2 p-2 text-lg bg-slate-800 rounded-md cursor-pointer opacity-0 group-hover:opacity-100 transform transition duration-300"
                   >
                     <GoScreenFull />
-                  </i>
+                  </button>
                 </div>
                 <div className="project_info gap-4 flex">
                   <img
@@ -140,8 +144,15 @@ function GemSection() {
                     alt="profile"
                     className="profile_img h-[45px] w-[45px] rounded-md"
                   />
-                  <div className="project_title flex flex-col justify-between">
-                    <span className="text-md font-bold">{gem.name}</span>
+                  <div className="project_title flex flex-col justify-between w-full">
+                    <div className="flex items-center justify-between w-full">
+                      <span className="text-md font-bold block">
+                        {gem.name}
+                      </span>
+                      <span className="text-md font-bold block">
+                        {moment(gem.createdAt).fromNow()}
+                      </span>
+                    </div>
                     <span className="text-sm">
                       {gem.owner.username}
                       <span className="bg-[#ffb120] rounded-sm px-1 h-min ml-2 text-black font-bold uppercase text-xs">
@@ -176,7 +187,7 @@ function GemSection() {
           ))}
         </div>
       )}
-      {gems.length > 0 && homeActiveTab !== "collection" && (
+      {gems.length > 0 && (
         <div className="w-full text-center mt-2 flex justify-center gap-4">
           {page > 0 && (
             <button

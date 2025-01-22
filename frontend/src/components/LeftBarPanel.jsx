@@ -30,18 +30,25 @@ import {
   SiDotenv,
 } from "react-icons/si";
 import { PiFileCSharp } from "react-icons/pi";
-
+import { MdDelete } from "react-icons/md";
 import { VscCollapseAll } from "react-icons/vsc";
 import { useDispatch, useSelector } from "react-redux";
 import {
   addNewFile,
+  deleteFile,
+  selectCurrentGem,
   selectFileTree,
   setActiveFile,
   setCurrentPath,
+  setGem,
   setOpenFiles,
 } from "../redux/slices/gemSlice";
 import { useMobileCheck } from "../hooks/useMobileCheck";
 import { useResizePanel } from "../hooks/useResizePanel";
+import axiosInstance from "../axios/axiosInstance";
+import { selectUser } from "../redux/slices/userSlice";
+import { toast } from "react-toastify";
+import { store } from "../redux/store";
 
 export const getFileIcon = (fileName) => {
   if (fileName.endsWith(".js")) return <FaJs className="text-yellow-400" />;
@@ -118,23 +125,56 @@ const FileTree = ({
             <span className="text-gray-300">{fileTree.name}</span>
           </div>
         )}
+
         {fileTree?.type === "folder" && (
-          <>
+          <div className="relative group flex w-full items-center">
             <span className="text-yellow-500 mr-2">
               {isOpen ? <FaFolderOpen /> : <FaFolder />}
             </span>
             <span className="text-gray-300">{fileTree?.name}</span>
-          </>
+            <button
+              className="hidden group-hover:flex absolute right-0 p-1 text-gray-500 
+              text-opacity-40 hover:text-opacity-100 hover:text-red-700 hover:scale-[1.1] 
+              cursor-pointer rounded-full transition-all z-50 "
+            >
+              <MdDelete
+                onClick={(e) => {
+                  if (e.target instanceof SVGElement) {
+                    console.log("clicked on delete");
+                    dispatch(
+                      deleteFile({ type: fileTree.type, name: fileTree.name })
+                    );
+                  }
+                }}
+              />
+            </button>
+          </div>
         )}
         {fileTree?.type === "file" && (
-          <button className="flex items-center">
+          <div className="group flex items-center">
             <span className="text-blue-400 mr-2 pointer-events-none">
               {getFileIcon(fileTree?.name)}
             </span>
             <span className="text-gray-300 pointer-events-none">
               {fileTree?.name}
             </span>
-          </button>
+            <button
+              className="hidden group-hover:flex absolute right-0 p-1 text-gray-500 
+              text-opacity-40 hover:text-opacity-100 hover:text-red-700 hover:scale-[1.1] 
+              cursor-pointer rounded-full transition-all z-50 "
+            >
+              <MdDelete
+                onClick={(e) => {
+                  if (e.target instanceof SVGElement) {
+                    console.log("clicked on delete");
+                    dispatch(
+                      deleteFile({ type: fileTree.type, name: fileTree.name })
+                    );
+                  }
+                }}
+              />
+            </button>
+          </div>
         )}
       </div>
 
@@ -189,6 +229,9 @@ const LeftBarPanel = ({ isLeftbarPanel, setIsLeftbarPanel }) => {
   const [showInput, setShowInput] = useState(false);
   const [lastOpenedFolder, setLastOpenedFolder] = useState(null);
   const leftBarRef = useRef(null);
+  const gem = useSelector(selectCurrentGem);
+  const user = useSelector(selectUser);
+
   const handleResize = useResizePanel(leftBarRef, "horizontal", {
     minWidth: 200,
     maxWidth: 600,
@@ -198,23 +241,57 @@ const LeftBarPanel = ({ isLeftbarPanel, setIsLeftbarPanel }) => {
 
   const fileTree = useSelector(selectFileTree)[0];
 
-  const handleAddFileSubmit = (e) => {
+  const handleAddFileSubmit = async (e) => {
     e.preventDefault();
+
+    // Add console logs to debug the IDs
+    console.log("Gem owner:", gem.owner);
+    console.log("Current user:", user._id);
+
+    // Convert IDs to strings and compare
+    const isOwner = String(gem.owner) === String(user._id);
+
+    if (!isOwner) {
+      // Use both warn and info to ensure visibility
+      toast.warn("Access Denied");
+      toast.info("Only the owner can modify this gem");
+      setShowInput(false);
+      return;
+    }
+
+    // Rest of the file creation logic
     const input = addingForm.current.querySelector("input");
     const newFileName = input.value.trim();
+
     if (newFileName) {
-      dispatch(
-        addNewFile({
-          type: type === "file" ? "file" : "folder",
-          name: newFileName,
-          icon: getFileIcon(newFileName),
-        })
-      );
-      input.value = "";
-      setShowInput(false);
-      if (type === "file") {
-        dispatch(setOpenFiles({ name: newFileName }));
-        dispatch(setActiveFile(newFileName));
+      try {
+        dispatch(
+          addNewFile({
+            type: type === "file" ? "file" : "folder",
+            name: newFileName,
+            children: [],
+            content: "",
+          })
+        );
+
+        // 2. Get current state after dispatch
+        const state = store.getState();
+        const updatedGem = state.gems.gem;
+
+        console.log(updatedGem);
+
+        await axiosInstance.put(`/gems/updateGem/${gem._id}`, updatedGem);
+
+        input.value = "";
+        setShowInput(false);
+
+        if (type === "file") {
+          dispatch(setOpenFiles({ name: newFileName }));
+          dispatch(setActiveFile(newFileName));
+        }
+      } catch (error) {
+        console.log(error);
+        toast.error("Failed to create file");
       }
     }
   };

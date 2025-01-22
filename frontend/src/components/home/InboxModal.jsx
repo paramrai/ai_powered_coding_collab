@@ -1,7 +1,13 @@
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { useSelector } from "react-redux";
-import { selectUser } from "../../redux/slices/userSlice";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  selectToken,
+  selectUser,
+  updateUserObject,
+} from "../../redux/slices/userSlice";
+import axiosInstance from "../../axios/axiosInstance";
+import { toast } from "react-toastify";
 
 const modalVariants = {
   hidden: {
@@ -28,11 +34,37 @@ const modalVariants = {
 
 const InboxModal = ({ showInvites, setShowInvites }) => {
   const user = useSelector(selectUser);
+  const token = useSelector(selectToken);
+  const dispatch = useDispatch();
   const recievedInvites = user.recievedInvites;
   const [activeInviteTab, setActiveInviteTab] = useState("received");
   const sentInvites = user.sentInvites;
 
-  console.log(sentInvites.recieverIds);
+  const handleAcceptInvite = async (invite) => {
+    try {
+      const res = await axiosInstance.put(
+        "/users/acceptInvite",
+        {
+          senderId: invite.senderId,
+          accepterId: user._id,
+          gemId: invite.gemId,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (res.status === 200 || res.statusText === "OK") {
+        dispatch(updateUserObject(res.data.user));
+        toast.success("Invite accepted");
+      }
+    } catch (error) {
+      console.log(error);
+      toast.error(error.response.data.message || error.message);
+    }
+  };
 
   return (
     <AnimatePresence>
@@ -93,13 +125,14 @@ const InboxModal = ({ showInvites, setShowInvites }) => {
                         className="bg-gray-700 p-4 rounded-lg border border-gray-600"
                       >
                         <p className="text-white font-medium mb-1">
-                          From: {invite.senderId}
+                          SenderId : {invite.senderId}
                         </p>
                         <p className="text-gray-300 text-sm mb-3">
-                          Project: {invite.gemId}
+                          GemId: {invite.gemId}
                         </p>
                         <div className="flex gap-3">
                           <button
+                            onClick={() => handleAcceptInvite(invite)}
                             className="flex-1 bg-green-600 hover:bg-green-700 
                         text-white rounded-md py-2 px-4 transition-all duration-200 
                         hover:shadow-lg hover:shadow-green-600/30 active:scale-95"
@@ -124,7 +157,7 @@ const InboxModal = ({ showInvites, setShowInvites }) => {
                 )
               ) : (
                 <div className="space-y-4">
-                  {sentInvites.length > 0 ? (
+                  {sentInvites?.length > 0 ? (
                     sentInvites.map((invite, index) => (
                       <motion.div
                         key={index}
