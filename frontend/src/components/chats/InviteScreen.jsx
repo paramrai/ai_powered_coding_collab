@@ -86,9 +86,7 @@ function InviteScreen({ activeTab }) {
             <button
               onClick={() => handleInviteUser(user)}
               className={`px-3 py-1 rounded-lg ${
-                isUserInvited(user._id)
-                  ? "bg-gray-500 cursor-not-allowed"
-                  : "bg-blue-500"
+                isUserInvited(user._id) ? "bg-gray-500" : "bg-blue-500"
               }`}
             >
               {isUserInvited(user._id) ? "Invited" : "Invite"}

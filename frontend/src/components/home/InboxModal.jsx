@@ -30,6 +30,9 @@ const InboxModal = ({ showInvites, setShowInvites }) => {
   const user = useSelector(selectUser);
   const recievedInvites = user.recievedInvites;
   const [activeInviteTab, setActiveInviteTab] = useState("received");
+  const sentInvites = user.sentInvites;
+
+  console.log(sentInvites.recieverIds);
 
   return (
     <AnimatePresence>
@@ -120,7 +123,44 @@ const InboxModal = ({ showInvites, setShowInvites }) => {
                   </p>
                 )
               ) : (
-                <p className="text-gray-400 text-center">No sent invites</p>
+                <div className="space-y-4">
+                  {sentInvites.length > 0 ? (
+                    sentInvites.map((invite, index) => (
+                      <motion.div
+                        key={index}
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: index * 0.1 }}
+                        className="bg-gray-700 p-4 rounded-lg border border-gray-600"
+                      >
+                        <p className="text-white font-medium mb-1">
+                          Gem: {invite.gemId}
+                        </p>
+                        <div className="space-y-2">
+                          {invite.recieverIds.map((recieverId, idx) => (
+                            <div
+                              key={idx}
+                              className="flex gap-2 items-center justify-between bg-gray-600 p-2 rounded"
+                            >
+                              <span className="text-gray-300">
+                                To: {recieverId}
+                              </span>
+                              <button
+                                className="bg-red-600 hover:bg-red-700 
+                                text-white rounded-md py-1 px-3 text-sm transition-all duration-200 
+                                hover:shadow-lg hover:shadow-red-600/30 active:scale-95"
+                              >
+                                Remove
+                              </button>
+                            </div>
+                          ))}
+                        </div>
+                      </motion.div>
+                    ))
+                  ) : (
+                    <p className="text-gray-400 text-center">No sent invites</p>
+                  )}
+                </div>
               )}
             </div>
 

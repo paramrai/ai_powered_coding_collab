@@ -14,7 +14,7 @@ const ChatContent = ({ setIsChatOpen }) => {
         setActiveTab={setActiveTab}
         setIsChatOpen={setIsChatOpen}
       />
-      <div className="chat_window mb-12 flex-1 flex flex-col gap-2 scroll-smooth h-full overflow-y-auto py-1 overflow-x-hidden scrollbar-thin scrollbar-thumb-slate-700 scrollbar-track-slate-900">
+      <div className="chat_window flex-1 flex flex-col gap-2 scroll-smooth h-full overflow-y-auto py-1 overflow-x-hidden scrollbar-thin scrollbar-thumb-slate-700 scrollbar-track-slate-900">
         <AiScreen activeTab={activeTab} />
         <GroupChatScreen activeTab={activeTab} />
         <InviteScreen activeTab={activeTab} />

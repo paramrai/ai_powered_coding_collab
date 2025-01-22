@@ -25,7 +25,7 @@ const DesktopChatOption = ({ isChatOpen, setIsChatOpen, width, setWidth }) => {
   return (
     <div
       ref={chatPanelRef}
-      className={`${resizableContainerClasses} h-[100vh] bg-red-900 border-l border-slate-700`}
+      className={`${resizableContainerClasses} h-[100vh] bg-slate-900 border-l border-slate-700`}
       style={{ width: `${width}px` }}
     >
       <div
