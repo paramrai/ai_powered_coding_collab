@@ -22,18 +22,15 @@ function InviteScreen({ activeTab }) {
     // fetch all users
     const fetchUsers = async () => {
       try {
-        const res = await axiosInstance.get("/users/getAllUsers", {
+        const res = await axiosInstance.get("/users/getPotentialInvites", {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         });
 
-        console.log(res.data.allUser);
-        const filteredUsers = allUsers.filter(
-          (user) => !currentGem.collaborator.includes(user.id)
-        );
+        console.log(res.data);
 
-        setPotentialInvites(filteredUsers);
+        setPotentialInvites(res.data.allUser);
       } catch (error) {
         console.log(error);
       }
@@ -45,7 +42,10 @@ function InviteScreen({ activeTab }) {
   const isUserInvited = (userId) => {
     return sentInvites.some(
       (invite) =>
-        invite.gemId === currentGem._id && invite.recieverIds.includes(userId)
+        String(invite.gem._id) === String(currentGem._id) &&
+        invite.recievers.some(
+          (reciever) => String(reciever._id) === String(userId)
+        )
     );
   };
 
@@ -79,7 +79,7 @@ function InviteScreen({ activeTab }) {
     activeTab === "add" && (
       <div className="p-4">
         <h2 className="text-lg font-bold text-white mb-4">Invite Users</h2>
-        {potentialInvites.map((user) => (
+        {potentialInvites?.map((user) => (
           <div
             key={user._id}
             className="flex items-center justify-between text-white mb-2 p-2 bg-gray-700 rounded"

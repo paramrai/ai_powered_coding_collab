@@ -85,13 +85,13 @@ export const logoutController = async (req, res, next) => {
   }
 };
 
-export const getAllUsersController = async (req, res, next) => {
+export const getPotentialInvitesController = async (req, res, next) => {
   try {
-    const loggedInUser = await userModel.findOne({
+    const user = await userModel.findOne({
       email: req.user.email,
     });
 
-    const allUser = await userService.getAllUsers({ userId: loggedInUser._id });
+    const allUser = await userModel.find({ _id: { $ne: user._id } });
 
     res.status(200).json({
       allUser,
@@ -118,37 +118,36 @@ export const inviteUserController = async (req, res, next) => {
     // Check if receiver already has this invite
     const hasReceivedInvite = inviteReceiverUser.recievedInvites.some(
       (invite) =>
-        invite.gemId.toString() === gemId.toString() &&
-        invite.senderId.toString() === inviteSenderId.toString()
+        invite.gem.equals(gemId) && invite.sender.equals(inviteSenderId)
     );
+
+    console.log("hasRecievedInvites", hasReceivedInvite);
 
     if (hasReceivedInvite) {
       // Remove the invite
       await inviteReceiverUser.updateOne({
         $pull: {
           recievedInvites: {
-            gemId: gemId,
-            senderId: inviteSenderId,
+            sender: inviteSenderId,
+            gem: gemId,
           },
         },
       });
 
-      await inviteSenderUser.updateOne({});
-
       // Remove receiverId from sender's sentInvites
       const gemInviteIndex = inviteSenderUser.sentInvites.findIndex(
-        (invite) => invite.gemId.toString() === gemId.toString()
+        (invite) => invite.gem.toString() === gemId.toString()
       );
 
       if (gemInviteIndex !== -1) {
-        inviteSenderUser.sentInvites[gemInviteIndex].recieverIds =
-          inviteSenderUser.sentInvites[gemInviteIndex].recieverIds.filter(
+        inviteSenderUser.sentInvites[gemInviteIndex].recievers =
+          inviteSenderUser.sentInvites[gemInviteIndex].recievers.filter(
             (id) => id.toString() !== inviteReceiverId.toString()
           );
 
         // Remove the entire gemId object if no receivers left
         if (
-          inviteSenderUser.sentInvites[gemInviteIndex].recieverIds.length === 0
+          inviteSenderUser.sentInvites[gemInviteIndex].recievers.length === 0
         ) {
           inviteSenderUser.sentInvites.splice(gemInviteIndex, 1);
         }
@@ -158,27 +157,27 @@ export const inviteUserController = async (req, res, next) => {
       await inviteReceiverUser.updateOne({
         $push: {
           recievedInvites: {
-            senderId: inviteSenderId,
-            gemId,
+            sender: inviteSenderId,
+            gem: gemId,
           },
         },
       });
 
       // Update sender's sentInvites
       const existingGemInvite = inviteSenderUser.sentInvites.find(
-        (invite) => invite.gemId.toString() === gemId.toString()
+        (invite) => invite.gem.toString() === gemId.toString()
       );
 
       if (existingGemInvite) {
         // Add receiverId if it doesn't exist
-        if (!existingGemInvite.recieverIds.includes(inviteReceiverId)) {
-          existingGemInvite.recieverIds.push(inviteReceiverId);
+        if (!existingGemInvite.recievers.includes(inviteReceiverId)) {
+          existingGemInvite.recievers.push(inviteReceiverId);
         }
       } else {
         // Create new gemId object with receiverId
         inviteSenderUser.sentInvites.push({
-          recieverIds: [inviteReceiverId],
-          gemId,
+          recievers: [inviteReceiverId],
+          gem: gemId,
         });
       }
     }
@@ -186,7 +185,11 @@ export const inviteUserController = async (req, res, next) => {
     await inviteSenderUser.save();
 
     // Populate and return updated user
-    const updatedUser = await userModel.findById(inviteSenderId);
+    const updatedUser = await userModel
+      .findById(inviteSenderId)
+      .populate(
+        "sentInvites.recievers sentInvites.gem recievedInvites.sender  recievedInvites.gem"
+      );
 
     return res.status(200).json({
       msg: hasReceivedInvite ? "Invite removed" : "Invite sent",
@@ -222,17 +225,17 @@ export const acceptInviteController = async (req, res, next) => {
 
     // Remove the invite from sender's sentInvites
     const inviteIndex = senderUser.sentInvites.findIndex((invite) =>
-      invite.gemId.equals(gemId)
+      invite.gem.equals(gemId)
     );
 
     if (inviteIndex !== -1) {
-      // Filter out the specific receiverId from recieverIds
-      senderUser.sentInvites[inviteIndex].recieverIds = senderUser.sentInvites[
+      // Filter out the specific receiverId from recievers
+      senderUser.sentInvites[inviteIndex].recievers = senderUser.sentInvites[
         inviteIndex
-      ].recieverIds.filter((id) => id.toString() !== accepterId.toString());
+      ].recievers.filter((id) => id.toString() !== accepterId.toString());
 
-      // Check if recieverIds is now empty, remove the invite if so
-      if (senderUser.sentInvites[inviteIndex].recieverIds.length === 0) {
+      // Check if recievers is now empty, remove the invite if so
+      if (senderUser.sentInvites[inviteIndex].recievers.length === 0) {
         senderUser.sentInvites.splice(inviteIndex, 1);
       }
 
@@ -247,7 +250,11 @@ export const acceptInviteController = async (req, res, next) => {
     await gem.save();
 
     // Populate and return updated user
-    const updatedUser = await userModel.findById(accepterId);
+    const updatedUser = await userModel
+      .findById(accepterId)
+      .populate(
+        "sentInvites.recievers sentInvites.gem  recievedInvites.sender  recievedInvites.gem"
+      );
 
     return res.status(200).json({
       msg: "Invite accepted",
@@ -283,11 +290,11 @@ export const rejectInviteController = async (req, res, next) => {
 
     // Remove the invite from sender's sentInvites
     const inviteIndex = senderUser.sentInvites.findIndex((invite) =>
-      invite.gemId.equals(gemId)
+      invite.gem.equals(gemId)
     );
 
     if (inviteIndex !== -1) {
-      senderUser.sentInvites[inviteIndex].recieverIds.filter(
+      senderUser.sentInvites[inviteIndex].recievers.filter(
         (id) => id.toString() !== gemId.toString()
       );
 

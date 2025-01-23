@@ -24,13 +24,13 @@ const userSchema = new mongoose.Schema(
     ],
     sentInvites: [
       {
-        recieverIds: [
+        recievers: [
           {
             type: mongoose.Schema.Types.ObjectId,
             ref: "user",
           },
         ],
-        gemId: {
+        gem: {
           type: mongoose.Schema.Types.ObjectId,
           ref: "gem",
         },
@@ -38,11 +38,11 @@ const userSchema = new mongoose.Schema(
     ],
     recievedInvites: [
       {
-        senderId: {
+        sender: {
           type: mongoose.Schema.Types.ObjectId,
           ref: "user",
         },
-        gemId: {
+        gem: {
           type: mongoose.Schema.Types.ObjectId,
           ref: "gem",
         },

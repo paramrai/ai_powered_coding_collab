@@ -3,7 +3,7 @@ import { body } from "express-validator";
 import {
   acceptInviteController,
   createUserController,
-  getAllUsersController,
+  getPotentialInvitesController,
   inviteUserController,
   loginController,
   logoutController,
@@ -38,7 +38,7 @@ router.post(
 
 router.get("/profile", authUser, profileController);
 router.get("/logout", authUser, logoutController);
-router.get("/getAllUsers", authUser, getAllUsersController);
+router.get("/getPotentialInvites", authUser, getPotentialInvitesController);
 
 router.put("/inviteUser", authUser, inviteUserController);
 router.put("/acceptInvite", authUser, acceptInviteController);

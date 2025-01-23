@@ -28,5 +28,13 @@ const gemSchema = new mongoose.Schema(
   }
 );
 
+gemSchema.pre("save", function (next) {
+  if (this.isNew && this.owner) {
+    this.collaborator.push(this.owner);
+  }
+
+  next();
+});
+
 const gemModel = mongoose.model("gem", gemSchema);
 export default gemModel;
