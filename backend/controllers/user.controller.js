@@ -40,7 +40,9 @@ export const loginController = async (req, res, next) => {
     const user = await userModel
       .findOne({ email })
       .select("+password")
-      .populate("collection");
+      .populate(
+        "collection sentInvites.recievers sentInvites.gem recievedInvites.sender  recievedInvites.gem"
+      );
 
     if (!user) {
       return next(new AuthenticationError("Invalid credentials"));
@@ -86,15 +88,29 @@ export const logoutController = async (req, res, next) => {
 };
 
 export const getPotentialInvitesController = async (req, res, next) => {
+  const { gemId } = req.body;
+
   try {
-    const user = await userModel.findOne({
+    const loggedInUser = await userModel.findOne({
       email: req.user.email,
     });
+    const gem = await gemModel.findById(gemId);
+    const sentInvite = loggedInUser.sentInvites.find(
+      (invite) => String(invite.gem) === String(gemId)
+    );
 
-    const allUser = await userModel.find({ _id: { $ne: user._id } });
+    console.log({ sentInvite });
+
+    const allUser = await userModel.find({ _id: { $ne: loggedInUser._id } });
+
+    const potentialInvites = allUser.filter(
+      (user) =>
+        !sentInvite?.recievers.includes(user._id) &&
+        !gem.collaborator.includes(user._id)
+    );
 
     res.status(200).json({
-      allUser,
+      potentialInvites,
     });
   } catch (error) {
     console.log(error);

@@ -125,10 +125,10 @@ const InboxModal = ({ showInvites, setShowInvites }) => {
                         className="bg-gray-700 p-4 rounded-lg border border-gray-600"
                       >
                         <p className="text-white font-medium mb-1">
-                          SenderId : {invite.senderId}
+                          SenderId : {invite.sender.username}
                         </p>
                         <p className="text-gray-300 text-sm mb-3">
-                          GemId: {invite.gemId}
+                          GemId: {invite.gem.name}
                         </p>
                         <div className="flex gap-3">
                           <button
@@ -167,16 +167,16 @@ const InboxModal = ({ showInvites, setShowInvites }) => {
                         className="bg-gray-700 p-4 rounded-lg border border-gray-600"
                       >
                         <p className="text-white font-medium mb-1">
-                          Gem: {invite.gemId}
+                          Gem: {invite.gem.name}
                         </p>
                         <div className="space-y-2">
-                          {invite.recieverIds.map((recieverId, idx) => (
+                          {invite.recievers.map((reciever, idx) => (
                             <div
                               key={idx}
                               className="flex gap-2 items-center justify-between bg-gray-600 p-2 rounded"
                             >
                               <span className="text-gray-300">
-                                To: {recieverId}
+                                To: {reciever.username}
                               </span>
                               <button
                                 className="bg-red-600 hover:bg-red-700 

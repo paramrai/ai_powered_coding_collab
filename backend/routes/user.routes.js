@@ -38,7 +38,7 @@ router.post(
 
 router.get("/profile", authUser, profileController);
 router.get("/logout", authUser, logoutController);
-router.get("/getPotentialInvites", authUser, getPotentialInvitesController);
+router.post("/getPotentialInvites", authUser, getPotentialInvitesController);
 
 router.put("/inviteUser", authUser, inviteUserController);
 router.put("/acceptInvite", authUser, acceptInviteController);

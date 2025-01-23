@@ -22,15 +22,21 @@ function InviteScreen({ activeTab }) {
     // fetch all users
     const fetchUsers = async () => {
       try {
-        const res = await axiosInstance.get("/users/getPotentialInvites", {
-          headers: {
-            Authorization: `Bearer ${token}`,
+        const res = await axiosInstance.post(
+          "/users/getPotentialInvites",
+          {
+            gemId: currentGem._id,
           },
-        });
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
 
-        console.log(res.data);
+        console.log(res.data.potentialInvites);
 
-        setPotentialInvites(res.data.allUser);
+        setPotentialInvites(res.data.potentialInvites);
       } catch (error) {
         console.log(error);
       }
