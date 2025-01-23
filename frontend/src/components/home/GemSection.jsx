@@ -35,21 +35,6 @@ function GemSection() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  // fetch gems
-  useEffect(() => {
-    const fetchAllGems = async () => {
-      try {
-        const res = await axiosInstance.get("/gems/getAllGems");
-        dispatch(setExploreGem(res.data));
-      } catch (error) {
-        toast.error(error.response?.data.msg);
-        console.log(error);
-      }
-    };
-
-    fetchAllGems();
-  }, []);
-
   useEffect(() => {
     setPage(0);
   }, [homeActiveTab]);

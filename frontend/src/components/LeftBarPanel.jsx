@@ -35,9 +35,11 @@ import { VscCollapseAll } from "react-icons/vsc";
 import { useDispatch, useSelector } from "react-redux";
 import {
   addNewFile,
+  closeFile,
   deleteFile,
   selectCurrentGem,
   selectFileTree,
+  selectOpenFiles,
   setActiveFile,
   setCurrentPath,
   setGem,
@@ -98,11 +100,13 @@ const FileTree = ({
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const dispatch = useDispatch();
+  const user = useSelector(selectUser);
+  const gem = useSelector(selectCurrentGem);
 
   const handleClick = () => {
     setIsOpen(!isOpen);
     if (fileTree.type === "file") {
-      dispatch(setOpenFiles({ name: fileTree.name }));
+      dispatch(setOpenFiles(fileTree.name));
       dispatch(setActiveFile(fileTree.name));
     } else if (fileTree.type === "folder" || fileTree.type === "root") {
       dispatch(setCurrentPath(fileTree.name));
@@ -139,11 +143,16 @@ const FileTree = ({
             >
               <MdDelete
                 onClick={(e) => {
-                  if (e.target instanceof SVGElement) {
-                    console.log("clicked on delete");
-                    dispatch(
-                      deleteFile({ type: fileTree.type, name: fileTree.name })
-                    );
+                  if (String(user._id) !== String(gem.owner)) {
+                    toast.error("Only Owner can edit gems");
+                    return;
+                  } else {
+                    if (e.target instanceof SVGElement) {
+                      dispatch(closeFile(fileTree.name));
+                      dispatch(
+                        deleteFile({ type: fileTree.type, name: fileTree.name })
+                      );
+                    }
                   }
                 }}
               />
@@ -165,11 +174,16 @@ const FileTree = ({
             >
               <MdDelete
                 onClick={(e) => {
-                  if (e.target instanceof SVGElement) {
-                    console.log("clicked on delete");
-                    dispatch(
-                      deleteFile({ type: fileTree.type, name: fileTree.name })
-                    );
+                  if (String(user._id) !== String(gem.owner)) {
+                    toast.error("Only Owner can edit gems");
+                    return;
+                  } else {
+                    if (e.target instanceof SVGElement) {
+                      dispatch(closeFile(fileTree.name));
+                      dispatch(
+                        deleteFile({ type: fileTree.type, name: fileTree.name })
+                      );
+                    }
                   }
                 }}
               />
@@ -274,19 +288,11 @@ const LeftBarPanel = ({ isLeftbarPanel, setIsLeftbarPanel }) => {
           })
         );
 
-        // 2. Get current state after dispatch
-        const state = store.getState();
-        const updatedGem = state.gems.gem;
-
-        console.log(updatedGem);
-
-        await axiosInstance.put(`/gems/updateGem/${gem._id}`, updatedGem);
-
         input.value = "";
         setShowInput(false);
 
         if (type === "file") {
-          dispatch(setOpenFiles({ name: newFileName }));
+          dispatch(setOpenFiles(newFileName));
           dispatch(setActiveFile(newFileName));
         }
       } catch (error) {

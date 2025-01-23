@@ -45,33 +45,24 @@ const OpenFiles = () => {
                       items-center bg-slate-800 p-4
                       transition-all duration-300 border-b-[1px]
                       ${
-                        activeFile === file.name
+                        activeFile === file
                           ? "border-blue-500"
                           : "border-slate-800"
                       }`}
             onClick={(e) => {
               if (e.target instanceof SVGElement) {
                 console.log("The target is an SVG element.");
-                dispatch(closeFile(file.name));
+                dispatch(closeFile(file));
                 // if closing file = active then active = index - 1
-                if (activeFile === file.name) {
-                  console.log("same");
-                  const index = openFiles.findIndex(
-                    (obj) => obj.name === file.name
-                  );
-                  dispatch(setActiveFile(openFiles[index - 1]?.name));
-                } else {
-                  console.log("diffrent");
-                }
               } else {
                 console.log("The target is not an SVG element.");
                 // set active file
-                dispatch(setActiveFile(file.name));
+                dispatch(setActiveFile(file));
               }
             }}
           >
-            {getFileIcon(file.name)}
-            <h3 className="text-sm text-white mx-2">{file.name}</h3>
+            {getFileIcon(file)}
+            <h3 className="text-sm text-white mx-2">{file}</h3>
             <IoClose
               className="text-sm text-gray-400 hover:text-red-500 transition-colors"
               size={18}

@@ -16,7 +16,7 @@ const CodeSpace = () => {
                    [&::-webkit-user-select]:none
                    [&::-moz-user-select]:none
                    [&::-ms-user-select]:none
-                   flex-grow-[1]"
+                   flex-grow-[1] scrollbar-hide"
         placeholder="// Start coding here..."
         spellCheck="false"
         draggable="false"

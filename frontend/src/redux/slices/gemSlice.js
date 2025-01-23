@@ -1,4 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
+import axiosInstance from "../../axios/axiosInstance";
 
 let initialState = {
   gem: {},
@@ -42,9 +43,10 @@ function findPathAndDelete(iterable, type, name, path) {
     return;
   }
 
-  for (let child in iterable) {
+  for (let [index, child] of iterable.entries()) {
     if (child.type === type && child.name === name) {
       console.log(`${child.name} will be deleted`);
+      iterable.splice(index, 1);
     }
 
     if (child.children) {
@@ -62,26 +64,16 @@ const gemSlice = createSlice({
     },
 
     setOpenFiles: (state, action) => {
-      state.openFiles = [...state.openFiles, action.payload];
-
-      const uniqueFiles = [];
-      const seenNames = new Set();
-
-      for (let file of state.openFiles) {
-        if (!seenNames.has(file.name)) {
-          seenNames.add(file.name);
-          uniqueFiles.push(file);
-        }
-      }
-
-      state.openFiles = uniqueFiles;
+      state.openFiles = [...new Set([...state.openFiles, action.payload])];
     },
     closeFile: (state, action) => {
-      let closingFile = action.payload;
+      const closingFile = action.payload;
 
-      state.openFiles = state.openFiles.filter(
-        (file) => file.name !== closingFile
-      );
+      if (state.openFiles.includes(closingFile)) {
+        state.openFiles = state.openFiles.filter(
+          (file) => file !== closingFile
+        );
+      }
     },
     setActiveFile: (state, action) => {
       state.activeFile = action.payload;
@@ -94,11 +86,21 @@ const gemSlice = createSlice({
       const { type, name } = action.payload;
       const path = state.path;
       findPathAndAdd(state.gem.fileTree, type, name, path);
+      const updatedGem = state.gem;
+      axiosInstance.put(`/gems/updateGem/${state.gem._id}`, updatedGem);
     },
     deleteFile: (state, action) => {
       const { type, name } = action.payload;
       const path = state.path;
+
       findPathAndDelete(state.gem.fileTree, type, name, path);
+
+      const updatedGem = state.gem;
+      axiosInstance.put(`/gems/updateGem/${state.gem._id}`, updatedGem);
+
+      if (state.activeFile === name) {
+        state.activeFile = state.openFiles[0]?.name || "";
+      }
     },
     setExploreGem: (state, action) => {
       state.exploreGems = action.payload;
