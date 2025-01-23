@@ -4,7 +4,7 @@ import {
   selectUser,
   setHomeActiveTab,
 } from "../../redux/slices/userSlice";
-import AuthForm from "../AuthForm";
+import AuthForm from "./AuthForm";
 import RightBarProfile from "./RightBarProfile";
 import { useState } from "react";
 import { FaSearch } from "react-icons/fa";

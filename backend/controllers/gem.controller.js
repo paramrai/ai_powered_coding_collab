@@ -35,7 +35,10 @@ export const readGemController = async (req, res, next) => {
   const { gemName } = req.params;
 
   try {
-    const gem = await gemModel.findOne({ name: gemName });
+    const gem = await gemModel
+      .findOne({ name: gemName })
+      .populate("collaborator");
+
     if (!gem) {
       return next(new NotFoundError("Gem not found"));
     }

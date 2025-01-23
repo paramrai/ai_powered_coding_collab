@@ -1,15 +1,15 @@
 import React, { useEffect, useState } from "react";
-import CodeSpace from "../components/CodeSpace";
-import MobileChatOption from "../components/MobileChatOption";
-import DesktopChatOption from "../components/DesktopChatOption";
-import LeftBar from "../components/LeftBar";
-import LeftBarPanel from "../components/LeftBarPanel";
 import { useMobileCheck } from "../hooks/useMobileCheck";
 import { useLocation, useParams } from "react-router-dom";
 import NotFound from "../components/NotFound";
 import axiosInstance from "../axios/axiosInstance";
 import { useDispatch } from "react-redux";
 import { setGem } from "../redux/slices/gemSlice";
+import LeftBar from "../components/CodeGem/LeftBar";
+import LeftBarPanel from "../components/CodeGem/LeftBarPanel";
+import CodeSpace from "../components/CodeGem/CodeSpace";
+import MobileChatOption from "../components/CodeGem/MobileChatOption";
+import DesktopChatOption from "../components/CodeGem/DesktopChatOption";
 
 const CodeGem = () => {
   const isMobile = useMobileCheck();

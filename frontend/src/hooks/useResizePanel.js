@@ -1,4 +1,4 @@
-import { useEffect, useCallback } from "react";
+import { useCallback } from "react";
 
 export const useResizePanel = (ref, direction = "horizontal", options = {}) => {
   const {

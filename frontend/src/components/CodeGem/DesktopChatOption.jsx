@@ -1,11 +1,11 @@
 import React, { useRef } from "react";
-import ChatContent from "./chats/ChatContent";
-import { useMobileCheck } from "../hooks/useMobileCheck";
-import { useResizePanel } from "../hooks/useResizePanel";
+import ChatContent from "../chats/ChatContent";
+import { useMobileCheck } from "../../hooks/useMobileCheck";
+import { useResizePanel } from "../../hooks/useResizePanel";
 import {
   resizeHandleClasses,
   resizableContainerClasses,
-} from "../styles/resizeHandle";
+} from "../../styles/resizeHandle";
 
 const DesktopChatOption = ({ isChatOpen, setIsChatOpen, width, setWidth }) => {
   const isMobile = useMobileCheck();

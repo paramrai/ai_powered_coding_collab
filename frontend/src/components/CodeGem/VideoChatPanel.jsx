@@ -1,11 +1,11 @@
 import React, { useEffect, useRef, useState } from "react";
 import { FaMicrophone, FaVideo, FaPhone, FaPhoneSlash } from "react-icons/fa";
-import { useMobileCheck } from "../hooks/useMobileCheck";
-import { useResizePanel } from "../hooks/useResizePanel";
+import { useMobileCheck } from "../../hooks/useMobileCheck";
+import { useResizePanel } from "../../hooks/useResizePanel";
 import {
   resizeHandleClasses,
   resizableContainerClasses,
-} from "../styles/resizeHandle";
+} from "../../styles/resizeHandle";
 
 const CallingOption = () => {
   return (

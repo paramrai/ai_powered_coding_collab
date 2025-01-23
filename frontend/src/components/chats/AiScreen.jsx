@@ -84,7 +84,7 @@ function AiScreen({ activeTab }) {
     activeTab === "ai" && (
       <>
         {messages.map((message, index) => (
-          <div key={index} className="flex flex-col mb-4">
+          <div key={index} className="h-full flex flex-col mb-4">
             <div
               className={`flex items-start gap-2 ${
                 message.sender === username ? "flex-row-reverse" : "flex-row"
@@ -134,7 +134,7 @@ function AiScreen({ activeTab }) {
           </div>
         )}
         <div ref={messagesEndRef} />
-        <div className="chat-promt sticky bottom-0 left-0 w-full px-2 pb-2">
+        <div className="chat-promt sticky bottom-0 w-full px-2 pb-2">
           <form onSubmit={sendMessage} className="flex pt-2">
             <input
               ref={inputRef}

@@ -1,6 +1,6 @@
 import React from "react";
-import VideoChatPanel from "./VideoChatPanel";
 import OpenFiles from "./OpenFiles";
+import VideoChatPanel from "./VideoChatPanel";
 
 const CodeSpace = () => {
   return (

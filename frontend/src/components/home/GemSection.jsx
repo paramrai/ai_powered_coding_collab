@@ -139,7 +139,7 @@ function GemSection() {
                       </span>
                     </div>
                     <span className="text-sm">
-                      {gem.owner.username}
+                      {gem.owner?.username}
                       <span className="bg-[#ffb120] rounded-sm px-1 h-min ml-2 text-black font-bold uppercase text-xs">
                         Pro
                       </span>

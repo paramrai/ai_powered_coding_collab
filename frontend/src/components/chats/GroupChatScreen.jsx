@@ -1,42 +1,12 @@
-function GroupChatScreen({ activeTab }) {
-  // Add sample chat data
-  const chatUsers = [
-    {
-      id: 1,
-      name: "Mike Johnson",
-      avatar: "MJ",
-      isOnline: true,
-      lastMessage: "Let's debug this together",
-      time: "1h ago",
-    },
-    {
-      id: 2,
-      name: "Sarah Wilson",
-      avatar: "SW",
-      isOnline: true,
-      lastMessage: "Can you review my PR?",
-      time: "2h ago",
-    },
-    {
-      id: 3,
-      name: "Pike Jade",
-      avatar: "PJ",
-      isOnline: false,
-      lastMessage: "Will check later",
-      time: "3h ago",
-    },
-    {
-      id: 4,
-      name: "Emma Davis",
-      avatar: "ED",
-      isOnline: false,
-      lastMessage: "Thanks for the help",
-      time: "5h ago",
-    },
-  ];
+import { useSelector } from "react-redux";
+import { selectCurrentGem } from "../../redux/slices/gemSlice";
 
-  const onlineUsers = chatUsers.filter((user) => user.isOnline);
-  const offlineUsers = chatUsers.filter((user) => !user.isOnline);
+function GroupChatScreen({ activeTab }) {
+  const gem = useSelector(selectCurrentGem);
+  const collaborator = gem.collaborator;
+
+  const onlineUsers = collaborator.filter((user) => user.isOnline);
+  const offlineUsers = collaborator.filter((user) => !user.isOnline);
 
   // Add sample group messages
   const groupMessages = [
@@ -71,13 +41,13 @@ function GroupChatScreen({ activeTab }) {
             {onlineUsers.map((user) => (
               <div key={user.id} className="relative group">
                 <div className="w-12 h-12 rounded-full bg-gray-600 flex items-center justify-center text-white font-bold cursor-pointer">
-                  {user.avatar}
+                  {user.avatar || user.username.slice(0, 2).toUpperCase()}
                 </div>
                 <div className="absolute -bottom-1 -right-1 w-4 h-4 rounded-full border-2 border-gray-800 bg-green-500"></div>
                 <div className="absolute top-0 left-0 bg-green-700 text-white text-xs py-1 px-2 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-50 pointer-events-none">
-                  {user.name}
+                  {user.username}
                   <div className="text-[10px] text-gray-300">
-                    {user.lastMessage}
+                    {user.lastMessage || "Lets debug"}
                   </div>
                 </div>
               </div>
@@ -85,12 +55,14 @@ function GroupChatScreen({ activeTab }) {
             {offlineUsers.map((user) => (
               <div key={user.id} className="relative group">
                 <div className="w-12 h-12 rounded-full bg-gray-600 flex items-center justify-center text-white font-bold opacity-70 cursor-pointer">
-                  {user.avatar}
+                  {user.avatar || user.username.slice(0, 2).toUpperCase()}
                 </div>
                 <div className="absolute -bottom-1 -right-1 w-4 h-4 rounded-full border-2 border-gray-800 bg-gray-500"></div>
                 <div className="absolute top-0 left-0 bg-gray-700 text-white text-xs py-1 px-2 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-50 pointer-events-none">
-                  {user.name}
-                  <div className="text-[10px] text-gray-300">{user.time}</div>
+                  {user.username}
+                  <div className="text-[10px] text-gray-300">
+                    {user.time || "1h ago"}
+                  </div>
                 </div>
               </div>
             ))}

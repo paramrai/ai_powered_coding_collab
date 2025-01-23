@@ -44,13 +44,10 @@ import {
   setCurrentPath,
   setGem,
   setOpenFiles,
-} from "../redux/slices/gemSlice";
-import { useMobileCheck } from "../hooks/useMobileCheck";
-import { useResizePanel } from "../hooks/useResizePanel";
-import axiosInstance from "../axios/axiosInstance";
-import { selectUser } from "../redux/slices/userSlice";
+} from "../../redux/slices/gemSlice";
+import { useResizePanel } from "../../hooks/useResizePanel";
+import { selectUser } from "../../redux/slices/userSlice";
 import { toast } from "react-toastify";
-import { store } from "../redux/store";
 
 export const getFileIcon = (fileName) => {
   if (fileName.endsWith(".js")) return <FaJs className="text-yellow-400" />;

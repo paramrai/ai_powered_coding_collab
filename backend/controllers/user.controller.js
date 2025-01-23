@@ -226,9 +226,15 @@ export const acceptInviteController = async (req, res, next) => {
     );
 
     if (inviteIndex !== -1) {
-      senderUser.sentInvites[inviteIndex].recieverIds.filter(
-        (id) => id.toString() !== gemId.toString()
-      );
+      // Filter out the specific receiverId from recieverIds
+      senderUser.sentInvites[inviteIndex].recieverIds = senderUser.sentInvites[
+        inviteIndex
+      ].recieverIds.filter((id) => id.toString() !== accepterId.toString());
+
+      // Check if recieverIds is now empty, remove the invite if so
+      if (senderUser.sentInvites[inviteIndex].recieverIds.length === 0) {
+        senderUser.sentInvites.splice(inviteIndex, 1);
+      }
 
       await senderUser.save();
     }

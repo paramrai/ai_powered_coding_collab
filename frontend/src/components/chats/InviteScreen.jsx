@@ -29,7 +29,11 @@ function InviteScreen({ activeTab }) {
         });
 
         console.log(res.data.allUser);
-        setPotentialInvites(res.data.allUser);
+        const filteredUsers = allUsers.filter(
+          (user) => !currentGem.collaborator.includes(user.id)
+        );
+
+        setPotentialInvites(filteredUsers);
       } catch (error) {
         console.log(error);
       }

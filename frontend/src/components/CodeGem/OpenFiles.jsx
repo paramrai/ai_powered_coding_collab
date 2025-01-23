@@ -27,7 +27,7 @@ import {
   selectActiveFile,
   selectOpenFiles,
   setActiveFile,
-} from "../redux/slices/gemSlice";
+} from "../../redux/slices/gemSlice";
 import { getFileIcon } from "./LeftBarPanel";
 
 const OpenFiles = () => {

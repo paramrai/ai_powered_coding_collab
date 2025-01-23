@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useDispatch, useSelector } from "react-redux";
-import { setUser, selectUser, selectToken } from "../redux/slices/userSlice";
-import axiosInstance from "../axios/axiosInstance";
+import { setUser, selectUser, selectToken } from "../../redux/slices/userSlice";
+import axiosInstance from "../../axios/axiosInstance";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
