@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-import axiosInstance from "../../axios/axiosInstance";
+import axiosInstance from "../../configs/axiosInstance";
 
 let initialState = {
   gem: {},

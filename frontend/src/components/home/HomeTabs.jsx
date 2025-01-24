@@ -4,14 +4,14 @@ import {
   selectUser,
   setHomeActiveTab,
 } from "../../redux/slices/userSlice";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import CreateGemModal from "./CreateGemModal";
 import { HiOutlineViewGridAdd } from "react-icons/hi";
 import { RiNotificationBadgeFill } from "react-icons/ri";
 import { FaProjectDiagram, FaUser } from "react-icons/fa";
 import { MdFolder } from "react-icons/md";
 import { toast } from "react-toastify";
-import axiosInstance from "../../axios/axiosInstance";
+import axiosInstance from "../../configs/axiosInstance";
 import { setExploreGem } from "../../redux/slices/gemSlice";
 import InboxModal from "./InboxModal";
 
@@ -42,8 +42,9 @@ function Tabs() {
         dispatch(setHomeActiveTab(tab));
         return;
       case "explore":
+        request = `/gems/getAllGems/${user._id}`;
       default:
-        request = "/gems/getAllGems";
+        request = `/gems/getAllGems/${user._id}`;
     }
 
     try {
@@ -55,6 +56,14 @@ function Tabs() {
       toast.error(error.response?.data.msg || error.message);
     }
   };
+
+  useEffect(() => {
+    if (homeActiveTab) {
+      handleTabChange(homeActiveTab);
+    } else {
+      handleTabChange("explore");
+    }
+  }, []);
 
   return (
     <div

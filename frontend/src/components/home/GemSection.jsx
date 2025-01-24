@@ -1,7 +1,7 @@
 import { BiComment } from "react-icons/bi";
 import { FaEye, FaThumbsUp } from "react-icons/fa";
 import { GoScreenFull } from "react-icons/go";
-import axiosInstance from "../../axios/axiosInstance";
+import axiosInstance from "../../configs/axiosInstance";
 import { useDispatch, useSelector } from "react-redux";
 import {
   selectHomeActiveTab,
@@ -138,12 +138,24 @@ function GemSection() {
                         {moment(gem.createdAt).fromNow()}
                       </span>
                     </div>
-                    <span className="text-sm">
-                      {gem.owner?.username}
-                      <span className="bg-[#ffb120] rounded-sm px-1 h-min ml-2 text-black font-bold uppercase text-xs">
-                        Pro
-                      </span>
-                    </span>
+                    <div className="text-sm">
+                      <div className="flex w-full justify-between">
+                        <div className="username_container">
+                          <span className="username">
+                            {gem.owner?.username}
+                          </span>
+                          <span className="badge bg-[#ffb120] rounded-sm px-1 h-min ml-2 text-black font-bold uppercase text-xs">
+                            Pro
+                          </span>
+                        </div>
+                        {homeActiveTab === "me" && (
+                          <span className="bg-[#ffb120] bg-opacity-70 rounded-sm px-1 h-min ml-2 text-black font-bold  text-xs">
+                            {gem.owner._id !== userId &&
+                              `Collabed with ${gem.owner?.username}`}
+                          </span>
+                        )}
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>

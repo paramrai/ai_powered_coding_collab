@@ -1,8 +1,4 @@
-import React, { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { toast } from "react-toastify";
-import axiosInstance from "../axios/axiosInstance";
-import { selectExploreGems, setExploreGem } from "../redux/slices/gemSlice";
+import React from "react";
 import InfoCards from "../components/home/InfoCards";
 import Navbar from "../components/home/Navbar";
 import HomeTabs from "../components/home/HomeTabs";

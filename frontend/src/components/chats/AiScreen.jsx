@@ -5,7 +5,7 @@ import {
 } from "../../redux/slices/conversationSlice";
 import { selectUser } from "../../redux/slices/userSlice";
 import { useCallback, useEffect, useRef, useState } from "react";
-import axiosInstance from "../../axios/axiosInstance";
+import axiosInstance from "../../configs/axiosInstance";
 
 function AiScreen({ activeTab }) {
   const messages = useSelector(selectMessages);
@@ -82,57 +82,59 @@ function AiScreen({ activeTab }) {
 
   return (
     activeTab === "ai" && (
-      <>
-        {messages.map((message, index) => (
-          <div key={index} className="h-full flex flex-col mb-4">
-            <div
-              className={`flex items-start gap-2 ${
-                message.sender === username ? "flex-row-reverse" : "flex-row"
-              }`}
-            >
-              <div className="min-w-8 min-h-8 rounded-full bg-gray-600 flex items-center justify-center text-white text-sm">
-                {message.sender === username
-                  ? username.substring(0, 2).toUpperCase()
-                  : "AI"}
-              </div>
+      <div className="h-full flex flex-col">
+        <div className="flex-1">
+          {messages.map((message, index) => (
+            <div key={index} className="h-auto flex flex-col mb-4">
               <div
-                className={`flex flex-col ${
-                  message.sender === username ? "items-end" : "items-start"
+                className={`flex items-start gap-2 ${
+                  message.sender === username ? "flex-row-reverse" : "flex-row"
                 }`}
               >
-                <span className="text-xs text-gray-400 mb-1">
-                  {message.sender === username ? "You" : "AI Assistant"} •{" "}
-                  {new Date().toLocaleTimeString([], {
-                    hour: "2-digit",
-                    minute: "2-digit",
-                  })}
-                </span>
+                <div className="min-w-8 min-h-8 rounded-full bg-gray-600 flex items-center justify-center text-white text-sm">
+                  {message.sender === username
+                    ? username.substring(0, 2).toUpperCase()
+                    : "AI"}
+                </div>
                 <div
-                  className={`p-2 px-3 shadow-md whitespace-break-spaces w-[70%] rounded-2xl h-auto
+                  className={`flex flex-col w-full ${
+                    message.sender === username ? "items-end" : "items-start"
+                  }`}
+                >
+                  <span className="text-xs text-gray-400 mb-1">
+                    {message.sender === username ? "You" : "AI Assistant"} •{" "}
+                    {new Date().toLocaleTimeString([], {
+                      hour: "2-digit",
+                      minute: "2-digit",
+                    })}
+                  </span>
+                  <div
+                    className={`p-2 px-3 shadow-md max-w-[70%] rounded-2xl h-auto
                   ${
                     message.sender === username
                       ? "bg-blue-600 text-white"
                       : "bg-gray-700 text-white"
                   }`}
-                >
-                  {message.msg}
+                  >
+                    {message.msg}
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-        ))}
-        {loading && (
-          <div
-            id="loading-bubble"
-            className="w-fit px-6 py-4 bg-slate-800 flex justify-center items-center rounded-br-xl rounded-bl-xl rounded-tr-xl"
-          >
-            <div id="spinner" className="flex gap-1">
-              <div className="bounce1 w-[9px] h-[9px] bg-[#dcdcdc] rounded-full inline-block"></div>
-              <div className="bounce2 w-[9px] h-[9px] bg-[#dcdcdc] rounded-full inline-block"></div>
-              <div className="bounce3 w-[9px] h-[9px] bg-[#dcdcdc] rounded-full inline-block"></div>
+          ))}
+          {loading && (
+            <div
+              id="loading-bubble"
+              className="w-fit px-6 py-4 bg-slate-800 flex justify-center items-center rounded-br-xl rounded-bl-xl rounded-tr-xl"
+            >
+              <div id="spinner" className="flex gap-1">
+                <div className="bounce1 w-[9px] h-[9px] bg-[#dcdcdc] rounded-full inline-block"></div>
+                <div className="bounce2 w-[9px] h-[9px] bg-[#dcdcdc] rounded-full inline-block"></div>
+                <div className="bounce3 w-[9px] h-[9px] bg-[#dcdcdc] rounded-full inline-block"></div>
+              </div>
             </div>
-          </div>
-        )}
+          )}
+        </div>
         <div ref={messagesEndRef} />
         <div className="chat-promt sticky bottom-0 w-full px-2 pb-2">
           <form onSubmit={sendMessage} className="flex pt-2">
@@ -154,7 +156,7 @@ function AiScreen({ activeTab }) {
             </button>
           </form>
         </div>
-      </>
+      </div>
     )
   );
 }

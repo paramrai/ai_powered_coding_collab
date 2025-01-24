@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import axiosInstance from "../../axios/axiosInstance";
+import axiosInstance from "../../configs/axiosInstance";
 import { selectToken, selectUser } from "../../redux/slices/userSlice";
 import { toast } from "react-toastify";
 import { motion } from "framer-motion";

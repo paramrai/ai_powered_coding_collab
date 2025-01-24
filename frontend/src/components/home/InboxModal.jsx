@@ -6,7 +6,7 @@ import {
   selectUser,
   updateUserObject,
 } from "../../redux/slices/userSlice";
-import axiosInstance from "../../axios/axiosInstance";
+import axiosInstance from "../../configs/axiosInstance";
 import { toast } from "react-toastify";
 
 const modalVariants = {

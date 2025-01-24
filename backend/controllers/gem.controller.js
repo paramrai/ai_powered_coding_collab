@@ -101,13 +101,19 @@ export const getUserGemsController = async (req, res, next) => {
       return next(new ValidationError("Unauthorized Please login !"));
     }
 
-    const userGems = await gemModel
+    const collabGems = await gemModel
+      .find({ collaborator: userId })
+      .populate("owner collaborator");
+
+    const myGems = await gemModel
       .find({ owner: userId })
       .populate("owner collaborator");
 
-    if (!userGems) {
-      return res.status(200).json({ msg: "Not found" });
+    if (!myGems || !collabGems) {
+      return next(new NotFoundError("Gems not Found"));
     }
+
+    const userGems = myGems.concat(collabGems);
 
     return res.status(200).json(userGems);
   } catch (error) {
@@ -117,8 +123,25 @@ export const getUserGemsController = async (req, res, next) => {
 };
 
 export const getAllGemsController = async (req, res, next) => {
+  const { userId } = req.params;
+
+  console.log(`userId: ${userId}`); // Log the value of userId
+
   try {
-    const allGems = await gemModel.find().populate("owner collaborator");
+    let allGems;
+
+    if (userId && mongoose.Types.ObjectId.isValid(userId)) {
+      console.log("Valid userId:", userId); // Log when userId is valid
+      allGems = await gemModel
+        .find({
+          owner: { $ne: userId },
+        })
+        .populate("owner collaborator");
+    } else {
+      console.log("userId is null or undefined"); // Log when userId is null or undefined
+      allGems = await gemModel.find().populate("owner collaborator");
+    }
+
     res.status(200).json(allGems);
   } catch (error) {
     console.error(error.message);

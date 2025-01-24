@@ -1,9 +1,13 @@
 import { useSelector } from "react-redux";
 import { selectCurrentGem } from "../../redux/slices/gemSlice";
+import { selectUser } from "../../redux/slices/userSlice";
 
 function GroupChatScreen({ activeTab }) {
   const gem = useSelector(selectCurrentGem);
-  const collaborator = gem.collaborator;
+  const user = useSelector(selectUser);
+  const collaborator = gem.collaborator.filter(
+    (person) => person._id !== user._id
+  );
 
   const onlineUsers = collaborator.filter((user) => user.isOnline);
   const offlineUsers = collaborator.filter((user) => !user.isOnline);
