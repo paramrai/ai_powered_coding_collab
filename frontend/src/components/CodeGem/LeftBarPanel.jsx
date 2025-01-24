@@ -111,6 +111,10 @@ const FileTree = ({
     }
   };
 
+  const isCollabrator = gem.collaborator.some(
+    (collabUser) => String(collabUser._id) === String(user._id)
+  );
+
   return (
     <>
       <div
@@ -140,8 +144,8 @@ const FileTree = ({
             >
               <MdDelete
                 onClick={(e) => {
-                  if (String(user._id) !== String(gem.owner)) {
-                    toast.error("Only Owner can edit gems");
+                  if (!isCollabrator) {
+                    toast.error("Only Collabraotor can edit gems");
                     return;
                   } else {
                     if (e.target instanceof SVGElement) {
@@ -171,8 +175,8 @@ const FileTree = ({
             >
               <MdDelete
                 onClick={(e) => {
-                  if (String(user._id) !== String(gem.owner)) {
-                    toast.error("Only Owner can edit gems");
+                  if (!isCollabrator) {
+                    toast.error("Only Collabraotor can edit gems");
                     return;
                   } else {
                     if (e.target instanceof SVGElement) {
@@ -241,6 +245,7 @@ const LeftBarPanel = ({ isLeftbarPanel, setIsLeftbarPanel }) => {
   const [lastOpenedFolder, setLastOpenedFolder] = useState(null);
   const leftBarRef = useRef(null);
   const gem = useSelector(selectCurrentGem);
+  const fileTree = useSelector(selectFileTree)[0];
   const user = useSelector(selectUser);
 
   const handleResize = useResizePanel(leftBarRef, "horizontal", {
@@ -250,8 +255,6 @@ const LeftBarPanel = ({ isLeftbarPanel, setIsLeftbarPanel }) => {
     closeAtWidth: 210, // Slightly higher than minWidth to create a "snap" effect
   });
 
-  const fileTree = useSelector(selectFileTree)[0];
-
   const handleAddFileSubmit = async (e) => {
     e.preventDefault();
 
@@ -259,11 +262,12 @@ const LeftBarPanel = ({ isLeftbarPanel, setIsLeftbarPanel }) => {
     console.log("Gem owner:", gem.owner);
     console.log("Current user:", user._id);
 
-    // Convert IDs to strings and compare
-    const isOwner = String(gem.owner) === String(user._id);
+    // check is collabrator
+    const isCollabrator = gem.collaborator.some(
+      (collabUser) => String(collabUser._id) === String(user._id)
+    );
 
-    if (!isOwner) {
-      // Use both warn and info to ensure visibility
+    if (!isCollabrator) {
       toast.warn("Access Denied");
       toast.info("Only the owner can modify this gem");
       setShowInput(false);
