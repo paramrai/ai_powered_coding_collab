@@ -45,9 +45,9 @@ const InboxModal = ({ showInvites, setShowInvites }) => {
       const res = await axiosInstance.put(
         "/users/acceptInvite",
         {
-          senderId: invite.senderId,
+          senderId: invite.sender._id,
           accepterId: user._id,
-          gemId: invite.gemId,
+          gemId: invite.gem._id,
         },
         {
           headers: {
@@ -57,8 +57,38 @@ const InboxModal = ({ showInvites, setShowInvites }) => {
       );
 
       if (res.status === 200 || res.statusText === "OK") {
+        console.log(res.data);
         dispatch(updateUserObject(res.data.user));
         toast.success("Invite accepted");
+      }
+    } catch (error) {
+      console.log(error);
+      toast.error(error.response.data.message || error.message);
+    }
+  };
+
+  const handleRejectInvite = async (invite) => {
+    console.log({ invite });
+
+    try {
+      const res = await axiosInstance.put(
+        "/users/rejectInvite",
+        {
+          senderId: invite.sender._id,
+          rejectorId: user._id,
+          gemId: invite.gem._id,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (res.status === 200 || res.statusText === "OK") {
+        console.log(res.data);
+        dispatch(updateUserObject(res.data.user));
+        toast.success("Invite rejected");
       }
     } catch (error) {
       console.log(error);
@@ -140,6 +170,7 @@ const InboxModal = ({ showInvites, setShowInvites }) => {
                             Accept
                           </button>
                           <button
+                            onClick={() => handleRejectInvite(invite)}
                             className="flex-1 bg-red-600 hover:bg-red-700 
                         text-white rounded-md py-2 px-4 transition-all duration-200 
                         hover:shadow-lg hover:shadow-red-600/30 active:scale-95"

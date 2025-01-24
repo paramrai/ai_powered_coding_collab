@@ -52,6 +52,7 @@ const userSchema = new mongoose.Schema(
   },
   {
     timestamps: true,
+    suppressReservedKeysWarning: true,
   }
 );
 

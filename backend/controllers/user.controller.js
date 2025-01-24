@@ -220,6 +220,10 @@ export const inviteUserController = async (req, res, next) => {
 export const acceptInviteController = async (req, res, next) => {
   const { gemId, accepterId, senderId } = req.body;
 
+  console.log({ gemId });
+  console.log({ senderId });
+  console.log({ accepterId });
+
   try {
     const gem = await gemModel.findById(gemId);
     const accepterUser = await userModel.findById(accepterId);
@@ -233,8 +237,8 @@ export const acceptInviteController = async (req, res, next) => {
     await accepterUser.updateOne({
       $pull: {
         recievedInvites: {
-          gemId,
-          senderId,
+          gem: gemId,
+          sender: senderId,
         },
       },
     });
@@ -285,6 +289,10 @@ export const acceptInviteController = async (req, res, next) => {
 export const rejectInviteController = async (req, res, next) => {
   const { gemId, rejectorId, senderId } = req.body;
 
+  console.log({ gemId });
+  console.log({ rejectorId });
+  console.log({ senderId });
+
   try {
     const rejectorUser = await userModel.findById(rejectorId);
     const senderUser = await userModel.findById(senderId);
@@ -298,8 +306,8 @@ export const rejectInviteController = async (req, res, next) => {
     await rejectorUser.updateOne({
       $pull: {
         recievedInvites: {
-          gemId,
-          senderId,
+          gem: gemId,
+          sender: senderId,
         },
       },
     });
@@ -309,16 +317,26 @@ export const rejectInviteController = async (req, res, next) => {
       invite.gem.equals(gemId)
     );
 
+    console.log({ inviteIndex });
+
     if (inviteIndex !== -1) {
-      senderUser.sentInvites[inviteIndex].recievers.filter(
-        (id) => id.toString() !== gemId.toString()
-      );
+      senderUser.sentInvites[inviteIndex].recievers = senderUser.sentInvites[
+        inviteIndex
+      ].recievers.filter((id) => id.toString() !== rejectorId.toString());
+
+      if (!senderUser.sentInvites[inviteIndex].recievers.length) {
+        senderUser.sentInvites.splice(inviteIndex, 1);
+      }
 
       await senderUser.save();
     }
 
     // Populate and return updated user
-    const updatedUser = await userModel.findById(rejectorId);
+    const updatedUser = await userModel
+      .findById(rejectorId)
+      .populate(
+        "sentInvites.recievers sentInvites.gem  recievedInvites.sender  recievedInvites.gem"
+      );
 
     return res.status(200).json({
       msg: "Invite rejected",
