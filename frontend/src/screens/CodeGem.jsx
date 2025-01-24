@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useMobileCheck } from "../hooks/useMobileCheck";
-import { useLocation, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import NotFound from "../components/NotFound";
-import axiosInstance from "../axios/axiosInstance";
+import axiosInstance from "../configs/axiosInstance";
 import { useDispatch } from "react-redux";
 import { setGem } from "../redux/slices/gemSlice";
 import LeftBar from "../components/CodeGem/LeftBar";

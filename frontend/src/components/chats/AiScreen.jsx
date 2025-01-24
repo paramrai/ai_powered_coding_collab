@@ -1,14 +1,11 @@
 import { useDispatch, useSelector } from "react-redux";
-import {
-  addMessage,
-  selectMessages,
-} from "../../redux/slices/conversationSlice";
 import { selectUser } from "../../redux/slices/userSlice";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import axiosInstance from "../../configs/axiosInstance";
+import { addMessage, selectAiMessages } from "../../redux/slices/messageSlice";
 
 function AiScreen({ activeTab }) {
-  const messages = useSelector(selectMessages);
+  const messages = useSelector(selectAiMessages);
   const { username } = useSelector(selectUser);
   const [promt, setPrompt] = useState("");
   const [loading, setLoading] = useState(false);
@@ -83,9 +80,9 @@ function AiScreen({ activeTab }) {
   return (
     activeTab === "ai" && (
       <div className="h-full flex flex-col">
-        <div className="flex-1">
+        <div className="flex-1 py-2 flex flex-col gap-2">
           {messages.map((message, index) => (
-            <div key={index} className="h-auto flex flex-col mb-4">
+            <div key={index} className="h-auto flex flex-col">
               <div
                 className={`flex items-start gap-2 ${
                   message.sender === username ? "flex-row-reverse" : "flex-row"
@@ -125,7 +122,7 @@ function AiScreen({ activeTab }) {
           {loading && (
             <div
               id="loading-bubble"
-              className="w-fit px-6 py-4 bg-slate-800 flex justify-center items-center rounded-br-xl rounded-bl-xl rounded-tr-xl"
+              className="w-fit px-6 py-4 mb-2 bg-slate-800 flex justify-center items-center rounded-br-xl rounded-bl-xl rounded-tr-xl"
             >
               <div id="spinner" className="flex gap-1">
                 <div className="bounce1 w-[9px] h-[9px] bg-[#dcdcdc] rounded-full inline-block"></div>

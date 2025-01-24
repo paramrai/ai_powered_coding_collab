@@ -12,7 +12,7 @@ import {
 import storage from "redux-persist/lib/storage";
 import userReducer from "./slices/userSlice";
 import gemReducer from "./slices/gemSlice";
-import msgReducer from "./slices/conversationSlice";
+import msgReducer from "./slices/messageSlice";
 
 // Combine reducers
 const rootReducer = combineReducers({

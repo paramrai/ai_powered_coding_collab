@@ -49,6 +49,7 @@ const userSchema = new mongoose.Schema(
       },
     ],
     isActive: Boolean,
+    socketId: String,
   },
   {
     timestamps: true,

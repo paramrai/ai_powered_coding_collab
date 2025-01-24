@@ -125,20 +125,16 @@ export const getUserGemsController = async (req, res, next) => {
 export const getAllGemsController = async (req, res, next) => {
   const { userId } = req.params;
 
-  console.log(`userId: ${userId}`); // Log the value of userId
-
   try {
     let allGems;
 
     if (userId && mongoose.Types.ObjectId.isValid(userId)) {
-      console.log("Valid userId:", userId); // Log when userId is valid
       allGems = await gemModel
         .find({
           owner: { $ne: userId },
         })
         .populate("owner collaborator");
     } else {
-      console.log("userId is null or undefined"); // Log when userId is null or undefined
       allGems = await gemModel.find().populate("owner collaborator");
     }
 

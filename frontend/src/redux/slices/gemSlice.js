@@ -103,7 +103,22 @@ const gemSlice = createSlice({
       }
     },
     setExploreGem: (state, action) => {
-      state.exploreGems = action.payload;
+      const uniqueObjects = Array.from(
+        new Set(action.payload.map((item) => JSON.stringify(item)))
+      ).map((item) => JSON.parse(item));
+
+      state.exploreGems = uniqueObjects;
+    },
+    updateStatus: (state, action) => {
+      const user = action.payload;
+
+      const targetUser = state.gem.collaborator.find(
+        (collabUser) => String(collabUser._id) === String(user._id)
+      );
+
+      if (targetUser) {
+        targetUser.isActive = user.isActive;
+      }
     },
   },
 });
@@ -128,4 +143,5 @@ export const {
   addNewFile,
   deleteFile,
   setExploreGem,
+  updateStatus,
 } = gemSlice.actions;
