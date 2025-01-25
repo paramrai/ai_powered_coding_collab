@@ -1,12 +1,65 @@
-import React from "react";
+import React, { useEffect, useRef, useState } from "react";
 import OpenFiles from "./OpenFiles";
 import VideoChatPanel from "./VideoChatPanel";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  selectActiveFile,
+  selectFileTree,
+  selectPath,
+  setActiveFile,
+} from "../../redux/slices/gemSlice";
 
 const CodeSpace = () => {
+  const codeRef = useRef();
+  const activeFile = useSelector(selectActiveFile);
+  const path = useSelector(selectPath);
+  const fileTree = useSelector(selectFileTree);
+  const [content, setContent] = useState("");
+  const dispatch = useDispatch();
+
+  function findFileAndRead(iterable, name, path) {
+    if (!Array.isArray(iterable)) {
+      console.error("iterable is not an array");
+      return;
+    }
+
+    for (let [index, child] of iterable.entries()) {
+      if (child.name === name) {
+        if (child.type === "file") {
+          // console.log({ content: iterable[index].content });
+          setContent(iterable[index].content);
+        }
+      }
+
+      if (child.children) {
+        findFileAndRead(child.children, name, path);
+      }
+    }
+  }
+
+  useEffect(() => {
+    dispatch(setActiveFile(""));
+
+    if (!activeFile) {
+      setContent("");
+    }
+  }, [activeFile]);
+
+  useEffect(() => {
+    findFileAndRead(fileTree, activeFile, path);
+  }, [activeFile]);
+
+  const handleCodeChange = (e) => {
+    setContent(e.target.value);
+  };
+
   return (
     <div className="min-h-screen w-auto overflow-hidden flex-1 flex flex-col">
-      <OpenFiles />
+      <OpenFiles content={content} setContent={setContent} />
       <textarea
+        ref={codeRef}
+        value={content}
+        onChange={handleCodeChange}
         name="code_space"
         id="code_space"
         className="w-full bg-slate-800 text-gray-100 

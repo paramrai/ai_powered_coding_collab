@@ -62,16 +62,22 @@ const gemSlice = createSlice({
     setGem: (state, action) => {
       state.gem = action.payload;
     },
-
     setOpenFiles: (state, action) => {
-      state.openFiles = [...new Set([...state.openFiles, action.payload])];
+      const { name, path } = action.payload;
+      state.openFiles.push({ name, path });
+
+      const uniqueFiles = Array.from(
+        new Set(state.openFiles.map((file) => JSON.stringify(file)))
+      ).map((file) => JSON.parse(file));
+
+      state.openFiles = uniqueFiles;
     },
     closeFile: (state, action) => {
       const closingFile = action.payload;
 
-      if (state.openFiles.includes(closingFile)) {
+      if (state.openFiles.some((item) => item.name == closingFile)) {
         state.openFiles = state.openFiles.filter(
-          (file) => file !== closingFile
+          (file) => file.name !== closingFile
         );
       }
     },
@@ -120,6 +126,8 @@ const gemSlice = createSlice({
         targetUser.isActive = user.isActive;
       }
     },
+    getOpenfilesContent: () => {},
+    saveFileContent: () => {},
   },
 });
 

@@ -49,19 +49,33 @@ const model = genAI.getGenerativeModel({
   Provide the complete code for referenceFiles with all necessary updates.
   Include detailed comments throughout the code to explain the changes and functionalities.
 
+  Strictly follow these Rules:
+  1.Don’t rename any key of objects.
+  1.1.keep the code object in response empty if referenceFiles are not given or referenceFiles is null
+  2.If in user object referenceFiles are not given, then give an empty usedReference array in the response object.
+  3.If you inspect code in prompt key of user object with no referenceFiles, then add a property in response object codeOfPrompt and add code in codeOfPromp not in code property of response object along with text property which only contains normal text like conversational and include other properties as well of response object with these newly added properties.
+  4.If no referenceFiles are given give code in codeWithNoRefs
+  5.Keep the code object empty if referenceFiles are not given
+  6.Dont add prompt key in codeWithNoRefs leave it empty if there is no code
+  7.If you inspect code in prompt of user object give the code in codeWithNoRefs only not in code object of response object
+  8.If ther is no referenceFiles in user object give the code in codeWithNoRefs only not in code object of response object
+
+  9.codeWithNoRefs always have this strucure codeWithNoRefs:{'filename':'code'}
+  10.Keep the key changes null if there are no referenceFiles OR code in prompt
+
   Example
   user request will be a object like this
-  {
-    user: isUserInvited not working and not changing color of button fix it
-    referenceFiles:{
-      'App.jsx':'Here is the code that requires changes or a solution to address a problem.',
-      'Home.jsx':'Here is the code that requires changes or a solution to address a problem.',
-      'Products.jsx : 'Here is the code that requires changes or a solution to address a problem.'
-    }
-  }
+  user : {
+     prompt: isUserInvited not working and not changing color of button fix it
+     referenceFiles:{
+       'App.jsx':'Here is the code that requires changes or a solution to address a problem.',
+       'Home.jsx':'Here is the code that requires changes or a solution to address a problem.',
+       'Products.jsx : 'Here is the code that requires changes or a solution to address a problem.'
+     }
+   }
 
   response should be like this
-  {
+  response : {
     text:'here is the solution'
     usedReference:['App.jsx','Home.jsx'],
     plan:{
@@ -77,6 +91,11 @@ const model = genAI.getGenerativeModel({
       'Product.jsx':'updated code'
     }
 
+
+    codeWithNoRefs:{
+      "here add filename":'here  is code you provide',
+    }
+
     keyChanges:{
      '1': 'Added String conversion for ID comparison'
      '2': 'Added null checks with optional chaining'
@@ -84,10 +103,13 @@ const model = genAI.getGenerativeModel({
      '4': 'Added disabled state for invited users'
     }
   }
+
+
   `,
 });
 
-export const generateResult = async (prompt) => {
-  const result = await model.generateContent(prompt);
+export const generateResult = async (prompt, referenceFiles) => {
+  const user = { prompt, referenceFiles };
+  const result = await model.generateContent(JSON.stringify(user));
   return result.response.text();
 };

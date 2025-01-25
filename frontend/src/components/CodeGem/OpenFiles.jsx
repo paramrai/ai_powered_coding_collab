@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { GoDotFill } from "react-icons/go";
 import { IoClose } from "react-icons/io5";
 import {
   FaReact,
@@ -25,15 +26,47 @@ import { useDispatch, useSelector } from "react-redux";
 import {
   closeFile,
   selectActiveFile,
+  selectFileTree,
   selectOpenFiles,
+  selectPath,
   setActiveFile,
 } from "../../redux/slices/gemSlice";
 import { getFileIcon } from "./LeftBarPanel";
 
-const OpenFiles = () => {
+const OpenFiles = ({ content, setContent }) => {
+  const dispatch = useDispatch();
   const openFiles = useSelector(selectOpenFiles);
   const activeFile = useSelector(selectActiveFile);
-  const dispatch = useDispatch();
+  const [prevContent, setPrevContent] = useState("");
+  const fileTree = useSelector(selectFileTree);
+  const path = useSelector(selectPath);
+  const [isSaved, setIsSaved] = useState(true);
+
+  function findFileAndCompare(iterable, name, path) {
+    if (!Array.isArray(iterable)) {
+      console.error("iterable is not an array");
+      return;
+    }
+
+    for (let [index, child] of iterable.entries()) {
+      if (child.name === name) {
+        if (child.type === "file") {
+          // console.log({ content: iterable[index].content });
+          setPrevContent(iterable[index].content);
+          setIsSaved(content === prevContent);
+          console.log(isSaved);
+        }
+      }
+
+      if (child.children) {
+        findFileAndCompare(child.children, name, path);
+      }
+    }
+  }
+
+  useEffect(() => {
+    findFileAndCompare(fileTree, activeFile, path);
+  }, [content, activeFile]);
 
   return (
     <div className="w-full overflow-x-auto scrollbar-hide bg-slate-800">
@@ -45,28 +78,38 @@ const OpenFiles = () => {
                       items-center bg-slate-800 p-4
                       transition-all duration-300 border-b-[1px]
                       ${
-                        activeFile === file
+                        activeFile === file.name
                           ? "border-blue-500"
                           : "border-slate-800"
                       }`}
             onClick={(e) => {
               if (e.target instanceof SVGElement) {
                 console.log("The target is an SVG element.");
-                dispatch(closeFile(file));
+                let index = openFiles.findIndex(
+                  (item) => item.name === file.name
+                );
+                dispatch(closeFile(file.name));
                 // if closing file = active then active = index - 1
+                if (file.name === activeFile) {
+                  dispatch(setActiveFile(openFiles[index - 1]?.name));
+                }
               } else {
                 console.log("The target is not an SVG element.");
                 // set active file
-                dispatch(setActiveFile(file));
+                dispatch(setActiveFile(file.name));
               }
             }}
           >
-            {getFileIcon(file)}
-            <h3 className="text-sm text-white mx-2">{file}</h3>
-            <IoClose
-              className="text-sm text-gray-400 hover:text-red-500 transition-colors"
-              size={18}
-            />
+            {getFileIcon(file.name)}
+            <h3 className="text-sm text-white mx-2">{file.name}</h3>
+            {!isSaved ? (
+              <GoDotFill className="min-h-2 min-w-2 rounded-full translate-x-[2px] translate-y-[1.54px] bg-gray-200 hover:bg-red-500 hover:scale-[1.1] transition-colors" />
+            ) : (
+              <IoClose
+                className="text-sm text-gray-400  translate-x-[2px] translate-y-[1.54px] hover:text-red-500 hover:scale-[1.1] transition-colors"
+                size={18}
+              />
+            )}
           </button>
         ))}
       </div>

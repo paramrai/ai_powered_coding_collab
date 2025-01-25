@@ -1,15 +1,18 @@
 import { useDispatch, useSelector } from "react-redux";
-import { selectUser } from "../../redux/slices/userSlice";
+import { selectToken, selectUser } from "../../redux/slices/userSlice";
 import { useCallback, useRef, useState } from "react";
 import axiosInstance from "../../configs/axiosInstance";
 import { addMessage, selectAiMessages } from "../../redux/slices/messageSlice";
+import { toast } from "react-toastify";
 
 function AiScreen({ activeTab }) {
   const messages = useSelector(selectAiMessages);
   const { username } = useSelector(selectUser);
-  const [promt, setPrompt] = useState("");
+  const token = useSelector(selectToken);
   const [loading, setLoading] = useState(false);
   const dispatch = useDispatch();
+  const [referenceFiles, setreferenceFiles] = useState(null);
+  const [prompt, setPrompt] = useState("");
 
   // refs
   const messagesEndRef = useRef(null);
@@ -38,34 +41,48 @@ function AiScreen({ activeTab }) {
 
   const sendMessage = async (e) => {
     e.preventDefault();
-    if (promt.trim() !== "") {
+    if (prompt.trim() !== "") {
       try {
         setLoading(true);
         // send msg
         dispatch(
           addMessage({
-            msg: promt,
+            msg: prompt,
             sender: username,
           })
         );
         setPrompt("");
         scrollToBottom();
 
-        // reciecve msg
-        const response = await axiosInstance("/ai/getResult", {
-          params: {
-            prompt: promt,
-          },
+        console.log({
+          prompt,
+          referenceFiles,
         });
+
+        // reciecve msg
+        const response = await axiosInstance.post(
+          "/ai/getResult",
+          {
+            prompt,
+            referenceFiles,
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
 
         if (response.status === 200) {
           console.log(response.data);
+
           dispatch(
             addMessage({
               msg: response.data.text,
               sender: "ai",
             })
           );
+
           scrollToBottom();
         }
       } catch (error) {
@@ -140,7 +157,7 @@ function AiScreen({ activeTab }) {
               type="text"
               className="flex-grow p-2 border rounded-lg bg-gray-700 text-white w-full"
               placeholder="Type your message..."
-              value={promt}
+              value={prompt}
               onChange={(e) => setPrompt(e.target.value)}
               onKeyDown={handleKeyDown}
               onFocus={handleInputFocus}

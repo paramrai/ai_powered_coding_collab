@@ -40,6 +40,7 @@ import {
   selectCurrentGem,
   selectFileTree,
   selectOpenFiles,
+  selectPath,
   setActiveFile,
   setCurrentPath,
   setGem,
@@ -99,11 +100,12 @@ const FileTree = ({
   const dispatch = useDispatch();
   const user = useSelector(selectUser);
   const gem = useSelector(selectCurrentGem);
+  const currentPath = useSelector(selectPath);
 
   const handleClick = () => {
     setIsOpen(!isOpen);
     if (fileTree.type === "file") {
-      dispatch(setOpenFiles(fileTree.name));
+      dispatch(setOpenFiles({ name: fileTree.name, path: currentPath }));
       dispatch(setActiveFile(fileTree.name));
     } else if (fileTree.type === "folder" || fileTree.type === "root") {
       dispatch(setCurrentPath(fileTree.name));
@@ -247,6 +249,7 @@ const LeftBarPanel = ({ isLeftbarPanel, setIsLeftbarPanel }) => {
   const gem = useSelector(selectCurrentGem);
   const fileTree = useSelector(selectFileTree)[0];
   const user = useSelector(selectUser);
+  const currentPath = useSelector(selectPath);
 
   const handleResize = useResizePanel(leftBarRef, "horizontal", {
     minWidth: 200,
@@ -293,7 +296,7 @@ const LeftBarPanel = ({ isLeftbarPanel, setIsLeftbarPanel }) => {
         setShowInput(false);
 
         if (type === "file") {
-          dispatch(setOpenFiles(newFileName));
+          dispatch(setOpenFiles({ name: newFileName, path: currentPath }));
           dispatch(setActiveFile(newFileName));
         }
       } catch (error) {

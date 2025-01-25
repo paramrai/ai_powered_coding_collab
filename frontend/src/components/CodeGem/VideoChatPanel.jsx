@@ -47,7 +47,7 @@ const VideoChatPanel = () => {
   return (
     <div
       ref={videoPanelRef}
-      className={`${resizableContainerClasses} w-full flex justify-between`}
+      className={`${resizableContainerClasses} w-full flex justify-between z-50`}
       style={{ height: `${panelHeight}px` }}
     >
       <div

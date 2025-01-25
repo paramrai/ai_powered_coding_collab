@@ -5,6 +5,7 @@
 html {
   background-color: rgb(15 23 42);
   scroll-behavior: smooth;
+  overflow: hidden;
   opacity: 1;
   @apply scrollbar-thin scrollbar-thumb-gray-700 scrollbar-track-gray-900;
 }
