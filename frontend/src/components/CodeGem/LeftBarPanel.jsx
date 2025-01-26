@@ -247,11 +247,11 @@ const LeftBarPanel = ({ isLeftbarPanel, setIsLeftbarPanel }) => {
   const dispatch = useDispatch();
   const addingForm = useRef(null);
   const [type, setType] = useState("");
+  const fileTree = useSelector(selectFileTree)[0];
   const [showInput, setShowInput] = useState(false);
-  const [lastOpenedFolder, setLastOpenedFolder] = useState(null);
+  const [lastOpenedFolder, setLastOpenedFolder] = useState(fileTree.name);
   const leftBarRef = useRef(null);
   const gem = useSelector(selectCurrentGem);
-  const fileTree = useSelector(selectFileTree)[0];
   const user = useSelector(selectUser);
   const currentPath = useSelector(selectPath);
 

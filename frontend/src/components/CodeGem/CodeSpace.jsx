@@ -6,11 +6,15 @@ import {
   selectActiveFile,
   selectFileTree,
   selectPath,
-  setActiveFile,
 } from "../../redux/slices/gemSlice";
-import * as Diff from "diff";
+import useOwnerOrCollaberCheck from "../../hooks/useOwnerOrCollaberCheck";
+import { toast } from "react-toastify";
 
-const CodeSpace = ({ isVideoChatOpen, setIsVideoChatOpen }) => {
+const CodeSpace = ({
+  isVideoChatOpen,
+  setIsVideoChatOpen,
+  ownerOrCollaber,
+}) => {
   const codeRef = useRef(null);
   const activeFile = useSelector(selectActiveFile);
   const path = useSelector(selectPath);
@@ -18,6 +22,7 @@ const CodeSpace = ({ isVideoChatOpen, setIsVideoChatOpen }) => {
   const [content, setContent] = useState("");
   const dispatch = useDispatch();
   const [isFileSaved, setIsFileSaved] = useState(true);
+  const isOwnerOrCollaber = useOwnerOrCollaberCheck();
 
   function findFileAndRead(iterable, name, path) {
     if (!Array.isArray(iterable)) {
@@ -66,8 +71,14 @@ const CodeSpace = ({ isVideoChatOpen, setIsVideoChatOpen }) => {
   }, [fileTree]);
 
   const handleCodeChange = (e) => {
-    setContent(e.target.value);
-    setIsFileSaved(false);
+    if (isOwnerOrCollaber) {
+      setContent(e.target.value);
+      setIsFileSaved(false);
+    } else {
+      toast.info(
+        "You are not owner or collaborator to this gem so you can only see this gem , create your own gem to edit , chats and prompt to ai , and invite users to your gems"
+      );
+    }
   };
 
   return (
@@ -106,10 +117,12 @@ const CodeSpace = ({ isVideoChatOpen, setIsVideoChatOpen }) => {
           WebkitTextFillColor: "currentcolor",
         }}
       ></textarea>
-      <VideoChatPanel
-        setIsVideoChatOpen={setIsVideoChatOpen}
-        isVideoChatOpen={isVideoChatOpen}
-      />
+      {ownerOrCollaber && (
+        <VideoChatPanel
+          setIsVideoChatOpen={setIsVideoChatOpen}
+          isVideoChatOpen={isVideoChatOpen}
+        />
+      )}
     </div>
   );
 };

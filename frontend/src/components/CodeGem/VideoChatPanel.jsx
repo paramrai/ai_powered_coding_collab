@@ -37,8 +37,6 @@ const VideoChatPanel = ({ isVideoChatOpen, setIsVideoChatOpen }) => {
     maxHeight: 400,
     onResize: setPanelHeight,
     reverse: true,
-    onClose: () => setIsVideoChatOpen(false),
-    closeAtWidth: 155, // Slightly higher than minHeight to create snap effect
   });
 
   if (!isVideoChatOpen || isMobile) return null;

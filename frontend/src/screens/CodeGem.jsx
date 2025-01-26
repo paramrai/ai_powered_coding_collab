@@ -3,13 +3,16 @@ import { useMobileCheck } from "../hooks/useMobileCheck";
 import { useParams } from "react-router-dom";
 import NotFound from "../components/NotFound";
 import axiosInstance from "../configs/axiosInstance";
-import { useDispatch } from "react-redux";
-import { setGem } from "../redux/slices/gemSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { selectCurrentGem, setGem } from "../redux/slices/gemSlice";
 import LeftBar from "../components/CodeGem/LeftBar";
 import LeftBarPanel from "../components/CodeGem/LeftBarPanel";
 import CodeSpace from "../components/CodeGem/CodeSpace";
 import MobileChatOption from "../components/CodeGem/MobileChatOption";
 import DesktopChatOption from "../components/CodeGem/DesktopChatOption";
+import { selectUser } from "../redux/slices/userSlice";
+import { toast } from "react-toastify";
+import useOwnerOrCollaberCheck from "../hooks/useOwnerOrCollaberCheck";
 
 const CodeGem = () => {
   const isMobile = useMobileCheck();
@@ -20,10 +23,17 @@ const CodeGem = () => {
   const [isGemFound, setIsGemFound] = useState();
   const [isLoading, setIsLoading] = useState(true);
   const dispatch = useDispatch();
+  const ownerOrCollaber = useOwnerOrCollaberCheck();
 
   const { gemName } = useParams();
 
   useEffect(() => {
+    if (!ownerOrCollaber) {
+      toast.info(
+        "You are not owner or collaborator to this gem so you can only see this gem , create your own gem to edit , chats and prompt to ai , and invite users to your gems"
+      );
+    }
+
     const readGem = async () => {
       try {
         const res = await axiosInstance.get(`/gems/readGem/${gemName}`);
@@ -68,14 +78,17 @@ const CodeGem = () => {
           <CodeSpace
             isVideoChatOpen={isVideoChatOpen}
             setIsVideoChatOpen={setIsChatOpen}
+            ownerOrCollaber={ownerOrCollaber}
           />
-          <MobileChatOption />
-          <DesktopChatOption
-            isChatOpen={isChatOpen}
-            setIsChatOpen={setIsChatOpen}
-            width={chatPanelWidth}
-            setWidth={setChatPanelWidth}
-          />
+          {ownerOrCollaber && <MobileChatOption />}
+          {ownerOrCollaber && (
+            <DesktopChatOption
+              isChatOpen={isChatOpen}
+              setIsChatOpen={setIsChatOpen}
+              width={chatPanelWidth}
+              setWidth={setChatPanelWidth}
+            />
+          )}
         </>
       ) : (
         <NotFound msg={"Ooops No Gem Found !"} />
