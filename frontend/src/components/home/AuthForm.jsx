@@ -45,7 +45,6 @@ const SignInForm = ({ setIsAuthFormOpen }) => {
       <input
         type="email"
         placeholder="Email"
-        autoFocus
         onChange={(e) => setEmail(e.target.value)}
         className="w-full p-2 bg-transparent outline-none text-gray-200"
       />
@@ -104,7 +103,6 @@ const SignUpForm = ({ setIsAuthFormOpen }) => {
       <input
         type="text"
         placeholder="Username"
-        autoFocus
         onChange={(e) => setUsername(e.target.value)}
         className="w-full p-2 bg-transparent outline-none text-gray-200"
       />
@@ -141,8 +139,8 @@ const AuthForm = ({ isAuthFormOpen, setIsAuthFormOpen }) => {
         <AnimatePresence>
           {isAuthFormOpen && (
             <motion.div
-              initial={{ y: "-100%", scale: 0, opacity: 0 }}
-              animate={{ y: "0%", scale: 1, opacity: 1 }}
+              initial={{ y: "-100%", scale: 0 }}
+              animate={{ y: "0%", scale: 1 }}
               exit={{
                 y: "-100%",
                 opacity: 0,

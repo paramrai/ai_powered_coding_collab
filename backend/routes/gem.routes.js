@@ -9,7 +9,7 @@ import {
   getUserGemsController,
   readGemController,
   updateGemController,
-} from "../controllers/Gem.controller.js";
+} from "../controllers/gem.controller.js";
 const router = Router();
 
 router.post(
