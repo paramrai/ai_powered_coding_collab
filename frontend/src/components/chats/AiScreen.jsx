@@ -43,9 +43,7 @@ function AiScreen({ activeTab }) {
 
       if (child.children) {
         const result = findFileAndRead(child.children, name);
-        if (result !== null && result !== undefined) {
-          return result;
-        }
+        if (result) return result;
       }
     }
     return null;
@@ -115,27 +113,22 @@ function AiScreen({ activeTab }) {
           }
         );
 
-        console.log(response.data);
-
         if (response.status === 200) {
+          console.log(response.data);
+
           const files = Object.keys(response.data.code);
 
           files.forEach((file) => {
-            dispatch(addNewFile({ type: "file", name: file }));
+            const isFileExist = findFileAndRead(fileTree, file);
+
+            if (!isFileExist) {
+              dispatch(addNewFile({ type: "file", name: file }));
+            }
+
             dispatch(
               saveFileContent({
                 name: file,
                 path,
-                content: response.data.code[file],
-              })
-            );
-          });
-
-          files.forEach((file) => {
-            dispatch(
-              saveFileContent({
-                name: file,
-                path: path,
                 content: response.data.code[file],
               })
             );

@@ -36,9 +36,7 @@ const InboxModal = ({ showInvites, setShowInvites }) => {
   const user = useSelector(selectUser);
   const token = useSelector(selectToken);
   const dispatch = useDispatch();
-  const recievedInvites = user.recievedInvites;
   const [activeInviteTab, setActiveInviteTab] = useState("received");
-  const sentInvites = user.sentInvites;
 
   const handleAcceptInvite = async (invite) => {
     try {
@@ -144,9 +142,9 @@ const InboxModal = ({ showInvites, setShowInvites }) => {
               </div>
 
               {activeInviteTab === "received" ? (
-                recievedInvites?.length > 0 ? (
+                user.recievedInvites?.length > 0 ? (
                   <div className="space-y-4">
-                    {recievedInvites.map((invite, index) => (
+                    {user.recievedInvites?.map((invite, index) => (
                       <motion.div
                         key={index}
                         initial={{ opacity: 0, y: 20 }}
@@ -155,10 +153,10 @@ const InboxModal = ({ showInvites, setShowInvites }) => {
                         className="bg-gray-700 p-4 rounded-lg border border-gray-600"
                       >
                         <p className="text-white font-medium mb-1">
-                          SenderId : {invite.sender.username}
+                          SenderId : {invite.sender?.username}
                         </p>
                         <p className="text-gray-300 text-sm mb-3">
-                          GemId: {invite.gem.name}
+                          GemId: {invite.gem?.name}
                         </p>
                         <div className="flex gap-3">
                           <button
@@ -188,8 +186,8 @@ const InboxModal = ({ showInvites, setShowInvites }) => {
                 )
               ) : (
                 <div className="space-y-4">
-                  {sentInvites?.length > 0 ? (
-                    sentInvites.map((invite, index) => (
+                  {user.sentInvites?.length > 0 ? (
+                    user.sentInvites?.map((invite, index) => (
                       <motion.div
                         key={index}
                         initial={{ opacity: 0, y: 20 }}
@@ -198,16 +196,16 @@ const InboxModal = ({ showInvites, setShowInvites }) => {
                         className="bg-gray-700 p-4 rounded-lg border border-gray-600"
                       >
                         <p className="text-white font-medium mb-1">
-                          Gem: {invite.gem.name}
+                          Gem: {invite.gem?.name}
                         </p>
                         <div className="space-y-2">
-                          {invite.recievers.map((reciever, idx) => (
+                          {invite.recievers?.map((reciever, idx) => (
                             <div
                               key={idx}
                               className="flex gap-2 items-center justify-between bg-gray-600 p-2 rounded"
                             >
                               <span className="text-gray-300">
-                                To: {reciever.username}
+                                To: {reciever?.username}
                               </span>
                               <button
                                 className="bg-red-600 hover:bg-red-700 

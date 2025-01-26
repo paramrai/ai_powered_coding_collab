@@ -35,7 +35,6 @@ import { VscCollapseAll } from "react-icons/vsc";
 import { useDispatch, useSelector } from "react-redux";
 import {
   addNewFile,
-  closeFile,
   deleteFile,
   selectCurrentGem,
   selectFileTree,
@@ -150,12 +149,12 @@ const FileTree = ({
             >
               <MdDelete
                 onClick={(e) => {
+                  e.stopPropagation();
                   if (!isCollabrator) {
                     toast.error("Only Collabraotor can edit gems");
                     return;
                   } else {
                     if (e.target instanceof SVGElement) {
-                      dispatch(closeFile(fileTree.name));
                       dispatch(
                         deleteFile({ type: fileTree.type, name: fileTree.name })
                       );
@@ -181,12 +180,12 @@ const FileTree = ({
             >
               <MdDelete
                 onClick={(e) => {
+                  e.stopPropagation();
                   if (!isCollabrator) {
                     toast.error("Only Collabraotor can edit gems");
                     return;
                   } else {
                     if (e.target instanceof SVGElement) {
-                      dispatch(closeFile(fileTree.name));
                       dispatch(
                         deleteFile({ type: fileTree.type, name: fileTree.name })
                       );
@@ -256,10 +255,10 @@ const LeftBarPanel = ({ isLeftbarPanel, setIsLeftbarPanel }) => {
   const currentPath = useSelector(selectPath);
 
   const handleResize = useResizePanel(leftBarRef, "horizontal", {
-    minWidth: 0,
+    minWidth: 200,
     maxWidth: 600,
     onClose: () => setIsLeftbarPanel(false),
-    closeAtWidth: 0,
+    closeAtWidth: 220,
   });
 
   const handleAddFileSubmit = async (e) => {

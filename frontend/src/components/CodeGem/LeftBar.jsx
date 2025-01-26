@@ -1,7 +1,9 @@
 import { FaFile, FaSearch, FaGithub, FaCode, FaVideo } from "react-icons/fa";
 import { ImExit } from "react-icons/im";
 import { IoMdChatboxes } from "react-icons/io";
+import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { exitTheGem } from "../../redux/slices/gemSlice";
 
 const LeftBar = ({
   isLeftbarPanel,
@@ -10,6 +12,7 @@ const LeftBar = ({
   setIsChatOpen,
 }) => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const icons = [
     { icon: <FaFile />, label: "Explorer" },
@@ -33,6 +36,7 @@ const LeftBar = ({
               switch (item.label) {
                 case "Exit":
                   navigate("/");
+                  dispatch(exitTheGem());
                   break;
                 case "Open Video Chat":
                   setIsVideoChatOpen((prev) => !prev);

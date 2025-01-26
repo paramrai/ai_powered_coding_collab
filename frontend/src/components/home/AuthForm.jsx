@@ -47,13 +47,13 @@ const SignInForm = ({ setIsAuthFormOpen }) => {
         placeholder="Email"
         autoFocus
         onChange={(e) => setEmail(e.target.value)}
-        className="w-full p-2 border rounded"
+        className="w-full p-2 bg-transparent outline-none text-gray-200"
       />
       <input
         type="password"
         placeholder="Password"
         onChange={(e) => setPassword(e.target.value)}
-        className="w-full p-2 border rounded"
+        className="w-full p-2 bg-transparent outline-none text-gray-200"
       />
       <button
         type="submit"
@@ -106,19 +106,19 @@ const SignUpForm = ({ setIsAuthFormOpen }) => {
         placeholder="Username"
         autoFocus
         onChange={(e) => setUsername(e.target.value)}
-        className="w-full p-2 border rounded"
+        className="w-full p-2 bg-transparent outline-none text-gray-200"
       />
       <input
         type="email"
         placeholder="Email"
         onChange={(e) => setEmail(e.target.value)}
-        className="w-full p-2 border rounded"
+        className="w-full p-2 bg-transparent outline-none text-gray-200"
       />
       <input
         type="password"
         placeholder="Password"
         onChange={(e) => setPassword(e.target.value)}
-        className="w-full p-2 border rounded"
+        className="w-full p-2 bg-transparent outline-none text-gray-200"
       />
       <button
         type="submit"
@@ -157,9 +157,9 @@ const AuthForm = ({ isAuthFormOpen, setIsAuthFormOpen }) => {
               }}
               className="fixed inset-0 bg-slate-900 z-[60] flex justify-center items-center"
             >
-              <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-md relative m-2">
+              <div className="bg-gray-800 p-6 rounded-lg shadow-lg w-full max-w-md relative m-2">
                 <div className="flex flex-wrap justify-between items-center mb-4">
-                  <h2 className="text-xl">
+                  <h2 className="text-xl text-gray-200">
                     {isSigningUp ? "Sign Up" : "Sign In"}
                   </h2>
                   <h2

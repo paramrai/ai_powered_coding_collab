@@ -8,7 +8,7 @@ const useOwnerOrCollaberCheck = () => {
 
   const ownerOrCollaber =
     String(gem.owner) === String(user._id) ||
-    gem.collaborator.some(
+    gem.collaborator?.some(
       (collaber) => String(collaber._id) === String(user._id)
     );
 

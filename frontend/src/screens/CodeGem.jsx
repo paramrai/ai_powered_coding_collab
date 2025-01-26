@@ -4,7 +4,11 @@ import { useParams } from "react-router-dom";
 import NotFound from "../components/NotFound";
 import axiosInstance from "../configs/axiosInstance";
 import { useDispatch, useSelector } from "react-redux";
-import { selectCurrentGem, setGem } from "../redux/slices/gemSlice";
+import {
+  selectCurrentGem,
+  setGem,
+  setOpenFiles,
+} from "../redux/slices/gemSlice";
 import LeftBar from "../components/CodeGem/LeftBar";
 import LeftBarPanel from "../components/CodeGem/LeftBarPanel";
 import CodeSpace from "../components/CodeGem/CodeSpace";

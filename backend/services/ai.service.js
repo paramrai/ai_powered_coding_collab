@@ -68,7 +68,8 @@ const model = genAI.getGenerativeModel({
   14. If user said to add new files or new component provide the new files and new components in code object
   15. if user said to add page , add file or add component provide in code object
 
-  Example
+  Example:
+
   user request will be a object like this
   user : {
      prompt: isUserInvited not working and not changing color of button fix it
@@ -79,7 +80,9 @@ const model = genAI.getGenerativeModel({
      }
    }
 
-  response should be like this
+  IMPORTANT :
+  ALWAYS ALWAYS ALWAYS return response in this pattern only, dont miss any key of object
+
   response : {
     text:'here is the solution'
     usedReference:['App.jsx','Home.jsx'],

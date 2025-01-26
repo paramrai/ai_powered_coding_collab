@@ -41,6 +41,32 @@ const OpenFiles = ({ content, isFileSaved, setIsFileSaved }) => {
   const openFiles = useSelector(selectOpenFiles);
   const activeFile = useSelector(selectActiveFile);
   const path = useSelector(selectPath);
+  const fileTree = useSelector(selectFileTree);
+
+  function findFileAndRead(iterable, name, path) {
+    if (!Array.isArray(iterable)) {
+      console.error("iterable is not an array");
+      return;
+    }
+
+    for (let [index, child] of iterable.entries()) {
+      if (child.name === name) {
+        if (child.type === "file") {
+          const content = iterable[index].content;
+          console.log({ name, content });
+          console.log("file not found");
+          return content;
+        }
+      }
+
+      if (child.children) {
+        const content = findFileAndRead(child.children, name, path);
+        if (content) return content;
+      }
+    }
+
+    console.log("file not found");
+  }
 
   const handleSave = () => {
     // Save file content
@@ -52,9 +78,15 @@ const OpenFiles = ({ content, isFileSaved, setIsFileSaved }) => {
       })
     );
 
-    setIsFileSaved(true);
     toast.success("File saved");
   };
+
+  useEffect(() => {
+    const prevContent = findFileAndRead(fileTree, activeFile);
+
+    console.log(content === prevContent);
+    setIsFileSaved(content === prevContent);
+  }, [content]);
 
   return (
     <div className="w-full overflow-x-auto scrollbar-hide bg-slate-800">
@@ -70,7 +102,7 @@ const OpenFiles = ({ content, isFileSaved, setIsFileSaved }) => {
             <IoMdCloudDone />
           </button>
         )}
-        {openFiles.map((file, i) => (
+        {openFiles?.map((file, i) => (
           <button
             key={i}
             className={`min-w-[50px] h-[50px] flex justify-between

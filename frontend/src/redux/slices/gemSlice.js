@@ -76,7 +76,7 @@ const gemSlice = createSlice({
     closeFile: (state, action) => {
       const closingFile = action.payload;
 
-      if (state.openFiles.some((item) => item.name == closingFile)) {
+      if (state.openFiles.some((item) => item.name === closingFile)) {
         state.openFiles = state.openFiles.filter(
           (file) => file.name !== closingFile
         );
@@ -102,12 +102,16 @@ const gemSlice = createSlice({
 
       findPathAndDelete(state.gem.fileTree, type, name, path);
 
-      const updatedGem = state.gem;
-      axiosInstance.put(`/gems/updateGem/${state.gem._id}`, updatedGem);
-
       if (state.activeFile === name) {
         state.activeFile = state.openFiles[0]?.name || "";
       }
+
+      if (state.openFiles.some((item) => item.name === name)) {
+        state.openFiles = state.openFiles.filter((file) => file.name !== name);
+      }
+
+      const updatedGem = state.gem;
+      axiosInstance.put(`/gems/updateGem/${state.gem._id}`, updatedGem);
     },
     setExploreGem: (state, action) => {
       const uniqueObjects = Array.from(
@@ -169,6 +173,12 @@ const gemSlice = createSlice({
         state.gem = updatedGem;
       }
     },
+    exitTheGem: (state, action) => {
+      state.gem = {};
+      state.activeFile = "";
+      state.openFiles = [];
+      state.path = "";
+    },
   },
 });
 
@@ -194,4 +204,5 @@ export const {
   setExploreGem,
   updateStatus,
   saveFileContent,
+  exitTheGem,
 } = gemSlice.actions;

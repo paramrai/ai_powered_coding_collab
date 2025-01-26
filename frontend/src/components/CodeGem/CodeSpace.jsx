@@ -35,15 +35,18 @@ const CodeSpace = ({
         if (child.type === "file") {
           const content = iterable[index].content;
           console.log({ name, content });
+          console.log("file not found");
           return content;
         }
       }
 
       if (child.children) {
         const content = findFileAndRead(child.children, name, path);
-        return content;
+        if (content) return content;
       }
     }
+
+    console.log("file not found");
   }
 
   useEffect(() => {
@@ -71,9 +74,11 @@ const CodeSpace = ({
   }, [fileTree]);
 
   const handleCodeChange = (e) => {
+    const prevContent = findFileAndRead(fileTree, activeFile, path);
+
     if (isOwnerOrCollaber) {
       setContent(e.target.value);
-      setIsFileSaved(false);
+      setIsFileSaved(content === prevContent);
     } else {
       toast.info(
         "You are not owner or collaborator to this gem so you can only see this gem , create your own gem to edit , chats and prompt to ai , and invite users to your gems"
