@@ -19,10 +19,24 @@ import { ClipLoader } from "react-spinners";
 import { useNavigate } from "react-router-dom";
 import moment from "moment";
 
-const profile =
-  "https:assets.codepen.io/2017/internal/avatars/users/default.png";
-const defaultPreview =
-  "https://img.freepik.com/free-vector/web-design-concept-with-flat-design_23-2147862426.jpg?t=st=1736832472~exp=1736836072~hmac=02c02e22fc0c1cb582e7f93316d30d5aaa11878d534f158e7a405757ce889694&w=740";
+const randomProfile = [
+  "https:assets.codepen.io/2017/internal/avatars/users/default.png",
+  "https://pics.craiyon.com/2023-11-26/oMNPpACzTtO5OVERUZwh3Q.webp",
+  "https://images.sftcdn.net/images/t_app-icon-s/p/c34c15bf-054c-4287-8c2c-73cef14107c2/3273691428/boys-dp-boy-profile-pictures-logo",
+  "https://images.sftcdn.net/images/t_app-cover-l,f_auto/p/e76d4296-43f3-493b-9d50-f8e5c142d06c/2117667014/boys-profile-picture-screenshot.png",
+];
+
+const randomPreview = [
+  "https://as2.ftcdn.net/v2/jpg/03/42/45/91/1000_F_342459198_KmVmJ04KdNKUFXjZ7JGzVfoevl1cBw7L.jpg",
+  "https://as1.ftcdn.net/v2/jpg/03/42/45/92/1000_F_342459217_8ZwBCz2xv3bDXa1P1v1egRafFgmFvmot.jpg",
+  "https://cdn.dribbble.com/userupload/3160967/file/original-079c818bc3fa4c2e0cf90e1da0cf2c4e.png?resize=1024x768&vertical=center",
+  "https://cdn.dribbble.com/userupload/4673833/file/original-458a45cadd81267da289136a7b1de673.png?resize=1024x768&vertical=center",
+  "https://cdn1.dronahq.com/wp-content/uploads/2023/01/custom_web_app_development_2x-scaled.webp",
+  "https://img.freepik.com/free-vector/application-learn-languages_23-2148624202.jpg?t=st=1737918819~exp=1737922419~hmac=d98dddcf46146e0a6521da5c8b8c34ce2fa27cfd72f02458523173565bc63a10&w=740",
+  "https://img.freepik.com/free-vector/flat-background-international-mother-language-day_23-2151115303.jpg?t=st=1737918847~exp=1737922447~hmac=c79d996387098e343a13396f41738c7ecab94533327310ed5c1b010982c330c8&w=740",
+  "https://img.freepik.com/free-vector/hand-drawn-english-school-illustration_23-2149494006.jpg?t=st=1737918879~exp=1737922479~hmac=4d1c65b1b1f4b5856f00f7234d93d1254e16f91e2e6e5578c9d5afd98a2ac04d&w=740",
+  "https://media.istockphoto.com/id/1058262630/vector/creation-responsive-internet-website-for-multiple-platforms-building-mobile-interface-on.jpg?s=1024x1024&w=is&k=20&c=Qrko2b9M1HK7M_5L2CYdj_iNG2xBt6OMJprLd3mmUOM=",
+];
 
 function GemSection() {
   const [page, setPage] = useState(0);
@@ -109,11 +123,15 @@ function GemSection() {
             >
               <div className="relative space-y-2">
                 <div className="overlay_effect_div absolute bg-slate-800 h-full w-full z-[-1] top-3 left-3 rounded-md"></div>
-                <div className="project_preview_img w-full rounded-md relative">
+                <div className="project_preview_img w-full bg-slate-700 h-[230px] rounded-md relative overflow-hidden">
                   <img
-                    src={gem.preview || defaultPreview}
+                    src={
+                      randomPreview[
+                        Math.floor(Math.random() * randomPreview.length)
+                      ]
+                    }
                     alt="preview"
-                    className="object-cover rounded-md max-h-[200px] w-full"
+                    className="object-cover rounded-md h-full w-full"
                   />
                   <button
                     onClick={() => handleOpenGem(gem)}
@@ -124,11 +142,17 @@ function GemSection() {
                   </button>
                 </div>
                 <div className="project_info gap-4 flex">
-                  <img
-                    src={profile}
-                    alt="profile"
-                    className="profile_img h-[45px] w-[45px] rounded-md"
-                  />
+                  <div className="profile_img_container bg-slate-700 rounded-md max-h-[45px] max-w-[45px] min-h-[45px] min-w-[45px]">
+                    <img
+                      src={
+                        randomProfile[
+                          Math.floor(Math.random() * randomProfile.length)
+                        ]
+                      }
+                      alt="profile"
+                      className="profile_img rounded-md object-cover max-h-[45px] max-w-[45px] min-h-[45px] min-w-[45px]"
+                    />
+                  </div>
                   <div className="project_title flex flex-col justify-between w-full">
                     <div className="flex items-center justify-between w-full">
                       <span className="text-md font-bold block">
