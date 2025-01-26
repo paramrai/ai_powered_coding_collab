@@ -62,6 +62,11 @@ const model = genAI.getGenerativeModel({
 
   9.codeWithNoRefs always have this strucure codeWithNoRefs:{'filename':'code'}
   10.Keep the key changes null if there are no referenceFiles OR code in prompt
+  11.If referenceFiles are given empty return a basic structure for that component
+  12.if referenceFiles are given empty and asked for update it return basic structure for that component
+  13.If the provided file is empty and asked for update provide basic structure of that file
+  14. If user said to add new files or new component provide the new files and new components in code object
+  15. if user said to add page , add file or add component provide in code object
 
   Example
   user request will be a object like this
@@ -90,7 +95,6 @@ const model = genAI.getGenerativeModel({
       'Home.jsx':'updated code'
       'Product.jsx':'updated code'
     }
-
 
     codeWithNoRefs:{
       "here add filename":'here  is code you provide',

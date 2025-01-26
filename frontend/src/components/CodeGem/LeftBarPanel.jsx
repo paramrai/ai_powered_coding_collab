@@ -102,6 +102,10 @@ const FileTree = ({
   const gem = useSelector(selectCurrentGem);
   const currentPath = useSelector(selectPath);
 
+  useEffect(() => {
+    setIsOpen(true);
+  }, []);
+
   const handleClick = () => {
     setIsOpen(!isOpen);
     if (fileTree.type === "file") {
@@ -252,10 +256,10 @@ const LeftBarPanel = ({ isLeftbarPanel, setIsLeftbarPanel }) => {
   const currentPath = useSelector(selectPath);
 
   const handleResize = useResizePanel(leftBarRef, "horizontal", {
-    minWidth: 200,
+    minWidth: 0,
     maxWidth: 600,
     onClose: () => setIsLeftbarPanel(false),
-    closeAtWidth: 210, // Slightly higher than minWidth to create a "snap" effect
+    closeAtWidth: 0,
   });
 
   const handleAddFileSubmit = async (e) => {

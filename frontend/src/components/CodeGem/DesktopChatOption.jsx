@@ -13,7 +13,7 @@ const DesktopChatOption = ({ isChatOpen, setIsChatOpen, width, setWidth }) => {
 
   const handleResize = useResizePanel(chatPanelRef, "horizontal", {
     minWidth: 300,
-    maxWidth: 800,
+    maxWidth: 1000,
     onResize: setWidth,
     reverse: true,
     onClose: () => setIsChatOpen(false),

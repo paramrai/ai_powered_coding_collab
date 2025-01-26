@@ -1,5 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 import axiosInstance from "../../configs/axiosInstance";
+import { toast } from "react-toastify";
 
 let initialState = {
   gem: {},
@@ -18,7 +19,7 @@ function findPathAndAdd(iterable, type, name, path) {
   for (let child of iterable) {
     if (child.name === path) {
       if (child.children.some((c) => c.name === name)) {
-        console.error(`A ${type} with the name "${name}" already exists.`);
+        toast.error(`A ${type} with the name "${name}" already exists.`);
         return;
       }
 
@@ -126,8 +127,48 @@ const gemSlice = createSlice({
         targetUser.isActive = user.isActive;
       }
     },
-    getOpenfilesContent: () => {},
-    saveFileContent: () => {},
+
+    saveFileContent: (state, action) => {
+      const { name, path, content } = action.payload;
+
+      function findFileAndUpdate(iterable, name, path) {
+        if (!Array.isArray(iterable)) {
+          console.error("iterable is not an array");
+          return false;
+        }
+
+        for (let child of iterable) {
+          if (child.name === name) {
+            if (child.type === "file") {
+              child.content = content;
+              return true; // Return true if file was found and updated
+            }
+          }
+
+          if (child.children) {
+            const found = findFileAndUpdate(child.children, name, path);
+            if (found) return true;
+          }
+        }
+        console.log("not updated");
+        return false;
+      }
+
+      // Update file content in file tree
+      const updated = findFileAndUpdate(state.gem.fileTree, name, path);
+
+      if (updated) {
+        // Update backend
+        console.log("updated");
+        const updatedGem = { ...state.gem };
+        axiosInstance
+          .put(`/gems/updateGem/${state.gem._id}`, updatedGem)
+          .catch((error) => console.error("Error updating gem:", error));
+
+        // Update state
+        state.gem = updatedGem;
+      }
+    },
   },
 });
 
@@ -152,4 +193,5 @@ export const {
   deleteFile,
   setExploreGem,
   updateStatus,
+  saveFileContent,
 } = gemSlice.actions;

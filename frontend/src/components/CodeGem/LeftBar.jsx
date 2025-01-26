@@ -1,16 +1,22 @@
-import { FaFile, FaSearch, FaGithub, FaCode, FaCog } from "react-icons/fa";
+import { FaFile, FaSearch, FaGithub, FaCode, FaVideo } from "react-icons/fa";
 import { ImExit } from "react-icons/im";
+import { IoMdChatboxes } from "react-icons/io";
 import { useNavigate } from "react-router-dom";
 
-const LeftBar = ({ isLeftbarPanel, setIsLeftbarPanel }) => {
+const LeftBar = ({
+  isLeftbarPanel,
+  setIsLeftbarPanel,
+  setIsVideoChatOpen,
+  setIsChatOpen,
+}) => {
   const navigate = useNavigate();
 
   const icons = [
     { icon: <FaFile />, label: "Explorer" },
     { icon: <FaSearch />, label: "Search" },
     { icon: <FaGithub />, label: "Source Control" },
-    { icon: <FaCode />, label: "Code" },
-    { icon: <FaCog />, label: "Settings" },
+    { icon: <IoMdChatboxes />, label: "Chat" },
+    { icon: <FaVideo />, label: "Open Video Chat" },
     { icon: <ImExit />, label: "Exit" },
   ];
 
@@ -24,10 +30,19 @@ const LeftBar = ({ isLeftbarPanel, setIsLeftbarPanel }) => {
                        border-l-2 border-transparent
                      hover:border-blue-500"
             onClick={() => {
-              if (item.label === "Exit") {
-                navigate("/");
+              switch (item.label) {
+                case "Exit":
+                  navigate("/");
+                  break;
+                case "Open Video Chat":
+                  setIsVideoChatOpen((prev) => !prev);
+                  break;
+                case "Chat":
+                  setIsChatOpen((prev) => !prev);
+                  break;
+                default:
+                  setIsLeftbarPanel(!isLeftbarPanel);
               }
-              setIsLeftbarPanel(!isLeftbarPanel);
             }}
           >
             <div className="text-xl">{item.icon}</div>
@@ -39,7 +54,7 @@ const LeftBar = ({ isLeftbarPanel, setIsLeftbarPanel }) => {
                 before:content-[''] before:absolute before:left-[-8px]
                 before:top-[50%] before:transform before:-translate-y-1/2
                 before:border-4 before:border-transparent before:border-r-slate-700
-                transition-opacity duration-200"
+                transition-opacity duration-200 z-50"
           >
             {item.label}
           </div>

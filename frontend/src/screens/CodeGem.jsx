@@ -14,6 +14,7 @@ import DesktopChatOption from "../components/CodeGem/DesktopChatOption";
 const CodeGem = () => {
   const isMobile = useMobileCheck();
   const [isChatOpen, setIsChatOpen] = useState(true);
+  const [isVideoChatOpen, setIsVideoChatOpen] = useState(true);
   const [isLeftbarPanel, setIsLeftbarPanel] = useState(!isMobile);
   const [chatPanelWidth, setChatPanelWidth] = useState(400); // Initial width for the chat panel
   const [isGemFound, setIsGemFound] = useState();
@@ -57,12 +58,17 @@ const CodeGem = () => {
           <LeftBar
             isLeftbarPanel={isLeftbarPanel}
             setIsLeftbarPanel={setIsLeftbarPanel}
+            setIsVideoChatOpen={setIsVideoChatOpen}
+            setIsChatOpen={setIsChatOpen}
           />
           <LeftBarPanel
             isLeftbarPanel={isLeftbarPanel}
             setIsLeftbarPanel={setIsLeftbarPanel}
           />
-          <CodeSpace />
+          <CodeSpace
+            isVideoChatOpen={isVideoChatOpen}
+            setIsVideoChatOpen={setIsChatOpen}
+          />
           <MobileChatOption />
           <DesktopChatOption
             isChatOpen={isChatOpen}

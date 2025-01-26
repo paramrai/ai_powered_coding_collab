@@ -25,6 +25,7 @@ import { BsHash } from "react-icons/bs";
 import { useDispatch, useSelector } from "react-redux";
 import {
   closeFile,
+  saveFileContent,
   selectActiveFile,
   selectFileTree,
   selectOpenFiles,
@@ -32,45 +33,43 @@ import {
   setActiveFile,
 } from "../../redux/slices/gemSlice";
 import { getFileIcon } from "./LeftBarPanel";
+import { IoMdCloudDone } from "react-icons/io";
+import { toast } from "react-toastify";
 
-const OpenFiles = ({ content, setContent }) => {
+const OpenFiles = ({ content, isFileSaved, setIsFileSaved }) => {
   const dispatch = useDispatch();
   const openFiles = useSelector(selectOpenFiles);
   const activeFile = useSelector(selectActiveFile);
-  const [prevContent, setPrevContent] = useState("");
-  const fileTree = useSelector(selectFileTree);
   const path = useSelector(selectPath);
-  const [isSaved, setIsSaved] = useState(true);
 
-  function findFileAndCompare(iterable, name, path) {
-    if (!Array.isArray(iterable)) {
-      console.error("iterable is not an array");
-      return;
-    }
+  const handleSave = () => {
+    // Save file content
+    dispatch(
+      saveFileContent({
+        name: activeFile,
+        path: path,
+        content: content,
+      })
+    );
 
-    for (let [index, child] of iterable.entries()) {
-      if (child.name === name) {
-        if (child.type === "file") {
-          // console.log({ content: iterable[index].content });
-          setPrevContent(iterable[index].content);
-          setIsSaved(content === prevContent);
-          console.log(isSaved);
-        }
-      }
-
-      if (child.children) {
-        findFileAndCompare(child.children, name, path);
-      }
-    }
-  }
-
-  useEffect(() => {
-    findFileAndCompare(fileTree, activeFile, path);
-  }, [content, activeFile]);
+    setIsFileSaved(true);
+    toast.success("File saved");
+  };
 
   return (
     <div className="w-full overflow-x-auto scrollbar-hide bg-slate-800">
       <div className="flex min-w-max">
+        {!isFileSaved && activeFile && (
+          <button
+            onClick={handleSave}
+            title="Save your gem"
+            className="text-green-500 text-2xl min-w-[50px] h-[50px] flex justify-between
+                      items-center bg-slate-800 p-4
+                      transition-all duration-300"
+          >
+            <IoMdCloudDone />
+          </button>
+        )}
         {openFiles.map((file, i) => (
           <button
             key={i}
@@ -88,6 +87,7 @@ const OpenFiles = ({ content, setContent }) => {
                 let index = openFiles.findIndex(
                   (item) => item.name === file.name
                 );
+                console.log(index);
                 dispatch(closeFile(file.name));
                 // if closing file = active then active = index - 1
                 if (file.name === activeFile) {
@@ -102,8 +102,8 @@ const OpenFiles = ({ content, setContent }) => {
           >
             {getFileIcon(file.name)}
             <h3 className="text-sm text-white mx-2">{file.name}</h3>
-            {!isSaved ? (
-              <GoDotFill className="min-h-2 min-w-2 rounded-full translate-x-[2px] translate-y-[1.54px] bg-gray-200 hover:bg-red-500 hover:scale-[1.1] transition-colors" />
+            {!isFileSaved && file.name === activeFile ? (
+              <GoDotFill className="min-h-2 min-w-2 rounded-full translate-x-[2px] translate-y-[1.54px] text-gray-400 hover:text-red-500 hover:scale-[1.1]" />
             ) : (
               <IoClose
                 className="text-sm text-gray-400  translate-x-[2px] translate-y-[1.54px] hover:text-red-500 hover:scale-[1.1] transition-colors"

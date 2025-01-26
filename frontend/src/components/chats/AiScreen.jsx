@@ -1,9 +1,16 @@
 import { useDispatch, useSelector } from "react-redux";
 import { selectToken, selectUser } from "../../redux/slices/userSlice";
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import axiosInstance from "../../configs/axiosInstance";
 import { addMessage, selectAiMessages } from "../../redux/slices/messageSlice";
 import { toast } from "react-toastify";
+import {
+  addNewFile,
+  saveFileContent,
+  selectFileTree,
+  selectOpenFiles,
+  selectPath,
+} from "../../redux/slices/gemSlice";
 
 function AiScreen({ activeTab }) {
   const messages = useSelector(selectAiMessages);
@@ -11,12 +18,38 @@ function AiScreen({ activeTab }) {
   const token = useSelector(selectToken);
   const [loading, setLoading] = useState(false);
   const dispatch = useDispatch();
-  const [referenceFiles, setreferenceFiles] = useState(null);
+  const [referenceFiles, setreferenceFiles] = useState({});
   const [prompt, setPrompt] = useState("");
+  const openFiles = useSelector(selectOpenFiles);
+  const fileTree = useSelector(selectFileTree);
+  const path = useSelector(selectPath);
 
   // refs
   const messagesEndRef = useRef(null);
   const inputRef = useRef(null);
+
+  function findFileAndRead(iterable, name) {
+    if (!Array.isArray(iterable)) {
+      console.error("iterable is not an array");
+      return;
+    }
+
+    for (let child of iterable) {
+      if (child.name === name) {
+        if (child.type === "file") {
+          return child.content;
+        }
+      }
+
+      if (child.children) {
+        const result = findFileAndRead(child.children, name);
+        if (result !== null && result !== undefined) {
+          return result;
+        }
+      }
+    }
+    return null;
+  }
 
   // !scroll to bottom on new msg added
   const scrollToBottom = useCallback(() => {
@@ -41,6 +74,20 @@ function AiScreen({ activeTab }) {
 
   const sendMessage = async (e) => {
     e.preventDefault();
+
+    // collect all file references
+    const checkedRefs = document.querySelectorAll('input[name="fileOption"]');
+
+    checkedRefs.forEach((ref) => {
+      if (ref.checked) {
+        const content = findFileAndRead(fileTree, ref.value);
+        console.log({ content });
+        referenceFiles[ref.value] = content;
+      }
+    });
+
+    console.log({ prompt, referenceFiles });
+
     if (prompt.trim() !== "") {
       try {
         setLoading(true);
@@ -53,11 +100,6 @@ function AiScreen({ activeTab }) {
         );
         setPrompt("");
         scrollToBottom();
-
-        console.log({
-          prompt,
-          referenceFiles,
-        });
 
         // reciecve msg
         const response = await axiosInstance.post(
@@ -73,8 +115,31 @@ function AiScreen({ activeTab }) {
           }
         );
 
+        console.log(response.data);
+
         if (response.status === 200) {
-          console.log(response.data);
+          const files = Object.keys(response.data.code);
+
+          files.forEach((file) => {
+            dispatch(addNewFile({ type: "file", name: file }));
+            dispatch(
+              saveFileContent({
+                name: file,
+                path,
+                content: response.data.code[file],
+              })
+            );
+          });
+
+          files.forEach((file) => {
+            dispatch(
+              saveFileContent({
+                name: file,
+                path: path,
+                content: response.data.code[file],
+              })
+            );
+          });
 
           dispatch(
             addMessage({
@@ -87,7 +152,7 @@ function AiScreen({ activeTab }) {
         }
       } catch (error) {
         console.log(error);
-        toast.error(error.response.data.msg || error.message);
+        toast.error(error.response?.data.msg || error.message);
       } finally {
         setLoading(false);
       }
@@ -150,25 +215,53 @@ function AiScreen({ activeTab }) {
           )}
         </div>
         <div ref={messagesEndRef} />
-        <div className="chat-promt sticky bottom-0 w-full px-2 pb-2">
-          <form onSubmit={sendMessage} className="flex pt-2">
-            <input
-              ref={inputRef}
-              type="text"
-              className="flex-grow p-2 border rounded-lg bg-gray-700 text-white w-full"
-              placeholder="Type your message..."
-              value={prompt}
-              onChange={(e) => setPrompt(e.target.value)}
-              onKeyDown={handleKeyDown}
-              onFocus={handleInputFocus}
-            />
-            <button
-              type="submit"
-              className="bg-blue-500 text-white p-2 rounded-lg ml-2"
-            >
-              Send
-            </button>
-          </form>
+        <div className="flex flex-col flex-wrap gap-1 bg-gray-800 p-4 rounded sticky bottom-0">
+          <h2 className="text-gray-400 text-sm font-semibold">
+            Select reference files
+          </h2>
+          {!openFiles.length && (
+            <h4 className="text-gray-400 text-xs font-semibold">
+              Open a file to select refs
+            </h4>
+          )}
+          <div className="flex flex-wrap gap-3 overflow-auto items-center">
+            {openFiles.map((file, i) => (
+              <label
+                key={i}
+                className="flex items-center space-x-3 text-white px-3 py-2 rounded-lg transition-all hover:bg-gray-700 bg-gray-750 border-gray-600 cursor-pointer"
+              >
+                <input
+                  type="checkbox"
+                  className="form-checkbox h-4 w-4 cursor-pointer rounded-md text-blue-500 bg-gray-600 transition-all"
+                  name="fileOption"
+                  value={file.name}
+                />
+                <span className="text-sm font-medium text-gray-200">
+                  {file.name}
+                </span>
+              </label>
+            ))}
+          </div>
+          <div className="chat-promt sticky bottom-0 w-full">
+            <form onSubmit={sendMessage} className="flex pt-2">
+              <input
+                ref={inputRef}
+                type="text"
+                className="flex-grow p-2 border rounded-lg bg-gray-700 text-white w-full focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
+                placeholder="Type your message..."
+                value={prompt}
+                onChange={(e) => setPrompt(e.target.value)}
+                onKeyDown={handleKeyDown}
+                onFocus={handleInputFocus}
+              />
+              <button
+                type="submit"
+                className="bg-blue-500 text-white p-2 rounded-lg ml-2 hover:bg-blue-600 transition-colors"
+              >
+                Send
+              </button>
+            </form>
+          </div>
         </div>
       </div>
     )
