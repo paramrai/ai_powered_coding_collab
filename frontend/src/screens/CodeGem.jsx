@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useMobileCheck } from "../hooks/useMobileCheck";
 import { useParams } from "react-router-dom";
 import NotFound from "../components/NotFound";
@@ -17,6 +17,7 @@ import DesktopChatOption from "../components/CodeGem/DesktopChatOption";
 import { selectUser } from "../redux/slices/userSlice";
 import { toast } from "react-toastify";
 import useOwnerOrCollaberCheck from "../hooks/useOwnerOrCollaberCheck";
+import { updateHeight } from "../utils/hieght";
 
 const CodeGem = () => {
   const isMobile = useMobileCheck();
@@ -28,8 +29,14 @@ const CodeGem = () => {
   const [isLoading, setIsLoading] = useState(true);
   const dispatch = useDispatch();
   const ownerOrCollaber = useOwnerOrCollaberCheck();
-
   const { gemName } = useParams();
+  const codeGemRef = useRef();
+
+  // for Mob ui
+  useEffect(() => {
+    updateHeight(codeGemRef);
+    window.addEventListener("resize", updateHeight(codeGemRef));
+  }, []);
 
   useEffect(() => {
     if (!ownerOrCollaber) {
@@ -59,14 +66,17 @@ const CodeGem = () => {
 
   if (isLoading) {
     return (
-      <div className="h-screen w-full flex items-center justify-center bg-slate-900">
+      <div className="h-[90vh] w-full flex items-center justify-center bg-slate-900">
         <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-blue-500"></div>
       </div>
     );
   }
 
   return (
-    <main className="main_container max-h-screen w-full overflow-hidden flex bg-slate-900">
+    <main
+      ref={codeGemRef}
+      className="main_container max-h-screen w-full overflow-hidden flex bg-slate-900"
+    >
       {isGemFound ? (
         <>
           <LeftBar

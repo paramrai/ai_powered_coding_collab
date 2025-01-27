@@ -34,8 +34,6 @@ function InviteScreen({ activeTab }) {
           }
         );
 
-        console.log(res.data.potentialInvites);
-
         setPotentialInvites(res.data.potentialInvites);
       } catch (error) {
         console.log(error);
@@ -71,7 +69,6 @@ function InviteScreen({ activeTab }) {
           },
         }
       );
-      console.log(res.data);
       if (res.status === 200 || res.statusText === "OK") {
         dispatch(updateUserObject(res.data.user));
         toast.success(res.data.msg);

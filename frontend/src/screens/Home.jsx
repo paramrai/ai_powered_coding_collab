@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import InfoCards from "../components/home/InfoCards";
 import Navbar from "../components/home/Navbar";
 import HomeTabs from "../components/home/HomeTabs";
@@ -11,12 +11,20 @@ import {
   selectUser,
   updateUserObject,
 } from "../redux/slices/userSlice";
+import { updateHeight } from "../utils/hieght";
 
 const Home = () => {
   const socket = useSocket();
   const user = useSelector(selectUser);
   const token = useSelector(selectToken);
   const dispatch = useDispatch();
+  const homeRef = useRef();
+
+  // for Mob ui
+  useEffect(() => {
+    updateHeight(homeRef);
+    window.addEventListener("resize", updateHeight(homeRef));
+  }, []);
 
   useEffect(() => {
     // show online when user enters in home
@@ -33,14 +41,17 @@ const Home = () => {
 
   if (!socket) {
     return (
-      <div className="h-screen w-full flex items-center justify-center bg-slate-900">
+      <div className="h-[90vh] w-full flex items-center justify-center bg-slate-900">
         <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-blue-500"></div>
       </div>
     );
   }
 
   return (
-    <main className="h-full overflow-x-hidden overflow-y-auto scrollbar-thin scrollbar-thumb-slate-700 scrollbar-track-slate-900">
+    <main
+      ref={homeRef}
+      className="h-screen overflow-x-hidden overflow-y-auto scrollbar-thin scrollbar-thumb-slate-700 scrollbar-track-slate-900"
+    >
       <Navbar />
       <HomeTabs />
       <GemSection />

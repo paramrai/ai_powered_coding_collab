@@ -66,8 +66,6 @@ const InboxModal = ({ showInvites, setShowInvites }) => {
   };
 
   const handleRejectInvite = async (invite) => {
-    console.log({ invite });
-
     try {
       const res = await axiosInstance.put(
         "/users/rejectInvite",
@@ -84,7 +82,6 @@ const InboxModal = ({ showInvites, setShowInvites }) => {
       );
 
       if (res.status === 200 || res.statusText === "OK") {
-        console.log(res.data);
         dispatch(updateUserObject(res.data.user));
         toast.success("Invite rejected");
       }

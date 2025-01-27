@@ -99,7 +99,6 @@ function GemSection() {
 
   const handleOpenGem = (gem) => {
     navigate(`/gem/${gem.name}`);
-    console.log(gem);
   };
 
   return (

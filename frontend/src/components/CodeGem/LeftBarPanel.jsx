@@ -48,6 +48,7 @@ import {
 import { useResizePanel } from "../../hooks/useResizePanel";
 import { selectUser } from "../../redux/slices/userSlice";
 import { toast } from "react-toastify";
+import { updateHeight } from "../../utils/hieght";
 
 export const getFileIcon = (fileName) => {
   if (fileName.endsWith(".js")) return <FaJs className="text-yellow-400" />;
@@ -249,10 +250,16 @@ const LeftBarPanel = ({ isLeftbarPanel, setIsLeftbarPanel }) => {
   const fileTree = useSelector(selectFileTree)[0];
   const [showInput, setShowInput] = useState(false);
   const [lastOpenedFolder, setLastOpenedFolder] = useState(fileTree.name);
-  const leftBarRef = useRef(null);
   const gem = useSelector(selectCurrentGem);
   const user = useSelector(selectUser);
   const currentPath = useSelector(selectPath);
+  const leftBarRef = useRef(null);
+
+  // for Mob ui
+  useEffect(() => {
+    updateHeight(leftBarRef);
+    window.addEventListener("resize", updateHeight(leftBarRef));
+  }, []);
 
   const handleResize = useResizePanel(leftBarRef, "horizontal", {
     minWidth: 200,
@@ -263,10 +270,6 @@ const LeftBarPanel = ({ isLeftbarPanel, setIsLeftbarPanel }) => {
 
   const handleAddFileSubmit = async (e) => {
     e.preventDefault();
-
-    // Add console logs to debug the IDs
-    console.log("Gem owner:", gem.owner);
-    console.log("Current user:", user._id);
 
     // check is collabrator
     const isCollabrator = gem.collaborator.some(

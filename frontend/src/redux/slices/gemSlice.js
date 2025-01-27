@@ -46,7 +46,6 @@ function findPathAndDelete(iterable, type, name, path) {
 
   for (let [index, child] of iterable.entries()) {
     if (child.type === type && child.name === name) {
-      console.log(`${child.name} will be deleted`);
       iterable.splice(index, 1);
     }
 
@@ -154,7 +153,6 @@ const gemSlice = createSlice({
             if (found) return true;
           }
         }
-        console.log("not updated");
         return false;
       }
 
@@ -163,7 +161,6 @@ const gemSlice = createSlice({
 
       if (updated) {
         // Update backend
-        console.log("updated");
         const updatedGem = { ...state.gem };
         axiosInstance
           .put(`/gems/updateGem/${state.gem._id}`, updatedGem)

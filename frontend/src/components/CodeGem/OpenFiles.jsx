@@ -53,7 +53,6 @@ const OpenFiles = ({ content, isFileSaved, setIsFileSaved }) => {
       if (child.name === name) {
         if (child.type === "file") {
           const content = iterable[index].content;
-          console.log({ name, content });
           console.log("file not found");
           return content;
         }
@@ -84,7 +83,6 @@ const OpenFiles = ({ content, isFileSaved, setIsFileSaved }) => {
   useEffect(() => {
     const prevContent = findFileAndRead(fileTree, activeFile);
 
-    console.log(content === prevContent);
     setIsFileSaved(content === prevContent);
   }, [content]);
 
@@ -115,18 +113,15 @@ const OpenFiles = ({ content, isFileSaved, setIsFileSaved }) => {
                       }`}
             onClick={(e) => {
               if (e.target instanceof SVGElement) {
-                console.log("The target is an SVG element.");
                 let index = openFiles.findIndex(
                   (item) => item.name === file.name
                 );
-                console.log(index);
                 dispatch(closeFile(file.name));
                 // if closing file = active then active = index - 1
                 if (file.name === activeFile) {
                   dispatch(setActiveFile(openFiles[index - 1]?.name));
                 }
               } else {
-                console.log("The target is not an SVG element.");
                 // set active file
                 dispatch(setActiveFile(file.name));
               }

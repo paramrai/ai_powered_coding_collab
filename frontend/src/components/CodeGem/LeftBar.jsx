@@ -4,6 +4,8 @@ import { IoMdChatboxes } from "react-icons/io";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { exitTheGem } from "../../redux/slices/gemSlice";
+import { useEffect, useRef } from "react";
+import { updateHeight } from "../../utils/hieght";
 
 const LeftBar = ({
   isLeftbarPanel,
@@ -13,6 +15,13 @@ const LeftBar = ({
 }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const leftBarRef = useRef();
+
+  // for Mob ui
+  useEffect(() => {
+    updateHeight(leftBarRef);
+    window.addEventListener("resize", updateHeight(leftBarRef));
+  }, []);
 
   const icons = [
     { icon: <FaFile />, label: "Explorer" },
@@ -24,7 +33,10 @@ const LeftBar = ({
   ];
 
   return (
-    <div className="h-screen bg-slate-900 flex flex-col items-left border-r border-slate-700">
+    <div
+      ref={leftBarRef}
+      className="h-screen bg-slate-900 flex flex-col items-left border-r border-slate-700"
+    >
       {icons.map((item, index) => (
         <div key={index} className="relative group">
           <button

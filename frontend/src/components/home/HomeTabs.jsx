@@ -37,7 +37,6 @@ function Tabs() {
         request = `/gems/getUserGems/${user._id}`;
         break;
       case "collection":
-        console.log("userCollection", user.collection);
         dispatch(setExploreGem(user.collection));
         dispatch(setHomeActiveTab(tab));
         return;

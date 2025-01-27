@@ -9,6 +9,7 @@ import {
 } from "../../redux/slices/gemSlice";
 import useOwnerOrCollaberCheck from "../../hooks/useOwnerOrCollaberCheck";
 import { toast } from "react-toastify";
+import { updateHeight } from "../../utils/hieght";
 
 const CodeSpace = ({
   isVideoChatOpen,
@@ -23,6 +24,13 @@ const CodeSpace = ({
   const dispatch = useDispatch();
   const [isFileSaved, setIsFileSaved] = useState(true);
   const isOwnerOrCollaber = useOwnerOrCollaberCheck();
+  const codeSpaceRef = useRef();
+
+  // for Mob ui
+  useEffect(() => {
+    updateHeight(codeSpaceRef);
+    window.addEventListener("resize", updateHeight(codeSpaceRef));
+  }, []);
 
   function findFileAndRead(iterable, name, path) {
     if (!Array.isArray(iterable)) {
@@ -34,7 +42,6 @@ const CodeSpace = ({
       if (child.name === name) {
         if (child.type === "file") {
           const content = iterable[index].content;
-          console.log({ name, content });
           console.log("file not found");
           return content;
         }
@@ -70,7 +77,6 @@ const CodeSpace = ({
     // const regex = /\\b(${uniqueLines.join('|')})\\b/gi;
 
     // const matches = content.match({ regex });
-    // console.log(matches);
   }, [fileTree]);
 
   const handleCodeChange = (e) => {
@@ -87,7 +93,10 @@ const CodeSpace = ({
   };
 
   return (
-    <div className="min-h-screen w-auto overflow-hidden flex-1 flex flex-col">
+    <div
+      ref={codeSpaceRef}
+      className="min-h-screen w-auto overflow-hidden flex-1 flex flex-col"
+    >
       <OpenFiles
         content={content}
         setContent={setContent}

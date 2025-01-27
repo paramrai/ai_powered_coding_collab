@@ -99,8 +99,6 @@ export const getPotentialInvitesController = async (req, res, next) => {
       (invite) => String(invite.gem) === String(gemId)
     );
 
-    console.log({ sentInvite });
-
     const allUser = await userModel.find({ _id: { $ne: loggedInUser._id } });
 
     const potentialInvites = allUser.filter(
@@ -136,8 +134,6 @@ export const inviteUserController = async (req, res, next) => {
       (invite) =>
         invite.gem.equals(gemId) && invite.sender.equals(inviteSenderId)
     );
-
-    console.log("hasRecievedInvites", hasReceivedInvite);
 
     if (hasReceivedInvite) {
       // Remove the invite
@@ -220,10 +216,6 @@ export const inviteUserController = async (req, res, next) => {
 export const acceptInviteController = async (req, res, next) => {
   const { gemId, accepterId, senderId } = req.body;
 
-  console.log({ gemId });
-  console.log({ senderId });
-  console.log({ accepterId });
-
   try {
     const gem = await gemModel.findById(gemId);
     const accepterUser = await userModel.findById(accepterId);
@@ -289,10 +281,6 @@ export const acceptInviteController = async (req, res, next) => {
 export const rejectInviteController = async (req, res, next) => {
   const { gemId, rejectorId, senderId } = req.body;
 
-  console.log({ gemId });
-  console.log({ rejectorId });
-  console.log({ senderId });
-
   try {
     const rejectorUser = await userModel.findById(rejectorId);
     const senderUser = await userModel.findById(senderId);
@@ -316,8 +304,6 @@ export const rejectInviteController = async (req, res, next) => {
     const inviteIndex = senderUser.sentInvites.findIndex((invite) =>
       invite.gem.equals(gemId)
     );
-
-    console.log({ inviteIndex });
 
     if (inviteIndex !== -1) {
       senderUser.sentInvites[inviteIndex].recievers = senderUser.sentInvites[

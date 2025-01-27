@@ -79,12 +79,9 @@ function AiScreen({ activeTab }) {
     checkedRefs.forEach((ref) => {
       if (ref.checked) {
         const content = findFileAndRead(fileTree, ref.value);
-        console.log({ content });
         referenceFiles[ref.value] = content;
       }
     });
-
-    console.log({ prompt, referenceFiles });
 
     if (prompt.trim() !== "") {
       try {
@@ -114,8 +111,6 @@ function AiScreen({ activeTab }) {
         );
 
         if (response.status === 200) {
-          console.log(response.data);
-
           const files = Object.keys(response.data.code);
 
           files.forEach((file) => {
@@ -144,7 +139,6 @@ function AiScreen({ activeTab }) {
           scrollToBottom();
         }
       } catch (error) {
-        console.log(error);
         toast.error(error.response?.data.msg || error.message);
       } finally {
         setLoading(false);

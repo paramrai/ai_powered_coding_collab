@@ -163,8 +163,6 @@ export const collectGemController = async (req, res, next) => {
 
     // Check if the gem already exists in the user's collection
     const isAlreadyExist = user.collection.some((item) => item.equals(gemId));
-    console.log(isAlreadyExist);
-    // { _id:lbncsaduvfb }
 
     if (isAlreadyExist) {
       await user.updateOne({ $pull: { collection: gemId } });
