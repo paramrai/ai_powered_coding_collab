@@ -29,6 +29,7 @@ const CodeGem = () => {
   const [isLoading, setIsLoading] = useState(true);
   const dispatch = useDispatch();
   const ownerOrCollaber = useOwnerOrCollaberCheck();
+  const currentGem = useSelector(selectCurrentGem);
   const { gemName } = useParams();
   const codeGemRef = useRef();
 
@@ -39,7 +40,7 @@ const CodeGem = () => {
   }, []);
 
   useEffect(() => {
-    if (!ownerOrCollaber) {
+    if (!ownerOrCollaber && currentGem._id) {
       toast.info(
         "You are not owner or collaborator to this gem so you can only see this gem , create your own gem to edit , chats and prompt to ai , and invite users to your gems"
       );
@@ -75,7 +76,7 @@ const CodeGem = () => {
   return (
     <main
       ref={codeGemRef}
-      className="main_container max-h-screen w-full overflow-hidden flex bg-slate-900"
+      className="main_container max- w-full overflow-hidden flex bg-slate-900"
     >
       {isGemFound ? (
         <>

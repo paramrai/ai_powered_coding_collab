@@ -331,7 +331,7 @@ const LeftBarPanel = ({ isLeftbarPanel, setIsLeftbarPanel }) => {
     isLeftbarPanel && (
       <div
         ref={leftBarRef}
-        className="group relative h-screen w-64 bg-slate-900 overflow-x-hidden 
+        className="group relative h-full w-64 bg-slate-900 overflow-x-hidden 
         overflow-y-auto scrollbar-thin scrollbar-thumb-slate-700 scrollbar-track-slate-900"
       >
         <div className="hidden group-hover:flex absolute top-0 right-0 gap-2 p-2 items-center pr-2 justify-end text-gray-400 bg-slate-900 w-max h-min ml-auto z-10">

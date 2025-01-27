@@ -50,7 +50,7 @@ const Home = () => {
   return (
     <main
       ref={homeRef}
-      className="h-screen overflow-x-hidden overflow-y-auto scrollbar-thin scrollbar-thumb-slate-700 scrollbar-track-slate-900"
+      className="h-full overflow-x-hidden overflow-y-auto scrollbar-thin scrollbar-thumb-slate-700 scrollbar-track-slate-900"
     >
       <Navbar />
       <HomeTabs />

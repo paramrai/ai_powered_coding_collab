@@ -95,7 +95,7 @@ const CodeSpace = ({
   return (
     <div
       ref={codeSpaceRef}
-      className="min-h-screen w-auto overflow-hidden flex-1 flex flex-col"
+      className="h-full w-auto overflow-hidden flex-1 flex flex-col"
     >
       <OpenFiles
         content={content}
