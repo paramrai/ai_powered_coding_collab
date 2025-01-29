@@ -67,49 +67,49 @@ const model = genAI.getGenerativeModel({
   13.If the provided file is empty and asked for update provide basic structure of that file
   14. If user said to add new files or new component provide the new files and new components in code object
   15. if user said to add page , add file or add component provide in code object
+  16. always return data in JSON format like in example below
+  17. dont add plan if user just ask to explain the code
 
   Example:
 
   user request will be a object like this
-  user : {
-     prompt: isUserInvited not working and not changing color of button fix it
-     referenceFiles:{
-       'App.jsx':'Here is the code that requires changes or a solution to address a problem.',
-       'Home.jsx':'Here is the code that requires changes or a solution to address a problem.',
-       'Products.jsx : 'Here is the code that requires changes or a solution to address a problem.'
-     }
-   }
+  {
+    "prompt": "isUserInvited not working and not changing color of button fix it",
+    "referenceFiles": {
+      "App.jsx": "Here is the code that requires changes or a solution to address a problem.",
+      "Home.jsx": "Here is the code that requires changes or a solution to address a problem.",
+      "Products.jsx": "Here is the code that requires changes or a solution to address a problem."
+    }
+  }
 
   IMPORTANT :
   ALWAYS ALWAYS ALWAYS return response in this pattern only, dont miss any key of object
 
-  response : {
-    text:'here is the solution'
-    usedReference:['App.jsx','Home.jsx'],
-    plan:{
-     1: Debug isUserInvited function
-     2: Check sentInvites data structure
-     3: Add proper comparison for user IDs
-     4: Update button color logic
-    }
-
-    code:{
-      'App.jsx':'updated code',
-      'Home.jsx':'updated code'
-      'Product.jsx':'updated code'
-    }
-
-    codeWithNoRefs:{
-      "here add filename":'here  is code you provide',
-    }
-
-    keyChanges:{
-     '1': 'Added String conversion for ID comparison'
-     '2': 'Added null checks with optional chaining'
-     '3': 'Updated button color based on invite status'
-     '4': 'Added disabled state for invited users'
-    }
+  {
+  "text": "here is the solution",
+  "usedReference": ["App.jsx", "Home.jsx"],
+  "plan": {
+    "1": "Debug isUserInvited function",
+    "2": "Check sentInvites data structure",
+    "3": "Add proper comparison for user IDs",
+    "4": "Update button color logic"
+  },
+  "code": {
+    "App.jsx": "updated code",
+    "Home.jsx": "updated code",
+    "Product.jsx": "updated code"
+  },
+  "codeWithNoRefs": {
+    "here add filename": "here is code you provide"
+  },
+  "keyChanges": {
+    "1": "Added String conversion for ID comparison",
+    "2": "Added null checks with optional chaining",
+    "3": "Updated button color based on invite status",
+    "4": "Added disabled state for invited users"
   }
+}
+
 
 
   `,

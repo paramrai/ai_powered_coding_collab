@@ -71,8 +71,9 @@ const CodeSpace = ({
 
   const handleCodeChange = (e) => {
     const prevContent = findFileAndRead(fileTree, activeFile, path);
-
     setContent(e.target.value);
+    console.log({ content });
+    console.log({ prevContent });
     setIsFileSaved(content === prevContent);
   };
 

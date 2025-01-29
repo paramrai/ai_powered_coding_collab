@@ -113,6 +113,8 @@ function AiScreen({ activeTab }) {
         );
 
         if (response.status === 200) {
+          console.log(response.data);
+
           const files = Object.keys(response.data.code);
 
           files.forEach((file) => {
@@ -140,9 +142,25 @@ function AiScreen({ activeTab }) {
             })
           );
 
+          let plan = "";
+
+          if (response.data.plan) {
+            for (let [key, value] of Object.entries(response.data.plan)) {
+              plan += ` ${key}: ${value} `;
+            }
+
+            dispatch(
+              addMessage({
+                msg: `here is plan ${plan}`,
+                sender: "ai",
+              })
+            );
+          }
+
           scrollToBottom();
         }
       } catch (error) {
+        console.log(error);
         toast.error(error.response?.data.msg || error.message);
       } finally {
         setLoading(false);
@@ -161,7 +179,7 @@ function AiScreen({ activeTab }) {
                   message.sender === username ? "flex-row-reverse" : "flex-row"
                 }`}
               >
-                <div className="min-w-8 min-h-8 rounded-full bg-gray-600 flex items-center justify-center text-white text-sm">
+                <div className="min-w-8 min-h-8 max-w-8 max-h-8 rounded-full bg-gray-600 flex items-center justify-center text-white text-sm">
                   {message.sender === username
                     ? username.substring(0, 2).toUpperCase()
                     : "AI"}
@@ -193,20 +211,26 @@ function AiScreen({ activeTab }) {
             </div>
           ))}
           {loading && (
-            <div
-              id="loading-bubble"
-              className="w-fit px-6 py-4 mb-2 bg-slate-800 flex justify-center items-center rounded-br-xl rounded-bl-xl rounded-tr-xl"
-            >
-              <div id="spinner" className="flex gap-1">
-                <div className="bounce1 w-[9px] h-[9px] bg-[#dcdcdc] rounded-full inline-block"></div>
-                <div className="bounce2 w-[9px] h-[9px] bg-[#dcdcdc] rounded-full inline-block"></div>
-                <div className="bounce3 w-[9px] h-[9px] bg-[#dcdcdc] rounded-full inline-block"></div>
+            <div className="flex items-start gap-2 mt-2">
+              <div className="min-w-8 min-h-8 max-w-8 max-h-8 rounded-full bg-gray-600 flex items-center justify-center text-white text-sm">
+                AI
+              </div>
+
+              <div
+                id="loading-bubble"
+                className="w-fit px-6 py-4 mb-2 bg-gray-700 flex justify-center items-center rounded-2xl"
+              >
+                <div id="spinner" className="flex gap-1">
+                  <div className="bounce1 w-[9px] h-[9px] bg-[#dcdcdc] rounded-full inline-block"></div>
+                  <div className="bounce2 w-[9px] h-[9px] bg-[#dcdcdc] rounded-full inline-block"></div>
+                  <div className="bounce3 w-[9px] h-[9px] bg-[#dcdcdc] rounded-full inline-block"></div>
+                </div>
               </div>
             </div>
           )}
         </div>
         <div ref={messagesEndRef} />
-        <div className="flex flex-col flex-wrap gap-1 bg-gray-800 p-4 rounded sticky bottom-0">
+        <div className="flex flex-col flex-wrap gap-1 bg-gray-700 p-4 rounded sticky bottom-0">
           <h2 className="text-gray-400 text-sm font-semibold">
             Select reference files
           </h2>

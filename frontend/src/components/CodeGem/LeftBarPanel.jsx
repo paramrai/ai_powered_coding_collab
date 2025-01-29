@@ -98,8 +98,6 @@ const FileTree = ({
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const dispatch = useDispatch();
-  const user = useSelector(selectUser);
-  const gem = useSelector(selectCurrentGem);
   const currentPath = useSelector(selectPath);
 
   useEffect(() => {
@@ -116,10 +114,6 @@ const FileTree = ({
       if (!isOpen) setLastOpenedFolder(fileTree.name);
     }
   };
-
-  const isCollabrator = gem.collaborator.some(
-    (collabUser) => String(collabUser._id) === String(user._id)
-  );
 
   return (
     <>
@@ -151,15 +145,10 @@ const FileTree = ({
               <MdDelete
                 onClick={(e) => {
                   e.stopPropagation();
-                  if (!isCollabrator) {
-                    toast.error("Only Collabraotor can edit gems");
-                    return;
-                  } else {
-                    if (e.target instanceof SVGElement) {
-                      dispatch(
-                        deleteFile({ type: fileTree.type, name: fileTree.name })
-                      );
-                    }
+                  if (e.target instanceof SVGElement) {
+                    dispatch(
+                      deleteFile({ type: fileTree.type, name: fileTree.name })
+                    );
                   }
                 }}
               />
@@ -182,15 +171,10 @@ const FileTree = ({
               <MdDelete
                 onClick={(e) => {
                   e.stopPropagation();
-                  if (!isCollabrator) {
-                    toast.error("Only Collabraotor can edit gems");
-                    return;
-                  } else {
-                    if (e.target instanceof SVGElement) {
-                      dispatch(
-                        deleteFile({ type: fileTree.type, name: fileTree.name })
-                      );
-                    }
+                  if (e.target instanceof SVGElement) {
+                    dispatch(
+                      deleteFile({ type: fileTree.type, name: fileTree.name })
+                    );
                   }
                 }}
               />
@@ -271,18 +255,6 @@ const LeftBarPanel = ({ isLeftbarPanel, setIsLeftbarPanel }) => {
   const handleAddFileSubmit = async (e) => {
     e.preventDefault();
 
-    // check is collabrator
-    const isCollabrator = gem.collaborator.some(
-      (collabUser) => String(collabUser._id) === String(user._id)
-    );
-
-    if (!isCollabrator) {
-      toast.warn("Access Denied");
-      toast.info("Only the owner can modify this gem");
-      setShowInput(false);
-      return;
-    }
-
     // Rest of the file creation logic
     const input = addingForm.current.querySelector("input");
     const newFileName = input.value.trim();
@@ -331,7 +303,7 @@ const LeftBarPanel = ({ isLeftbarPanel, setIsLeftbarPanel }) => {
     isLeftbarPanel && (
       <div
         ref={leftBarRef}
-        className="group relative h-full w-64 bg-slate-900 overflow-x-hidden 
+        className="group relative h-screen w-64 bg-slate-900 overflow-x-hidden 
         overflow-y-auto scrollbar-thin scrollbar-thumb-slate-700 scrollbar-track-slate-900"
       >
         <div className="hidden group-hover:flex absolute top-0 right-0 gap-2 p-2 items-center pr-2 justify-end text-gray-400 bg-slate-900 w-max h-min ml-auto z-10">

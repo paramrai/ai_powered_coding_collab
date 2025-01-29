@@ -20,29 +20,6 @@ const OpenFiles = ({ content, isFileSaved, setIsFileSaved }) => {
   const openFiles = useSelector(selectOpenFiles);
   const activeFile = useSelector(selectActiveFile);
   const path = useSelector(selectPath);
-  const fileTree = useSelector(selectFileTree);
-
-  function findFileAndRead(iterable, name) {
-    if (!Array.isArray(iterable)) {
-      console.error("iterable is not an array");
-      return;
-    }
-
-    for (let child of iterable) {
-      if (child.name === name && child.type === "file") {
-        if (child.content) {
-          return child.content;
-        } else {
-          return "";
-        }
-      }
-
-      if (child.children) {
-        const content = findFileAndRead(child.children, name);
-        if (content) return content;
-      }
-    }
-  }
 
   const handleSave = () => {
     // Save file content
@@ -57,11 +34,6 @@ const OpenFiles = ({ content, isFileSaved, setIsFileSaved }) => {
     toast.success("File saved");
     setIsFileSaved(true);
   };
-
-  useEffect(() => {
-    const prevContent = findFileAndRead(fileTree, activeFile);
-    setIsFileSaved(content === prevContent);
-  }, [content]);
 
   return (
     <div className="w-full overflow-x-auto scrollbar-hide bg-slate-800">
