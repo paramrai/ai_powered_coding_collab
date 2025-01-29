@@ -101,12 +101,18 @@ const gemSlice = createSlice({
 
       findPathAndDelete(state.gem.fileTree, type, name, path);
 
+      // if active file deleting
       if (state.activeFile === name) {
         state.activeFile = state.openFiles[0]?.name || "";
       }
 
+      // remove also from open files
       if (state.openFiles.some((item) => item.name === name)) {
         state.openFiles = state.openFiles.filter((file) => file.name !== name);
+      }
+
+      if (state.openFiles.length === 0) {
+        state.activeFile = "";
       }
 
       const updatedGem = state.gem;
