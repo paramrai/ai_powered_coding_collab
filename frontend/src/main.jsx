@@ -1,13 +1,18 @@
+// css
+import "./index.css";
+import "react-toastify/dist/ReactToastify.css";
+
+// components
+import App from "./App.jsx";
+import Toast from "./components/Toast.jsx";
+
+// libs
+import SocketProvider from "./redux/socket/SocketProvider.jsx";
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { BrowserRouter as Router } from "react-router-dom";
-import "./index.css";
-import App from "./App.jsx";
 import { Provider } from "react-redux";
 import { store } from "./redux/store";
-import { ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
-import SocketProvider from "./redux/socket/SocketProvider.jsx";
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
@@ -15,17 +20,7 @@ createRoot(document.getElementById("root")).render(
       <Provider store={store}>
         <SocketProvider>
           <App />
-          <ToastContainer
-            position="top-right"
-            autoClose={5000}
-            hideProgressBar={false}
-            newestOnTop
-            closeOnClick
-            rtl={false}
-            pauseOnFocusLoss
-            draggable
-            pauseOnHover
-          />
+          <Toast />
         </SocketProvider>
       </Provider>
     </Router>

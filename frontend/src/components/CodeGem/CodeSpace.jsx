@@ -1,14 +1,12 @@
 import React, { useEffect, useRef, useState } from "react";
 import OpenFiles from "./OpenFiles";
 import VideoChatPanel from "./VideoChatPanel";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import {
   selectActiveFile,
   selectFileTree,
   selectPath,
 } from "../../redux/slices/gemSlice";
-import useOwnerOrCollaberCheck from "../../hooks/useOwnerOrCollaberCheck";
-import { toast } from "react-toastify";
 import { updateHeight } from "../../utils/hieght";
 
 const CodeSpace = ({
@@ -21,9 +19,7 @@ const CodeSpace = ({
   const path = useSelector(selectPath);
   const fileTree = useSelector(selectFileTree);
   const [content, setContent] = useState("");
-  const dispatch = useDispatch();
   const [isFileSaved, setIsFileSaved] = useState(true);
-  const isOwnerOrCollaber = useOwnerOrCollaberCheck();
   const codeSpaceRef = useRef();
 
   // for Mob ui
@@ -32,23 +28,19 @@ const CodeSpace = ({
     window.addEventListener("resize", updateHeight(codeSpaceRef));
   }, []);
 
-  function findFileAndRead(iterable, name, path) {
+  function findFileAndRead(iterable, name) {
     if (!Array.isArray(iterable)) {
       console.error("iterable is not an array");
       return;
     }
 
-    for (let [index, child] of iterable.entries()) {
-      if (child.name === name) {
-        if (child.type === "file") {
-          const content = iterable[index].content;
-          console.log("file not found");
-          return content;
-        }
+    for (let child of iterable) {
+      if (child.name === name && child.type === "file") {
+        return child.content; // Correctly returns the file content
       }
 
       if (child.children) {
-        const content = findFileAndRead(child.children, name, path);
+        const content = findFileAndRead(child.children, name);
         if (content) return content;
       }
     }
@@ -68,28 +60,13 @@ const CodeSpace = ({
   useEffect(() => {
     const newContent = findFileAndRead(fileTree, activeFile, path);
     setContent(newContent);
-    // const newLines = newContent?.split("\n");
-    // const prevLines = content?.split("\n");
-
-    // const textarea = codeRef.current;
-
-    // const uniqueLines = newLines?.filter((line) => !prevLines?.includes(line));
-    // const regex = /\\b(${uniqueLines.join('|')})\\b/gi;
-
-    // const matches = content.match({ regex });
   }, [fileTree]);
 
   const handleCodeChange = (e) => {
     const prevContent = findFileAndRead(fileTree, activeFile, path);
 
-    if (isOwnerOrCollaber) {
-      setContent(e.target.value);
-      setIsFileSaved(content === prevContent);
-    } else {
-      toast.info(
-        "You are not owner or collaborator to this gem so you can only see this gem , create your own gem to edit , chats and prompt to ai , and invite users to your gems"
-      );
-    }
+    setContent(e.target.value);
+    setIsFileSaved(content === prevContent);
   };
 
   return (

@@ -1,6 +1,8 @@
 import React from "react";
-import Home from "./screens/Home";
 import { Routes, Route } from "react-router-dom";
+
+// component
+import Home from "./screens/Home";
 import CodeGem from "./screens/CodeGem";
 import NotFound from "./components/NotFound";
 

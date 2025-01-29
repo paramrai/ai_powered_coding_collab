@@ -1,17 +1,18 @@
-import React, { useEffect, useRef, useState } from "react";
-import InfoCards from "../components/home/InfoCards";
-import Navbar from "../components/home/Navbar";
-import HomeTabs from "../components/home/HomeTabs";
-import Footer from "../components/home/Footer";
-import GemSection from "../components/home/GemSection";
-import { useSocket } from "../redux/socket/SocketProvider";
-import { useDispatch, useSelector } from "react-redux";
+// react and redux
+import React, { useEffect, useRef } from "react";
 import {
   selectToken,
   selectUser,
   updateUserObject,
 } from "../redux/slices/userSlice";
+import { useSocket } from "../redux/socket/SocketProvider";
+import { useDispatch, useSelector } from "react-redux";
 import { updateHeight } from "../utils/hieght";
+import InfoCards from "../components/home/InfoCards";
+import Navbar from "../components/home/Navbar";
+import HomeTabs from "../components/home/HomeTabs";
+import Footer from "../components/home/Footer";
+import GemSection from "../components/home/GemSection";
 
 const Home = () => {
   const socket = useSocket();
@@ -38,14 +39,6 @@ const Home = () => {
       if (socket) socket.emit("logged-out", { socketId: socket.id });
     }
   }, [socket, token, user._id]);
-
-  if (!socket) {
-    return (
-      <div className="h-[90vh] w-full flex items-center justify-center bg-slate-900">
-        <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-blue-500"></div>
-      </div>
-    );
-  }
 
   return (
     <main

@@ -3,20 +3,13 @@ import { useMobileCheck } from "../hooks/useMobileCheck";
 import { useParams } from "react-router-dom";
 import NotFound from "../components/NotFound";
 import axiosInstance from "../configs/axiosInstance";
-import { useDispatch, useSelector } from "react-redux";
-import {
-  selectCurrentGem,
-  setGem,
-  setOpenFiles,
-} from "../redux/slices/gemSlice";
+import { useDispatch } from "react-redux";
+import { setGem } from "../redux/slices/gemSlice";
 import LeftBar from "../components/CodeGem/LeftBar";
 import LeftBarPanel from "../components/CodeGem/LeftBarPanel";
 import CodeSpace from "../components/CodeGem/CodeSpace";
 import MobileChatOption from "../components/CodeGem/MobileChatOption";
 import DesktopChatOption from "../components/CodeGem/DesktopChatOption";
-import { selectUser } from "../redux/slices/userSlice";
-import { toast } from "react-toastify";
-import useOwnerOrCollaberCheck from "../hooks/useOwnerOrCollaberCheck";
 import { updateHeight } from "../utils/hieght";
 
 const CodeGem = () => {
@@ -28,8 +21,6 @@ const CodeGem = () => {
   const [isGemFound, setIsGemFound] = useState();
   const [isLoading, setIsLoading] = useState(true);
   const dispatch = useDispatch();
-  const ownerOrCollaber = useOwnerOrCollaberCheck();
-  const currentGem = useSelector(selectCurrentGem);
   const { gemName } = useParams();
   const codeGemRef = useRef();
 
@@ -40,12 +31,6 @@ const CodeGem = () => {
   }, []);
 
   useEffect(() => {
-    if (!ownerOrCollaber && currentGem._id) {
-      toast.info(
-        "You are not owner or collaborator to this gem so you can only see this gem , create your own gem to edit , chats and prompt to ai , and invite users to your gems"
-      );
-    }
-
     const readGem = async () => {
       try {
         const res = await axiosInstance.get(`/gems/readGem/${gemName}`);
