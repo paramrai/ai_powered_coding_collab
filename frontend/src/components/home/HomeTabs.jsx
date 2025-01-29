@@ -144,7 +144,7 @@ function Tabs() {
           className="mr-2 text-blue-500 transform transition-all 
         duration-200 ease-in-out"
         />
-        <span>Explore Projects</span>
+        <span>Explore Gems</span>
       </button>
     </div>
   );

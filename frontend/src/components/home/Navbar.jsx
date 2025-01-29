@@ -36,7 +36,7 @@ function Navbar() {
         <input
           autoComplete="off"
           className="bg-transparent w-full h-full outline-none"
-          placeholder="Search for public projects"
+          placeholder="Search for public Gems"
           type="text"
         />
       </div>
