@@ -10,6 +10,8 @@ import {
   selectFileTree,
   selectOpenFiles,
   selectPath,
+  setActiveFile,
+  setOpenFiles,
 } from "../../redux/slices/gemSlice";
 
 function AiScreen({ activeTab }) {
@@ -118,6 +120,8 @@ function AiScreen({ activeTab }) {
 
             if (!isFileExist) {
               dispatch(addNewFile({ type: "file", name: file }));
+              dispatch(setActiveFile(files[0]));
+              dispatch(setOpenFiles({ name: file, path }));
             }
 
             dispatch(

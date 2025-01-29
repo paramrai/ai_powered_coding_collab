@@ -1,27 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { GoDotFill } from "react-icons/go";
 import { IoClose } from "react-icons/io5";
-import {
-  FaReact,
-  FaNodeJs,
-  FaPython,
-  FaJava,
-  FaJs,
-  FaHtml5,
-  FaCss3,
-  FaPhp,
-  FaRust,
-  FaSwift,
-} from "react-icons/fa";
-import {
-  SiGo,
-  SiCplusplus,
-  SiRuby,
-  SiKotlin,
-  SiTypescript,
-  SiDart,
-} from "react-icons/si";
-import { BsHash } from "react-icons/bs";
 import { useDispatch, useSelector } from "react-redux";
 import {
   closeFile,
@@ -43,28 +22,26 @@ const OpenFiles = ({ content, isFileSaved, setIsFileSaved }) => {
   const path = useSelector(selectPath);
   const fileTree = useSelector(selectFileTree);
 
-  function findFileAndRead(iterable, name, path) {
+  function findFileAndRead(iterable, name) {
     if (!Array.isArray(iterable)) {
       console.error("iterable is not an array");
       return;
     }
 
-    for (let [index, child] of iterable.entries()) {
-      if (child.name === name) {
-        if (child.type === "file") {
-          const content = iterable[index].content;
-          console.log("file not found");
-          return content;
+    for (let child of iterable) {
+      if (child.name === name && child.type === "file") {
+        if (child.content) {
+          return child.content;
+        } else {
+          return "";
         }
       }
 
       if (child.children) {
-        const content = findFileAndRead(child.children, name, path);
+        const content = findFileAndRead(child.children, name);
         if (content) return content;
       }
     }
-
-    console.log("file not found");
   }
 
   const handleSave = () => {
@@ -78,11 +55,11 @@ const OpenFiles = ({ content, isFileSaved, setIsFileSaved }) => {
     );
 
     toast.success("File saved");
+    setIsFileSaved(true);
   };
 
   useEffect(() => {
     const prevContent = findFileAndRead(fileTree, activeFile);
-
     setIsFileSaved(content === prevContent);
   }, [content]);
 

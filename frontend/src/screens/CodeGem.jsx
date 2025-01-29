@@ -78,17 +78,14 @@ const CodeGem = () => {
           <CodeSpace
             isVideoChatOpen={isVideoChatOpen}
             setIsVideoChatOpen={setIsChatOpen}
-            ownerOrCollaber={ownerOrCollaber}
           />
-          {ownerOrCollaber && <MobileChatOption />}
-          {ownerOrCollaber && (
-            <DesktopChatOption
-              isChatOpen={isChatOpen}
-              setIsChatOpen={setIsChatOpen}
-              width={chatPanelWidth}
-              setWidth={setChatPanelWidth}
-            />
-          )}
+          <MobileChatOption />
+          <DesktopChatOption
+            isChatOpen={isChatOpen}
+            setIsChatOpen={setIsChatOpen}
+            width={chatPanelWidth}
+            setWidth={setChatPanelWidth}
+          />
         </>
       ) : (
         <NotFound msg={"Ooops No Gem Found !"} />

@@ -36,7 +36,11 @@ const CodeSpace = ({
 
     for (let child of iterable) {
       if (child.name === name && child.type === "file") {
-        return child.content; // Correctly returns the file content
+        if (child.content) {
+          return child.content;
+        } else {
+          return "";
+        }
       }
 
       if (child.children) {
@@ -44,8 +48,6 @@ const CodeSpace = ({
         if (content) return content;
       }
     }
-
-    console.log("file not found");
   }
 
   useEffect(() => {
@@ -53,7 +55,12 @@ const CodeSpace = ({
       setContent("");
     } else {
       const savedContent = findFileAndRead(fileTree, activeFile, path);
-      setContent(savedContent);
+
+      if (savedContent) {
+        setContent(savedContent);
+      } else {
+        setContent("");
+      }
     }
   }, [activeFile]);
 
@@ -108,12 +115,10 @@ const CodeSpace = ({
           WebkitTextFillColor: "currentcolor",
         }}
       ></textarea>
-      {ownerOrCollaber && (
-        <VideoChatPanel
-          setIsVideoChatOpen={setIsVideoChatOpen}
-          isVideoChatOpen={isVideoChatOpen}
-        />
-      )}
+      <VideoChatPanel
+        setIsVideoChatOpen={setIsVideoChatOpen}
+        isVideoChatOpen={isVideoChatOpen}
+      />
     </div>
   );
 };
