@@ -113,14 +113,10 @@ function AiScreen({ activeTab }) {
         );
 
         if (response.status === 200) {
-          console.log(response.data);
-
           const files = Object.keys(response.data.code);
 
           files.forEach((file) => {
             const isFileExist = findFileAndRead(fileTree, file);
-
-            console.log(isFileExist);
 
             if (!isFileExist) {
               dispatch(addNewFile({ type: "file", name: file }));

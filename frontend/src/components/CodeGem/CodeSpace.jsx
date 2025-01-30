@@ -147,7 +147,6 @@ const CodeSpace = ({ isVideoChatOpen, setIsVideoChatOpen }) => {
       socket.on("codeChanged", ({ user, file, gem, top, left, content }) => {
         editor && editor.focus();
         setCodeEditerUser(user);
-        console.log("codeUser", user.username);
         setContent(content);
       });
     }
