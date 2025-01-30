@@ -61,6 +61,7 @@ const gemSlice = createSlice({
   reducers: {
     setGem: (state, action) => {
       state.gem = action.payload;
+      state.path = action.payload.name;
     },
     setOpenFiles: (state, action) => {
       const { name, path } = action.payload;
@@ -90,6 +91,7 @@ const gemSlice = createSlice({
     },
     addNewFile: (state, action) => {
       const { type, name } = action.payload;
+      console.log(type, name);
       const path = state.path;
       findPathAndAdd(state.gem.fileTree, type, name, path);
       const updatedGem = state.gem;
@@ -139,6 +141,8 @@ const gemSlice = createSlice({
 
     saveFileContent: (state, action) => {
       const { name, path, content } = action.payload;
+
+      console.log(name, path, content);
 
       function findFileAndUpdate(iterable, name, path) {
         if (!Array.isArray(iterable)) {

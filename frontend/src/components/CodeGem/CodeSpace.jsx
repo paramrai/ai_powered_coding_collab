@@ -12,6 +12,7 @@ import { updateHeight } from "../../utils/hieght";
 import Editor from "@monaco-editor/react";
 import { selectUser } from "../../redux/slices/userSlice";
 import { useSocket } from "../../redux/socket/SocketProvider";
+import { getLanguage } from "../../utils/getLanguage";
 
 const LoadingSpinner = () => (
   <div className="flex items-center justify-center h-full w-full bg-[#1e1e1e]">
@@ -31,11 +32,22 @@ const CodeSpace = ({ isVideoChatOpen, setIsVideoChatOpen }) => {
   const codeSpaceRef = useRef();
   const user = useSelector(selectUser);
   const [codeEditerUser, setCodeEditerUser] = useState(null);
+  const [language, setLanguage] = useState("plaintext");
 
   const editor = document.querySelector(".monaco-editor textarea");
   const rect = editor && editor.getBoundingClientRect();
   let top = rect && rect.top;
   let left = rect && rect.left;
+
+  useEffect(() => {
+    if (activeFile) {
+      const language = getLanguage(activeFile);
+
+      if (language) {
+        setLanguage(language);
+      }
+    }
+  }, [activeFile]);
 
   useEffect(() => {
     if (socket) {
@@ -158,7 +170,7 @@ const CodeSpace = ({ isVideoChatOpen, setIsVideoChatOpen }) => {
           <Editor
             height="100%"
             className="monaco-editor"
-            defaultLanguage="javascript"
+            language={language}
             beforeMount={(monaco) => {
               monaco.editor.defineTheme("custom-dark", {
                 base: "vs-dark",
