@@ -1,6 +1,7 @@
 import { Server } from "socket.io";
 import handleJoinUser from "./controllers/handleJoinUser.controller.js";
 import handleMessage from "./controllers/handleMessage.controller.js";
+import { handleCodeChange } from "./controllers/handleCodeChange.controller.js";
 
 function initSocket(server) {
   const io = new Server(server, {
@@ -15,6 +16,7 @@ function initSocket(server) {
     if (socket) {
       handleJoinUser(socket);
       handleMessage(socket);
+      handleCodeChange(socket);
     }
   });
 }

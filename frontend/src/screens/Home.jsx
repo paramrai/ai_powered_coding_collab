@@ -1,12 +1,5 @@
 // react and redux
 import React, { useEffect, useRef } from "react";
-import {
-  selectToken,
-  selectUser,
-  updateUserObject,
-} from "../redux/slices/userSlice";
-import { useSocket } from "../redux/socket/SocketProvider";
-import { useDispatch, useSelector } from "react-redux";
 import { updateHeight } from "../utils/hieght";
 import InfoCards from "../components/home/InfoCards";
 import Navbar from "../components/home/Navbar";
@@ -15,10 +8,6 @@ import Footer from "../components/home/Footer";
 import GemSection from "../components/home/GemSection";
 
 const Home = () => {
-  const socket = useSocket();
-  const user = useSelector(selectUser);
-  const token = useSelector(selectToken);
-  const dispatch = useDispatch();
   const homeRef = useRef();
 
   // for Mob ui
@@ -26,19 +15,6 @@ const Home = () => {
     updateHeight(homeRef);
     window.addEventListener("resize", updateHeight(homeRef));
   }, []);
-
-  useEffect(() => {
-    // show online when user enters in home
-    if (socket && user._id && token) {
-      socket.emit("join", { userId: user._id });
-
-      socket.on("joined", (user) => {
-        dispatch(updateUserObject(user));
-      });
-    } else {
-      if (socket) socket.emit("logged-out", { socketId: socket.id });
-    }
-  }, [socket, token, user._id]);
 
   return (
     <main

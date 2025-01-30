@@ -1,16 +1,17 @@
 import React, { useEffect, useRef, useState } from "react";
 import OpenFiles from "./OpenFiles";
 import VideoChatPanel from "./VideoChatPanel";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import {
-  addNewFile,
   selectActiveFile,
+  selectCurrentGem,
   selectFileTree,
-  selectOpenFiles,
   selectPath,
 } from "../../redux/slices/gemSlice";
 import { updateHeight } from "../../utils/hieght";
 import Editor from "@monaco-editor/react";
+import { selectUser } from "../../redux/slices/userSlice";
+import { useSocket } from "../../redux/socket/SocketProvider";
 
 const LoadingSpinner = () => (
   <div className="flex items-center justify-center h-full w-full bg-[#1e1e1e]">
@@ -19,19 +20,51 @@ const LoadingSpinner = () => (
 );
 
 const CodeSpace = ({ isVideoChatOpen, setIsVideoChatOpen }) => {
-  const activeFile = useSelector(selectActiveFile);
+  const socket = useSocket();
   const path = useSelector(selectPath);
+  const activeFile = useSelector(selectActiveFile);
   const fileTree = useSelector(selectFileTree);
+  const gem = useSelector(selectCurrentGem);
   const [content, setContent] = useState("");
   const [isFileSaved, setIsFileSaved] = useState(true);
-  const codeSpaceRef = useRef();
   const [isEditorLoading, setIsEditorLoading] = useState(true);
+  const codeSpaceRef = useRef();
+  const user = useSelector(selectUser);
+  const [codeEditerUser, setCodeEditerUser] = useState(null);
+
+  const editor = document.querySelector(".monaco-editor textarea");
+  const rect = editor && editor.getBoundingClientRect();
+
+  let top = rect && rect.top;
+  let left = rect && rect.left;
+
+  useEffect(() => {
+    if (socket) {
+      socket.emit("join-room", gem._id);
+    }
+  }, [socket]);
 
   // for Mob ui
   useEffect(() => {
     updateHeight(codeSpaceRef);
     window.addEventListener("resize", updateHeight(codeSpaceRef));
   }, []);
+
+  // show username
+  useEffect(() => {
+    let userDiv = document.querySelector("#username");
+
+    if (editor) {
+      if (document.activeElement === editor) {
+        userDiv.style.display = "block";
+      } else {
+        userDiv.style.display = "none";
+      }
+
+      userDiv.style.top = `${top}px`;
+      userDiv.style.left = `${left}px`;
+    }
+  }, [editor, document.activeElement, left, top]);
 
   function findFileAndRead(iterable, name) {
     if (!Array.isArray(iterable)) {
@@ -78,11 +111,33 @@ const CodeSpace = ({ isVideoChatOpen, setIsVideoChatOpen }) => {
     }
   }, [fileTree]);
 
-  const handleCodeChange = (newVal) => {
-    const prevContent = findFileAndRead(fileTree, activeFile, path);
-    setContent(newVal);
-    setIsFileSaved(content === prevContent);
+  const handleCodeChange = (newContent) => {
+    setContent(newContent);
+    setIsFileSaved(false);
+
+    if (socket) {
+      socket.emit("codeChange", {
+        user,
+        top,
+        left,
+        gem,
+        file: activeFile,
+        content: newContent,
+      });
+    }
   };
+
+  // recieve codeChanged
+  useEffect(() => {
+    if (socket) {
+      socket.on("codeChanged", ({ user, file, gem, top, left, content }) => {
+        editor && editor.focus();
+        setCodeEditerUser(user);
+        console.log("codeUser", user.username);
+        setContent(content);
+      });
+    }
+  }, [socket, editor]);
 
   return (
     <div
@@ -91,6 +146,7 @@ const CodeSpace = ({ isVideoChatOpen, setIsVideoChatOpen }) => {
     >
       <OpenFiles
         content={content}
+        editor={editor}
         setContent={setContent}
         isFileSaved={isFileSaved}
         setIsFileSaved={setIsFileSaved}
@@ -98,6 +154,7 @@ const CodeSpace = ({ isVideoChatOpen, setIsVideoChatOpen }) => {
       <div className="flex-1 min-h-0">
         <Editor
           height="100%"
+          className="monaco-editor"
           defaultLanguage="javascript"
           beforeMount={(monaco) => {
             monaco.editor.defineTheme("custom-dark", {
@@ -120,7 +177,7 @@ const CodeSpace = ({ isVideoChatOpen, setIsVideoChatOpen }) => {
             scrollBeyondLastLine: false,
             automaticLayout: true,
             tabSize: 2,
-            wordWrap: "on",
+            wordWrap: "off",
             lineNumbers: "on",
             glyphMargin: false,
             folding: true,
@@ -128,6 +185,12 @@ const CodeSpace = ({ isVideoChatOpen, setIsVideoChatOpen }) => {
             lineNumbersMinChars: 3,
           }}
         />
+        <div
+          id="username"
+          className="bg-yellow-500 absolute px-2 mt-5 capitalize z-[5000]"
+        >
+          {codeEditerUser && codeEditerUser.username}
+        </div>
       </div>
       <VideoChatPanel
         setIsVideoChatOpen={setIsVideoChatOpen}

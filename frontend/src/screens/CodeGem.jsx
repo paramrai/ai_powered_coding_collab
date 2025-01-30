@@ -3,8 +3,8 @@ import { useMobileCheck } from "../hooks/useMobileCheck";
 import { useParams } from "react-router-dom";
 import NotFound from "../components/NotFound";
 import axiosInstance from "../configs/axiosInstance";
-import { useDispatch } from "react-redux";
-import { setGem } from "../redux/slices/gemSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { selectCurrentGem, setGem } from "../redux/slices/gemSlice";
 import LeftBar from "../components/CodeGem/LeftBar";
 import LeftBarPanel from "../components/CodeGem/LeftBarPanel";
 import CodeSpace from "../components/CodeGem/CodeSpace";
@@ -52,7 +52,7 @@ const CodeGem = () => {
 
   if (isLoading) {
     return (
-      <div className="h-[90vh] w-full flex items-center justify-center bg-slate-900">
+      <div className="h-screen w-full flex items-center justify-center bg-slate-900">
         <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-blue-500"></div>
       </div>
     );

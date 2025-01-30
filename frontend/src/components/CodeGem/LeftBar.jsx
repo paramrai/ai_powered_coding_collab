@@ -35,7 +35,7 @@ const LeftBar = ({
   return (
     <div
       ref={leftBarRef}
-      className="h-full bg-slate-900 flex flex-col items-left border-r border-slate-700"
+      className="h-screen bg-slate-900 flex flex-col items-left border-r border-slate-700"
     >
       {icons.map((item, index) => (
         <div key={index} className="relative group">
