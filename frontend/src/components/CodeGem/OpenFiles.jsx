@@ -14,8 +14,10 @@ import {
 import { getFileIcon } from "./LeftBarPanel";
 import { IoMdCloudDone } from "react-icons/io";
 import { toast } from "react-toastify";
+import { useSocket } from "../../redux/socket/SocketProvider";
 
-const OpenFiles = ({ content, isFileSaved, setIsFileSaved }) => {
+const OpenFiles = ({ content, isFileSaved, setIsFileSaved, editor }) => {
+  const socket = useSocket();
   const dispatch = useDispatch();
   const openFiles = useSelector(selectOpenFiles);
   const activeFile = useSelector(selectActiveFile);

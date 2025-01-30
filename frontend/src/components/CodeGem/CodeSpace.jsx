@@ -34,7 +34,6 @@ const CodeSpace = ({ isVideoChatOpen, setIsVideoChatOpen }) => {
 
   const editor = document.querySelector(".monaco-editor textarea");
   const rect = editor && editor.getBoundingClientRect();
-
   let top = rect && rect.top;
   let left = rect && rect.left;
 
@@ -54,7 +53,7 @@ const CodeSpace = ({ isVideoChatOpen, setIsVideoChatOpen }) => {
   useEffect(() => {
     let userDiv = document.querySelector("#username");
 
-    if (editor) {
+    if (editor && userDiv) {
       if (document.activeElement === editor) {
         userDiv.style.display = "block";
       } else {
@@ -91,6 +90,7 @@ const CodeSpace = ({ isVideoChatOpen, setIsVideoChatOpen }) => {
   useEffect(() => {
     if (!activeFile) {
       setContent("");
+      editor;
     } else {
       const savedContent = findFileAndRead(fileTree, activeFile, path);
 
@@ -112,18 +112,20 @@ const CodeSpace = ({ isVideoChatOpen, setIsVideoChatOpen }) => {
   }, [fileTree]);
 
   const handleCodeChange = (newContent) => {
-    setContent(newContent);
-    setIsFileSaved(false);
+    if (activeFile) {
+      setContent(newContent);
+      setIsFileSaved(false);
 
-    if (socket) {
-      socket.emit("codeChange", {
-        user,
-        top,
-        left,
-        gem,
-        file: activeFile,
-        content: newContent,
-      });
+      if (socket) {
+        socket.emit("codeChange", {
+          user,
+          top,
+          left,
+          gem,
+          file: activeFile,
+          content: newContent,
+        });
+      }
     }
   };
 
@@ -152,45 +154,61 @@ const CodeSpace = ({ isVideoChatOpen, setIsVideoChatOpen }) => {
         setIsFileSaved={setIsFileSaved}
       />
       <div className="flex-1 min-h-0">
-        <Editor
-          height="100%"
-          className="monaco-editor"
-          defaultLanguage="javascript"
-          beforeMount={(monaco) => {
-            monaco.editor.defineTheme("custom-dark", {
-              base: "vs-dark",
-              inherit: true,
-              rules: [],
-              colors: {
-                "editor.background": "#1e293b",
-              },
-            });
-          }}
-          theme="custom-dark"
-          value={content}
-          onChange={handleCodeChange}
-          loading={<LoadingSpinner />}
-          onMount={() => setIsEditorLoading(false)}
-          options={{
-            fontSize: 14,
-            minimap: { enabled: false },
-            scrollBeyondLastLine: false,
-            automaticLayout: true,
-            tabSize: 2,
-            wordWrap: "off",
-            lineNumbers: "on",
-            glyphMargin: false,
-            folding: true,
-            lineDecorationsWidth: 0,
-            lineNumbersMinChars: 3,
-          }}
-        />
-        <div
-          id="username"
-          className="bg-yellow-500 absolute px-2 mt-5 capitalize z-[5000]"
-        >
-          {codeEditerUser && codeEditerUser.username}
-        </div>
+        {activeFile ? (
+          <Editor
+            height="100%"
+            className="monaco-editor"
+            defaultLanguage="javascript"
+            beforeMount={(monaco) => {
+              monaco.editor.defineTheme("custom-dark", {
+                base: "vs-dark",
+                inherit: true,
+                rules: [],
+                colors: {
+                  "editor.background": "#1e293b",
+                },
+              });
+            }}
+            theme="custom-dark"
+            value={content}
+            onChange={handleCodeChange}
+            loading={<LoadingSpinner />}
+            onMount={() => setIsEditorLoading(false)}
+            options={{
+              fontSize: 14,
+              minimap: { enabled: false },
+              scrollBeyondLastLine: false,
+              automaticLayout: true,
+              tabSize: 2,
+              wordWrap: "off",
+              lineNumbers: "on",
+              glyphMargin: false,
+              folding: true,
+              lineDecorationsWidth: 0,
+              lineNumbersMinChars: 3,
+            }}
+          />
+        ) : (
+          <div className="w-full h-full flex flex-col gap-2 justify-center items-center bg-slate-800 text-gray-300 p-3 rounded-lg shadow-lg z-50 transition-opacity duration-300 ease-in-out ">
+            <p className="text-sm">Use Ctrl+Z for undo</p>
+            <p className="text-sm">Multiple users can edit simultaneously</p>
+            <p className="text-sm">Double click to select word</p>
+            <p className="text-sm">Triple click to select line</p>
+          </div>
+        )}
+
+        {codeEditerUser && (
+          <div
+            id="username"
+            className={`${
+              codeEditerUser.username === user.username
+                ? "bg-yellow-500"
+                : "bg-pink-500 text-white"
+            } absolute px-2 mt-5 capitalize z-[5000]`}
+          >
+            {codeEditerUser.username}
+          </div>
+        )}
       </div>
       <VideoChatPanel
         setIsVideoChatOpen={setIsVideoChatOpen}
