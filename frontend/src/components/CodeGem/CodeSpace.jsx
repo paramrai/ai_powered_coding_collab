@@ -149,6 +149,11 @@ const CodeSpace = ({ isVideoChatOpen, setIsVideoChatOpen }) => {
         setCodeEditerUser(user);
         setContent(content);
       });
+
+      socket.on("code-by-me", () => {
+        console.log("code by me");
+        setCodeEditerUser(user);
+      });
     }
   }, [socket, editor]);
 

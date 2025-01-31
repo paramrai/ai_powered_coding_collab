@@ -6,13 +6,21 @@ import Navbar from "../components/home/Navbar";
 import HomeTabs from "../components/home/HomeTabs";
 import Footer from "../components/home/Footer";
 import GemSection from "../components/home/GemSection";
+import { useSelector } from "react-redux";
+import { selectUser } from "../redux/slices/userSlice";
 
 const Home = () => {
   const homeRef = useRef();
+  const user = useSelector(selectUser);
 
   // for Mob ui
   useEffect(() => {
     updateHeight(homeRef);
+    document.title = user?.username
+      ? `${
+          user.username.charAt(0).toUpperCase() + user.username.slice(1)
+        } : Code Gems`
+      : `Ai Powered : Code Gems`;
     window.addEventListener("resize", updateHeight(homeRef));
   }, []);
 

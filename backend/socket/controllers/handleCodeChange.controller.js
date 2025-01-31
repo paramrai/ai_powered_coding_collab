@@ -7,7 +7,6 @@ export const handleCodeChange = (socket) => {
       .to(gem._id)
       .emit("codeChanged", { user, file, gem, top, left, content });
 
-    // Emit to the sender
-    socket.emit("codeChanged", { user, file, gem, top, left, content });
+    socket.emit("code-by-me");
   });
 };
