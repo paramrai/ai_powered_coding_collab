@@ -12,7 +12,7 @@ function CreateGemModal({ createGemModal, setCreateGemModal }) {
   const [description, setDescription] = useState("");
 
   const token = useSelector(selectToken);
-  const userId = useSelector(selectUser)._id;
+  const userId = useSelector(selectUser)?._id;
 
   const navigate = useNavigate();
   const dispatch = useDispatch();

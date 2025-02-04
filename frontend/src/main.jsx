@@ -13,14 +13,17 @@ import { createRoot } from "react-dom/client";
 import { BrowserRouter as Router } from "react-router-dom";
 import { Provider } from "react-redux";
 import { store } from "./redux/store";
+import UserProtectWrapper from "./components/UserProtectWrapper.jsx";
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
     <Router>
       <Provider store={store}>
         <SocketProvider>
-          <App />
-          <Toast />
+          <UserProtectWrapper>
+            <App />
+            <Toast />
+          </UserProtectWrapper>
         </SocketProvider>
       </Provider>
     </Router>

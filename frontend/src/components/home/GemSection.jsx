@@ -45,7 +45,7 @@ function GemSection() {
   const [loading, setLoading] = useState(false);
   const homeActiveTab = useSelector(selectHomeActiveTab);
   const exploreGems = useSelector(selectExploreGems);
-  const userId = useSelector(selectUser)._id;
+  const userId = useSelector(selectUser)?._id;
   const dispatch = useDispatch();
   const navigate = useNavigate();
 

@@ -21,7 +21,7 @@ const App = () => {
 
   useEffect(() => {
     // show online when user enters in home
-    if (socket && user._id && token) {
+    if (socket && user?._id && token) {
       socket.emit("join", { userId: user._id });
 
       socket.on("joined", (user) => {
@@ -30,7 +30,7 @@ const App = () => {
     } else {
       if (socket) socket.emit("logged-out", { socketId: socket.id });
     }
-  }, [socket, token, user._id]);
+  }, [socket, token, user?._id]);
 
   return (
     <>

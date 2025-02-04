@@ -11,7 +11,8 @@ import { FaSearch } from "react-icons/fa";
 import { toast } from "react-toastify";
 
 function Navbar() {
-  const [isAuthFormOpen, setIsAuthFormOpen] = useState(false);
+  const token = useSelector(selectUser);
+  const [isAuthFormOpen, setIsAuthFormOpen] = useState(!token);
   const user = useSelector(selectUser);
   const dispatch = useDispatch();
   const [isRightBarOpen, setIsRightBarOpen] = useState(false);
@@ -40,7 +41,7 @@ function Navbar() {
           type="text"
         />
       </div>
-      {!user.email ? (
+      {!user?.email ? (
         <div className="btns space-x-2 flex flex-shrink-0">
           <button
             onClick={() => setIsAuthFormOpen(true)}
