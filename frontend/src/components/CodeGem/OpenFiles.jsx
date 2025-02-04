@@ -16,7 +16,7 @@ import { IoMdCloudDone } from "react-icons/io";
 import { toast } from "react-toastify";
 import { useSocket } from "../../redux/socket/SocketProvider";
 
-const OpenFiles = ({ content, isFileSaved, setIsFileSaved, editor }) => {
+const OpenFiles = ({ content, isFileSaved, setIsFileSaved }) => {
   const socket = useSocket();
   const dispatch = useDispatch();
   const openFiles = useSelector(selectOpenFiles);

@@ -18,7 +18,7 @@ const UserProtectWrapper = ({ children }) => {
         );
 
         if (response.status === 200) {
-          dispatch(setUser(response.data));
+          // dispatch(setUser(response.data));
         }
       } catch (error) {
         console.error(error);

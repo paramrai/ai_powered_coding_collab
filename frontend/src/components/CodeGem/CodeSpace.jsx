@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import OpenFiles from "./OpenFiles";
 import VideoChatPanel from "./VideoChatPanel";
 import { useSelector } from "react-redux";
@@ -20,6 +20,28 @@ const LoadingSpinner = () => (
   </div>
 );
 
+export function findFileAndRead(iterable, name) {
+  if (!Array.isArray(iterable)) {
+    console.error("iterable is not an array");
+    return;
+  }
+
+  for (let child of iterable) {
+    if (child.name === name && child.type === "file") {
+      if (child.content) {
+        return child.content;
+      } else {
+        return "";
+      }
+    }
+
+    if (child.children) {
+      const content = findFileAndRead(child.children, name);
+      if (content) return content;
+    }
+  }
+}
+
 const CodeSpace = ({ isVideoChatOpen, setIsVideoChatOpen }) => {
   const socket = useSocket();
   const path = useSelector(selectPath);
@@ -31,13 +53,7 @@ const CodeSpace = ({ isVideoChatOpen, setIsVideoChatOpen }) => {
   const [isEditorLoading, setIsEditorLoading] = useState(true);
   const codeSpaceRef = useRef();
   const user = useSelector(selectUser);
-  const [codeEditerUser, setCodeEditerUser] = useState(null);
   const [language, setLanguage] = useState("plaintext");
-
-  const editor = document.querySelector(".monaco-editor textarea");
-  const rect = editor && editor.getBoundingClientRect();
-  let top = rect && rect.top;
-  let left = rect && rect.left;
 
   useEffect(() => {
     if (activeFile) {
@@ -61,48 +77,11 @@ const CodeSpace = ({ isVideoChatOpen, setIsVideoChatOpen }) => {
     window.addEventListener("resize", updateHeight(codeSpaceRef));
   }, []);
 
-  // show username
   useEffect(() => {
-    let userDiv = document.querySelector("#username");
+    setIsFileSaved(true);
 
-    if (editor && userDiv) {
-      if (document.activeElement === editor) {
-        userDiv.style.display = "block";
-      } else {
-        userDiv.style.display = "none";
-      }
-
-      userDiv.style.top = `${top}px`;
-      userDiv.style.left = `${left}px`;
-    }
-  }, [editor, document.activeElement, left, top]);
-
-  function findFileAndRead(iterable, name) {
-    if (!Array.isArray(iterable)) {
-      console.error("iterable is not an array");
-      return;
-    }
-
-    for (let child of iterable) {
-      if (child.name === name && child.type === "file") {
-        if (child.content) {
-          return child.content;
-        } else {
-          return "";
-        }
-      }
-
-      if (child.children) {
-        const content = findFileAndRead(child.children, name);
-        if (content) return content;
-      }
-    }
-  }
-
-  useEffect(() => {
     if (!activeFile) {
       setContent("");
-      editor;
     } else {
       const savedContent = findFileAndRead(fileTree, activeFile, path);
 
@@ -123,39 +102,36 @@ const CodeSpace = ({ isVideoChatOpen, setIsVideoChatOpen }) => {
     }
   }, [fileTree]);
 
-  const handleCodeChange = (newContent) => {
-    if (activeFile) {
-      setContent(newContent);
-      setIsFileSaved(false);
+  const handleCodeChange = useCallback(
+    (newContent) => {
+      const savedContent = findFileAndRead(fileTree, activeFile);
 
-      if (socket) {
-        socket.emit("codeChange", {
-          user,
-          top,
-          left,
-          gem,
-          file: activeFile,
-          content: newContent,
-        });
+      if (activeFile) {
+        setContent(newContent);
+        setIsFileSaved(newContent === savedContent);
+
+        if (socket) {
+          socket.emit("codeChange", {
+            user,
+
+            gem,
+            file: activeFile,
+            content: newContent,
+          });
+        }
       }
-    }
-  };
+    },
+    [activeFile]
+  );
 
   // recieve codeChanged
   useEffect(() => {
     if (socket) {
-      socket.on("codeChanged", ({ user, file, gem, top, left, content }) => {
-        editor && editor.focus();
-        setCodeEditerUser(user);
+      socket.on("codeChanged", ({ user, file, gem, content }) => {
         setContent(content);
       });
-
-      socket.on("code-by-me", () => {
-        console.log("code by me");
-        setCodeEditerUser(user);
-      });
     }
-  }, [socket, editor]);
+  }, [socket]);
 
   return (
     <div
@@ -164,7 +140,6 @@ const CodeSpace = ({ isVideoChatOpen, setIsVideoChatOpen }) => {
     >
       <OpenFiles
         content={content}
-        editor={editor}
         setContent={setContent}
         isFileSaved={isFileSaved}
         setIsFileSaved={setIsFileSaved}
@@ -210,19 +185,6 @@ const CodeSpace = ({ isVideoChatOpen, setIsVideoChatOpen }) => {
             <p className="text-sm">Multiple users can edit simultaneously</p>
             <p className="text-sm">Double click to select word</p>
             <p className="text-sm">Triple click to select line</p>
-          </div>
-        )}
-
-        {codeEditerUser && (
-          <div
-            id="username"
-            className={`${
-              codeEditerUser.username === user.username
-                ? "bg-yellow-500"
-                : "bg-pink-500 text-white"
-            } absolute px-2 mt-5 capitalize z-[5000]`}
-          >
-            {codeEditerUser.username}
           </div>
         )}
       </div>
