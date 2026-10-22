@@ -120,13 +120,29 @@ export const inviteUserController = async (req, res, next) => {
   const { inviteSenderId, inviteReceiverId, gemId } = req.body;
 
   try {
-    const [inviteReceiverUser, inviteSenderUser] = await Promise.all([
+    const [inviteReceiverUser, inviteSenderUser, gem] = await Promise.all([
       userModel.findById(inviteReceiverId),
       userModel.findById(inviteSenderId),
+      gemModel.findById(gemId),
     ]);
 
-    if (!inviteSenderUser || !inviteReceiverUser || !gemId) {
+    if (!inviteSenderUser || !inviteReceiverUser || !gem) {
       return next(new ValidationError("Please enter a valid user or gem Id"));
+    }
+
+    // 1. Validation: Only owner of the gem can send invites
+    if (gem.owner.toString() !== inviteSenderId.toString()) {
+      return next(new AuthenticationError("Only the owner of the gem can send invites"));
+    }
+
+    // 2. Validation: Prevent self-invites
+    if (inviteSenderId.toString() === inviteReceiverId.toString()) {
+      return next(new ValidationError("You cannot invite yourself"));
+    }
+
+    // 3. Validation: Don't invite if user is already a collaborator
+    if (gem.collaborator.includes(inviteReceiverUser._id)) {
+      return next(new ValidationError("User is already a collaborator on this gem"));
     }
 
     // Check if receiver already has this invite

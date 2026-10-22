@@ -117,6 +117,19 @@ const model = genAI.getGenerativeModel({
 
 export const generateResult = async (prompt, referenceFiles) => {
   const user = { prompt, referenceFiles };
-  const result = await model.generateContent(JSON.stringify(user));
-  return result.response.text();
+  try {
+    const result = await model.generateContent(JSON.stringify(user));
+    return result.response.text();
+  } catch (error) {
+    // Handle API errors (like 404 model not found or 429 quota exceeded)
+    // by returning a structured JSON response that the frontend can display as a message.
+    return JSON.stringify({
+      text: "⚠️ I'm currently unable to process your request. This is a demo project and the AI API has either reached its free tier limit or is momentarily unavailable. Please explore other screens and the overall flow of the application to see how it works!",
+      usedReference: [],
+      plan: null,
+      code: {},
+      codeWithNoRefs: {},
+      keyChanges: null
+    });
+  }
 };

@@ -91,7 +91,6 @@ const SignUpForm = ({ setIsAuthFormOpen }) => {
       toast.success("Signed up successfully!");
       setIsAuthFormOpen(false);
     } catch (error) {
-      dispatch(setError(error.message));
       toast.error(error.response?.data.msg || error.message);
     } finally {
       setLoading(false);

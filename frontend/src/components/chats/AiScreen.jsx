@@ -179,7 +179,7 @@ function AiScreen({ activeTab }) {
               >
                 <div className="min-w-8 min-h-8 max-w-8 max-h-8 rounded-full bg-gray-600 flex items-center justify-center text-white text-sm">
                   {message.sender === username
-                    ? username.substring(0, 2).toUpperCase()
+                    ? username?.substring(0, 2).toUpperCase()
                     : "AI"}
                 </div>
                 <div
